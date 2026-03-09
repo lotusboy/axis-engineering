@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+.windsurf/
+
+# Claude Code
+.claude/
+
+# Temp projects
+temp-projects/
+
+# Local-only example outputs
+testing/
