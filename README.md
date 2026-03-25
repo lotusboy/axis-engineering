@@ -153,6 +153,7 @@ Tested across 9 controlled reviews, 5 experiments, and 4 real-world applications
 | **Two-pass, fresh sessions** | Pre-production audit, integration review | 2 | Yes | Fresh session per pass | **~30** |
 | **Two-pass, continued session** | Deep-dive on known-problematic area | 2 | Yes | Same session, Pass 2 as subagent | ~25 (deeper) |
 | **Four-pass (2x two-pass)** | Critical security review, pre-launch | 4 | Yes | Fresh sessions | ~35 (highest coverage) |
+| **Triangle Protocol** | Architecture with genuine tradeoffs | 3+1 | Yes (per agent) | Fresh, isolated contexts | 3 designs + synthesis |
 
 *\*Approximate deduplicated finding counts from experiments on a ~7-class Apex subsystem with design docs.*
 
@@ -188,6 +189,9 @@ Is this an implementation retrospective (design vs actual)?
 
 Is this a solution design generation (requirements → architecture)?
   → Single pass with contract (Cynefin + First Principles + MECE + Pre-mortem)
+
+Is this a design task with genuine tradeoffs between time, cost, and quality?
+  → Triangle Protocol (3 agents × TQ/TC/CQ + synthesis). See triangle-protocol.md
 
 Is this a critical security review or pre-launch audit?
   → Four-pass (run two-pass twice), deduplicate findings
@@ -527,6 +531,8 @@ Beyond controlled experiments, Axis Engineering has been applied to three real-w
 
 **Insight:** This is the most demanding test — not reviewing or finding bugs, but *generating* a complete solution from requirements alone. The ~90% match demonstrates that Cynefin (domain sizing) + First Principles (decomposition) + MECE (completeness) guide the LLM toward the same architectural decisions a human engineer reaches independently. The methodology doesn't just catch bugs faster — it can produce comparable designs from scratch.
 
+**Follow-up — Triangle Protocol:** The 4 gaps from this experiment became the test case for the Triangle Protocol. Three agents (TQ, TC, CQ) ran against the same requirements with different constraint pairings. All 4 gaps surfaced as explicit divergence points in the synthesis, plus a requirements contradiction that no single-agent run had detected. See `triangle-protocol.md` for the full protocol and experiment results.
+
 ## Known Limitations
 
 1. **Model specificity.** All experiments used Claude Opus 4.6 (May 2025 training cutoff). Handle effectiveness on other models (Sonnet, Haiku, GPT-4o, Gemini) is untested. The co-occurrence cluster theory predicts cross-model transfer for handles with strong training signal (Genba, SOLID, Pre-mortem), but this is unverified. Handles with weaker training signal (Wu Wei, Wabi-sabi) may not activate reliably on smaller models. The hooks architecture is a Claude Code reference implementation — the concepts (pre-edit check, post-edit verify, session triage) are tool-agnostic but the JSON format is not.
@@ -574,8 +580,10 @@ The Evidence field is the key addition that prevents cargo-culting. Without it, 
 |------|---------|
 | `README.md` | This document — the complete Axis Engineering methodology |
 | `salesforce-handles.md` | Salesforce-specific handle applications — what each handle checks and what findings look like on the platform |
+| `triangle-protocol.md` | Triangle Protocol — 3-agent solution space exploration using Iron Triangle constraint pairs |
+| `salesforce-triangle.md` | Salesforce-specific Triangle Protocol — output skeleton, contracts, and divergence patterns for the platform |
 | `hooks-architecture.md` | How to wire behavior handles into Claude Code hooks |
 | `vocabulary-quick-ref.md` | One-page cheat sheet with Evidence and Domain fields |
 | `experiment-results.md` | Full nine-review comparison across five experiments + four real-world applications |
 | `two-pass-strategy.md` | Two-pass review strategy (structured + adversarial) |
-| `testing/` | Experiment output files — all 9 review outputs + MGA Framework reviews + wildfire design review |
+| `testing/` | Experiment output files — all 9 review outputs + MGA Framework reviews + wildfire design review + Triangle Protocol outputs |

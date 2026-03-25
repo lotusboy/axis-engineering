@@ -4,7 +4,7 @@
 
 Each handle activates specific checks AND implies a natural finding format. You don't need to think about output structure separately — the handles carry their own shape. Pick 2-3 handles, point them at your target files, and the output quality follows.
 
-This is a companion to the [vocabulary reference](vocabulary-quick-ref.md) and [main methodology](README.md).
+This is a companion to the [vocabulary reference](vocabulary-quick-ref.md) and [main methodology](README.md). For solution design generation using the Triangle Protocol, see [salesforce-triangle.md](salesforce-triangle.md).
 
 ---
 
@@ -405,6 +405,7 @@ Design doc review:               Genba + MECE + Pre-mortem + Poka-yoke
 Pre-production audit (2-pass):   Pass 1: Genba + SOLID + MECE
                                  Pass 2: Chaos Engineering + Pre-mortem + Poka-yoke
 Solution design from reqs:       Cynefin + First Principles + MECE + Pre-mortem
+Solution design (explore space): Triangle Protocol — see salesforce-triangle.md
 Bug investigation:               Genba + Five Whys + First Principles
 ```
 

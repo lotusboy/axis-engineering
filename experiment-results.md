@@ -7,7 +7,7 @@
 **Codebase:** ExampleCo Commercial Property (Salesforce/Apex)
 **Model:** Claude Opus 4.6 (all experiments)
 
-Nine controlled reviews were conducted across five experiments, followed by three real-world applications on production artifacts.
+Nine controlled reviews were conducted across five experiments, followed by five real-world applications on production artifacts (including the Triangle Protocol experiment).
 
 ### Method
 
@@ -351,7 +351,7 @@ Six findings from v2 were absent from both v3 passes:
 
 3. **Zero buildings not validated before rating** — v2 Pass 2 M4 (also in v1 combined as finding #14). A Quote with zero buildings sends nonsensical aggregates to the rater. Not mentioned in v3.
 
-4. **LocationTriggerHandler silent skip without logging** — v2 Pass 2 M5. The handler's `hasKettleFieldAccess()` guard returns silently with no log. Not mentioned in v3.
+4. **LocationTriggerHandler silent skip without logging** — v2 Pass 2 M5. The handler's `hasExampleCoFieldAccess()` guard returns silently with no log. Not mentioned in v3.
 
 5. **BuildingTriggerHandler lacks FLS guard** — v2 Pass 2 M6. Asymmetry between the two trigger handlers. Not mentioned in v3.
 
@@ -483,7 +483,7 @@ v3 Pass 2 produced genuinely independent findings. It did not simply echo Pass 1
 
 ## Real-World Applications
 
-These are not controlled experiments — they are production uses of the methodology on real project artifacts. They demonstrate that the handles and contracts transfer beyond code review to design review, documentation analysis, and implementation retrospectives.
+These are not controlled experiments — they are production uses of the methodology on real project artifacts. They demonstrate that the handles and contracts transfer beyond code review to design review, documentation analysis, implementation retrospectives, and multi-agent solution space exploration.
 
 ### Application 1: Wildfire API Design Review
 
@@ -621,14 +621,87 @@ These are not controlled experiments — they are production uses of the methodo
 
 **Insight:** This is the most demanding test of Axis Engineering to date. The methodology was not reviewing existing work or finding bugs — it was *generating* a complete solution design from scratch. The ~90% match with a human-designed, implemented, and tested architecture demonstrates that the handles (particularly Cynefin for domain categorisation, First Principles for decomposition, and MECE for completeness) guide the LLM toward the same architectural decisions a human engineer reaches. The 4 gaps are all reasonable design choices that a code review would catch — the core architecture (the hard part) was correct.
 
+**Follow-up:** The 4 gaps from this experiment became the hypothesis test case for the Triangle Protocol (Application 5 below).
+
+### Application 5: Triangle Protocol — Solution Space Exploration (Ping Vision Integration)
+
+**Date:** 2026-03-24
+**Protocol:** Triangle Protocol (3 diverge agents + 1 synthesis agent)
+**Agent handles:**
+- TQ (Time+Quality): Cynefin + MECE + First Principles + Pre-mortem
+- TC (Time+Cost): Cynefin + MECE + YAGNI + Theory of Constraints
+- CQ (Cost+Quality): Cynefin + MECE + Muda + Kent Beck's Four Rules
+- Synthesis: Cynefin + MECE + First Principles
+
+**Target:** `testing/ping-requirements-only.md` — same 271-line requirements document used in Application 4
+**Outputs:**
+- `testing/triangle-ping-agent-tq.md` — Time+Quality design
+- `testing/triangle-ping-agent-tc.md` — Time+Cost design
+- `testing/triangle-ping-agent-cq.md` — Cost+Quality design
+- `testing/triangle-ping-synthesis.md` — Comparison and synthesis
+
+**Comparison baseline:** Application 4's single-agent design (781 lines, ~90% match, 4 silent gaps)
+
+**Task:** Test whether 3 independent agents with different Iron Triangle constraint pairs would surface the 4 gaps from Application 4 as explicit design choices rather than silent omissions.
+
+**Results:**
+
+| Metric | Single-Agent (App 4) | Triangle Protocol (App 5) |
+|--------|---------------------|--------------------------|
+| Designs produced | 1 | 3 |
+| Architectural gaps (silent) | 4 | 0 — all surfaced as divergence points |
+| Convergence points | N/A | 7 (high-confidence decisions) |
+| Divergence points | N/A | 6 (genuine tradeoff zones) |
+| Blind spots identified | 0 | 8 (1 P0, 5 P1, 2 P2) |
+| Requirements contradictions found | 0 | 1 (Cleared status — P0 blocker) |
+| Hybrid options proposed | N/A | 4 |
+| Token cost | 1x | ~4x |
+
+**The 4 original gaps — all surfaced:**
+
+| Gap from Application 4 | Where it surfaced in synthesis |
+|---|---|
+| Missing dedicated output processor batch | Divergence 2.1 — the #1 divergence point. TQ/CQ built separate output processors; TC consolidated into a single batch. Synthesis called this "the single highest-stakes tradeoff." |
+| Missing separate scheduler classes | Divergence 2.1 — TQ: 4 schedulers, CQ: 4 schedulers, TC: 0 (self-scheduling batch). Explicitly compared in effort table. |
+| Missing Named Credential indirection | Convergence 1.2 (all three used Named Credentials) + Divergence 2.4 (shared API client vs inline callouts). |
+| Missing Case-to-submission date sync trigger | Divergence 2.3 — CQ's user-driven Cleared pattern requires a Case trigger to sync dates; TC/TQ automate inception date retrieval instead. |
+
+**Agent output comparison:**
+
+| Agent | Functional Classes | Schedulers | Test Classes | Total Components | Effort Estimate |
+|---|---|---|---|---|---|
+| **TC** (Time+Cost) | 5 | 0 | ~4 | ~92 | ~55 hours |
+| **CQ** (Cost+Quality) | 7 | 4 | 12+ | ~112 | ~105 hours |
+| **TQ** (Time+Quality) | 10 | 4 | 11 | ~105 | ~100 hours |
+
+The designs are genuinely different — not anchored variations. TC produced a God-class `APP_PingEventPollerBatch` combining all processing; TQ produced well-separated classes with 4 independent scheduled jobs; CQ produced a NULL-timestamp coordination pattern with user-driven Cleared status and the most thorough "Components NOT Built" justification.
+
+**Bonus finding — requirements contradiction:**
+
+The synthesis agent flagged a P0 blocker that no single-agent run had detected: requirement 3 states "Data Entry is the ONLY outbound status change," but TQ and CQ both designed Cleared as an additional outbound status change. TC took the requirement literally. This disagreement surfaced a genuine requirements ambiguity — CQ explicitly flagged it as Unknown Assumption U8 with the note "Confirm with Ping whether Cleared has `is_valid_for_user_transition = true`."
+
+This is the strongest argument for the Triangle Protocol: multi-agent divergence surfaces **requirements ambiguities**, not just design alternatives. A single agent silently picks one interpretation. Three agents may pick different interpretations, and the synthesis agent flags the disagreement.
+
+**Synthesis quality:**
+
+The synthesis agent produced a 380-line structured comparison with all 8 required sections (Executive Summary, Convergence, Divergence, Tradeoff Matrix, Effort Comparison, Hybrid Opportunities, Risk Register, Blind Spots) plus a Next Steps section. Improvements applied after initial synthesis: prioritised decision guide (top 3 decisions), normalised effort estimates, uncertainty ranges on hybrid estimates, priority-ranked blind spots (P0/P1/P2), and suggested next steps.
+
+**Insight:** The Triangle Protocol adds genuine value for architecture decisions where tradeoffs matter. The ~4x token cost is justified when the alternative is discovering silent gaps during implementation. The protocol's strongest finding was not one of the 4 predicted gaps — it was the requirements contradiction, a category of finding that single-agent design generation cannot produce because it requires multiple independent interpretations of the same requirement. The protocol also demonstrated that the Iron Triangle constraint pairs produce genuinely independent designs (not anchored variations) because each pair activates different handle cocktails in separate contexts. See `triangle-protocol.md` for the full protocol specification and methodology.
+
 ### Cross-Application Observations
 
 1. **Handles transfer across artifact types.** Genba (verify against source) works on code, design docs, and doc chains. MECE (no gaps) works on code coverage and design completeness. Pre-mortem (assume failure) works on code deployment and design readiness. Cynefin + First Principles + MECE work for solution design generation.
 
-2. **The assumption ledger is valuable in every context.** In code review it catches runtime assumptions. In design review it catches field type assumptions. In retrospectives it catches framework behavior assumptions. In design generation it catches platform constraint assumptions. The forcing function is the same: declare what you assumed, then check.
+2. **The assumption ledger is valuable in every context.** In code review it catches runtime assumptions. In design review it catches field type assumptions. In retrospectives it catches framework behavior assumptions. In design generation it catches platform constraint assumptions. In multi-agent synthesis it catches requirements ambiguities. The forcing function is the same: declare what you assumed, then check.
 
-3. **Design review needs different handle combinations than code review.** Code review benefits from Fowler + SOLID (pattern recognition). Design review benefits from MECE + First Principles (completeness + justification). Design generation benefits from Cynefin + First Principles + MECE + Pre-mortem (domain sizing + decomposition + completeness + failure anticipation). Both benefit from Genba (verify) and Pre-mortem (assume failure).
+3. **Design review needs different handle combinations than code review.** Code review benefits from Fowler + SOLID (pattern recognition). Design review benefits from MECE + First Principles (completeness + justification). Design generation benefits from Cynefin + First Principles + MECE + Pre-mortem (domain sizing + decomposition + completeness + failure anticipation). Solution space exploration benefits from the Triangle Protocol (3 agents with different constraint pairs + synthesis). Both benefit from Genba (verify) and Pre-mortem (assume failure).
 
 4. **The Genba gap is consistent.** In every application, the most impactful finding was something that could only be caught by reading the actual artifact (field metadata, framework source code, existing implementation) rather than trusting documentation or abstractions. Genba is the single most valuable handle across all contexts.
 
 5. **Design generation is the ultimate completeness test for MECE.** When generating (not reviewing), MECE forces the agent to ask "what's missing from this design?" at every level — objects, fields, classes, execution flow, scheduling, error handling. The 4 gaps in the Ping design are all things MECE *could* have caught with more exhaustive system boundary analysis (scheduler separation, date sync direction, output processing isolation).
+
+6. **Multi-agent divergence surfaces requirements ambiguities that single-agent approaches cannot.** Application 5 demonstrated that a single agent silently picks one interpretation of an ambiguous requirement, while three independent agents may pick different interpretations. The synthesis agent then flags the disagreement. This is a category of finding unavailable to any single-agent strategy — it requires independent parallel generation under different constraints. The requirements contradiction found in Application 5 (Cleared as outbound status change) would have been discovered during implementation otherwise.
+
+7. **The Iron Triangle produces genuine divergence, not anchored variations.** Application 5 produced designs ranging from 5 to 10 classes, with fundamentally different async architectures (monolith vs separated batches), different automation scopes (fully automated vs user-driven), and different configuration strategies (key-value vs typed CMDT). Context isolation and different handle cocktails prevent the anchoring that plagues "give me 3 options" in a single context.
+
+8. **Convergence across independent agents is a strong correctness signal.** When all three Triangle Protocol agents independently make the same choice (7 convergence points in Application 5), that's stronger evidence than one agent making the choice once. Convergence points can be adopted with high confidence. This is the multi-agent analogue of reproducibility in the two-pass experiments (the "big 5" findings appearing across all versions).
