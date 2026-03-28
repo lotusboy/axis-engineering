@@ -441,9 +441,36 @@ Beyond the original 4 gaps, the synthesis agent flagged a **requirements contrad
 
 7 convergence points, 6 divergence points, 4 hybrid opportunities, 8 blind spots (1 P0, 5 P1, 2 P2). Full outputs in `testing/triangle-ping-*.md`.
 
+### Experiment 2: Wildfire Endorsement + Cancellation (N=2)
+
+The Triangle Protocol was tested a second time against a different problem type — extending the existing `APP_WildfireApiService` to support endorsement and cancellation endpoints. Unlike the greenfield Ping experiment, this tests the protocol on infrastructure extension with established patterns and constraints.
+
+- **Input:** 6 existing design docs (wildfire integration, AOP rater V2, cancellation hook)
+- **Agents:** TQ, TC, CQ with same handle assignments as Experiment 1
+- **Key result:** 7 convergence, 6 divergence, 4 hybrids, 8 blind spots (2 P0, 3 P1, 3 P2) — structurally consistent with Experiment 1
+- **Requirements ambiguity detected:** Date source disagreement (CQ: InsurancePolicy fields; TQ/TC: Quote PKG fields)
+- **P0 architectural blocker:** Override parameter contract unverified — 2 of 3 designs depend on it; if it doesn't exist, only TQ's approach works
+- **Effort spread:** 3.25x (24h–78h), wider than Experiment 1's 1.9x
+
+Full outputs in `testing/triangle-wildfire-ec-*.md`. Full writeup in `experiment-results.md` Application 6.
+
+### Experiment 3: ExampleRater Batch Design (N=3, Cross-Domain)
+
+The Triangle Protocol was tested on a non-Salesforce platform for the first time — designing a batch/bulk rating feature for ExampleRater, an Azure Functions Node.js API that exposes Excel-based insurance raters as REST services.
+
+- **Input:** Manufactured requirements document + existing codebase docs
+- **Platform:** Azure Functions / Node.js / SharePoint (no Salesforce constraints)
+- **Key result:** 6 convergence, 5 divergence, 4 hybrids, 9 blind spots (3 P0, 3 P1, 3 P2)
+- **Genuinely different architectures:** Service Bus fan-out (TQ) vs self-chaining HTTP (TC) vs timer-polling (CQ)
+- **Cynefin domain disagreement:** TQ classified worker pool contention as Complex; TC/CQ classified the problem as Complicated
+- **Infrastructure cost divergence:** TQ added ~£125-370/month; TC/CQ added ~£0 — a category of divergence unique to variable-cost platforms
+- **Effort spread:** 1.4x (80h–112h)
+
+Full outputs in `testing/triangle-example-rating-batch-*.md`. Full writeup in `experiment-results.md` Application 7.
+
 ### Limitations
 
-This is N=1 on a single domain (Salesforce/Apex integration). The hypothesis is confirmed for this problem class, but generalisability to other domains (frontend, data pipelines, mobile) is untested. The handle assignments, output skeleton, and caricature mitigations all need further testing across different project types.
+This is N=3 across two platforms (Salesforce/Apex and Azure Functions/Node.js) and three problem types (greenfield, extension, and cross-domain feature design). The structural consistency of output (6-7 convergence, 5-6 divergence, 8-9 blind spots, 4 hybrids across all three experiments) and repeated ambiguity detection on both platforms confirm the protocol is platform-agnostic. The handle assignments and output skeleton transfer without modification to non-Salesforce targets. Remaining untested: frontend (React/Vue), data pipelines (Spark/Airflow), mobile, and non-English requirements.
 
 ## Related Work
 

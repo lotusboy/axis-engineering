@@ -91,7 +91,7 @@ That's it. From here, every new session picks up the handles automatically. Your
 
 ### Go deeper
 
-Browse the [full vocabulary](#the-vocabulary) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 4 real-world applications with empirical data. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+Browse the [full vocabulary](#the-vocabulary) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 11 real-world applications across 5 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
 
 ---
 
@@ -144,7 +144,7 @@ This gives the AI everything it needs per-session. The full vocabulary and exper
 
 ## Execution Strategies
 
-Tested across 9 controlled reviews, 5 experiments, and 4 real-world applications (see `experiment-results.md`). Results are empirical, not theoretical.
+Tested across 9 controlled reviews, 5 experiments, and 11 real-world applications across five languages and two artifact types (see `experiment-results.md`). Results are empirical, not theoretical.
 
 | Strategy | When to use | Passes | Contract? | Session | Findings* |
 |----------|-------------|--------|-----------|---------|-----------|
@@ -153,7 +153,7 @@ Tested across 9 controlled reviews, 5 experiments, and 4 real-world applications
 | **Two-pass, fresh sessions** | Pre-production audit, integration review | 2 | Yes | Fresh session per pass | **~30** |
 | **Two-pass, continued session** | Deep-dive on known-problematic area | 2 | Yes | Same session, Pass 2 as subagent | ~25 (deeper) |
 | **Four-pass (2x two-pass)** | Critical security review, pre-launch | 4 | Yes | Fresh sessions | ~35 (highest coverage) |
-| **Triangle Protocol** | Architecture with genuine tradeoffs | 3+1 | Yes (per agent) | Fresh, isolated contexts | 3 designs + synthesis |
+| **Triangle Protocol** | Architecture with genuine tradeoffs (N=3, cross-platform) | 3+1 | Yes (per agent) | Fresh, isolated contexts | 3 designs + synthesis |
 
 *\*Approximate deduplicated finding counts from experiments on a ~7-class Apex subsystem with design docs.*
 
@@ -168,6 +168,8 @@ Tested across 9 controlled reviews, 5 experiments, and 4 real-world applications
 4. **Pass 2 must be isolated.** Run it as a separate subagent with no access to Pass 1 output. The instruction "Do NOT read Pass 1" works even within the same session. Independent rediscovery confirms genuine signal.
 
 5. **Core findings are highly reproducible (~75% overlap across runs).** The same critical bugs are independently rediscovered every time. Medium-severity findings vary by ~25% across runs. For maximum coverage, run twice and deduplicate.
+
+6. **The Triangle Protocol surfaces requirements ambiguities that single-agent approaches cannot.** Tested three times (N=3) across two platforms (Salesforce/Apex and Azure/Node.js). All experiments produced structurally consistent output (6-7 convergence, 5-6 divergence, 8-9 blind spots, 4 hybrids) and independently surfaced ambiguities through agent disagreement. Cross-platform validated — the protocol's value is not tied to Salesforce-specific constraints. See `triangle-protocol.md`.
 
 **Decision tree:**
 
@@ -486,7 +488,7 @@ When adversarial handles (Chaos Engineering, Pre-mortem, Red Team) are applied t
 
 ## Real-World Applications
 
-Beyond controlled experiments, Axis Engineering has been applied to three real-world tasks on the same project. These are not A/B tests — they're production use of the methodology.
+Beyond controlled experiments, Axis Engineering has been applied to eleven real-world tasks across five languages (Salesforce/Apex, TypeScript, Python, JavaScript, Bash), two artifact types (application code and DevOps/IaC), and multiple codebases including code written by other developers. These are not A/B tests — they're production use of the methodology. Applications 5-11 are documented in `experiment-results.md`.
 
 ### Application 1: Design Review (Wildfire API Solution Design)
 
@@ -584,6 +586,60 @@ The Evidence field is the key addition that prevents cargo-culting. Without it, 
 | `salesforce-triangle.md` | Salesforce-specific Triangle Protocol — output skeleton, contracts, and divergence patterns for the platform |
 | `hooks-architecture.md` | How to wire behavior handles into Claude Code hooks |
 | `vocabulary-quick-ref.md` | One-page cheat sheet with Evidence and Domain fields |
-| `experiment-results.md` | Full nine-review comparison across five experiments + four real-world applications |
+| `experiment-results.md` | Full nine-review comparison across five experiments + eleven real-world applications |
 | `two-pass-strategy.md` | Two-pass review strategy (structured + adversarial) |
-| `testing/` | Experiment output files — all 9 review outputs + MGA Framework reviews + wildfire design review + Triangle Protocol outputs |
+| `testing/` | Experiment output files — all 9 review outputs + PKG Framework reviews + wildfire design review + Triangle Protocol outputs |
+## Scoring Rubric & Model Calibration
+
+To standardize comparisons between models (Claude vs GPT vs Gemini) and track the effectiveness of Axis Engineering over time, include a scoring rubric and calibration table at the end of every review. Retrofit the rubric into prior experiment entries using recorded P0/P1 counts and rediscovery %, and add time/cost where measured.
+
+### 1. The Scoring Rubric
+Append this table to the end of every `experiment-results.md` entry:
+
+```markdown
+### Review Rubric & Metrics
+- **P0 / P1 count:** [Number of critical and high findings]
+- **Rediscovery %:** [Overlap with previous/baseline runs]
+- **Model used:** [e.g., Claude 3.7 Sonnet, GPT-5.1-Codex Max High, Gemini 3.1 Pro High Thinking]
+- **Estimated Elapsed Time:** [e.g., 45 seconds, 3 minutes]
+- **Estimated Cost/Tokens:** [e.g., ~$0.10, ~120k tokens]
+```
+
+### 2. Review Checklists
+To reduce stylistic drift and ensure consistency, use these standard checklists for different review modes.
+
+**Two-Pass Checklist:**
+- [ ] Pass 1 (Analytical): Did it find structural, design, and API issues?
+- [ ] Pass 2 (Adversarial): Did it find runtime edge cases, missing guards, and failure modes?
+- [ ] Evidence: Does every finding cite a specific `file:line` or artifact?
+- [ ] Synthesis: Are findings deduplicated into a combined document?
+- [ ] Rubric: Is the scoring rubric appended?
+
+**Triangle Protocol Checklist:**
+- [ ] Agent TQ: Did it produce a high-quality, time-sensitive design, sacrificing cost?
+- [ ] Agent TC: Did it produce a fast, cheap design, sacrificing quality?
+- [ ] Agent CQ: Did it produce a high-quality, cost-sensitive design, sacrificing time?
+- [ ] Synthesis: Does it explicitly map Convergences, Divergences, and Blind Spots?
+- [ ] Rubric: Is the scoring rubric appended?
+
+### 3. Model Calibration Log
+Maintain a running log of model performance to make data-driven decisions on which model to use for which task. Add this to `experiment-results.md` or a dedicated `model-calibration.md`.
+
+| Model | Task Type | Strengths | Weaknesses | Avg Cost | Avg Time |
+|-------|-----------|-----------|------------|----------|----------|
+| Claude 3.7 | Deep Code Review | Broad SAST coverage, security focus | Can be overly cautious, higher cost | $$$ | Medium |
+| GPT-5.1 | Architecture / Triangle | Runtime failure modes, infra minimization | Less deep on static analysis | $$ | Fast |
+| Gemini 3.1 | Document / Design Review | Fast synthesis, good context retention | Sometimes misses nuanced edge cases | $ | Very Fast |
+
+Status: planned. Replace the placeholder table above with measured averages only after multiple logged runs per model; until then, do not cite it as evidence.
+
+## Regression Harnesses
+
+Turn critical recurring findings into executable checks to prevent regressions.
+
+Example common patterns to harness:
+1. **Auth Surface Checks:** Ensure all endpoints (except health) are wrapped in `withAuth` and validate tenant boundaries (e.g. `customerId`).
+2. **Error Token Traps:** Inject failure states (like `#REF!` or `#VALUE!` in Excel output) and assert the API returns a 400/500 rather than a 200 with error strings.
+3. **Concurrency Locking:** For stateful worker pools, assert that parallel requests for a lock cannot claim the same worker (TOCTOU).
+
+Create a small automated suite (`tests/axis-regression/`) for the top P0/P1s across your reviews to ensure Axis Engineering findings permanently harden the system.

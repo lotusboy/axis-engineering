@@ -315,7 +315,7 @@ Records dry-run results. If the dry-run detected `State: Changed`, writes a `CON
 Lightweight sanity checks (no LLM call):
 1. Uncommitted Apex class changes (forgot to commit after deploy?)
 2. Uncommitted LWC changes
-3. MGA boundary violations (`PKG_*` files modified in `core/`)
+3. PKG boundary violations (`PKG_*` files modified in `core/`)
 4. Changed classes without corresponding test classes
 5. Stale deploy-state files older than 30 min (auto-cleaned)
 
@@ -332,7 +332,7 @@ The reference architecture (above) includes `agent`-type hooks for PreToolUse:Ed
 | PreToolUse:Bash | <100ms | <100ms | Same — command-type in both |
 | Stop | ~30-60s | <100ms | Shell checks only; no LLM-powered failure analysis |
 
-The deployed configuration is the **minimum viable hook set** — it prevents the most damaging mistakes (deploying without checking, committing MGA files, forgetting tests) without slowing down development. The full reference suite is available for critical work by switching settings files.
+The deployed configuration is the **minimum viable hook set** — it prevents the most damaging mistakes (deploying without checking, committing PKG files, forgetting tests) without slowing down development. The full reference suite is available for critical work by switching settings files.
 
 ## Performance Considerations
 

@@ -271,7 +271,7 @@ Salesforce has hard constraints that aren't obvious from requirements alone: IPs
 
 **Mitigation:** Each agent contract includes ANDON conditions. The synthesis agent should compare ANDON lists across agents — if all three flag the same risk, it's a validated concern. If only one flags it, it needs investigation.
 
-### OmniStudio / MGA Connect assumptions
+### OmniStudio / PKG Connect assumptions
 
 When the integration touches OmniStudio Integration Procedures (IPs), all three agents may assume IPs are callable from Apex. This assumption needs validation in a sandbox before sprint planning. The Ping experiment flagged this as ANDON condition A2 across all agents.
 

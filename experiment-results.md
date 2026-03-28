@@ -7,7 +7,7 @@
 **Codebase:** ExampleCo Commercial Property (Salesforce/Apex)
 **Model:** Claude Opus 4.6 (all experiments)
 
-Nine controlled reviews were conducted across five experiments, followed by five real-world applications on production artifacts (including the Triangle Protocol experiment).
+Nine controlled reviews were conducted across five experiments, followed by eleven real-world applications on production artifacts (including three Triangle Protocol experiments and four two-pass reviews spanning Salesforce/Apex, TypeScript/Node.js, JavaScript/Azure, Python, and Bash/DevOps).
 
 ### Method
 
@@ -335,7 +335,7 @@ Four findings appeared in v3 that were not present in any v2 review:
 
 1. **v3 Pass 1 LOW-2: Redundant null check (ternary no-op)** — `APP_RaterPayloadBuilder.cls:233` has `x != null ? x : null` which is semantically equivalent to just `x`. Minor code quality issue.
 
-2. **v3 Pass 1 LOW-4: `APP_QuoteTriggerHandler.isDisabled()` hardcoded to false** — No runtime bypass mechanism for data migrations or bulk operations. Other MGA handlers typically read from CMDT.
+2. **v3 Pass 1 LOW-4: `APP_QuoteTriggerHandler.isDisabled()` hardcoded to false** — No runtime bypass mechanism for data migrations or bulk operations. Other PKG handlers typically read from CMDT.
 
 3. **v3 Pass 2 M8: Fragile success check** — `APP_PremiumReviewController.cls:277` uses `ipResult.get('success') == false` which evaluates to `false` when the key is absent (null == false is false in Apex), so missing key is treated as success.
 
@@ -688,9 +688,310 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Insight:** The Triangle Protocol adds genuine value for architecture decisions where tradeoffs matter. The ~4x token cost is justified when the alternative is discovering silent gaps during implementation. The protocol's strongest finding was not one of the 4 predicted gaps — it was the requirements contradiction, a category of finding that single-agent design generation cannot produce because it requires multiple independent interpretations of the same requirement. The protocol also demonstrated that the Iron Triangle constraint pairs produce genuinely independent designs (not anchored variations) because each pair activates different handle cocktails in separate contexts. See `triangle-protocol.md` for the full protocol specification and methodology.
 
+### Application 6: Triangle Protocol — Solution Space Exploration (Wildfire Endorsement + Cancellation)
+
+**Date:** 2026-03-28
+**Protocol:** Triangle Protocol (3 diverge agents + 1 synthesis agent)
+**Agent handles:**
+- TQ (Time+Quality): Cynefin + MECE + First Principles + Pre-mortem
+- TC (Time+Cost): Cynefin + MECE + YAGNI + Theory of Constraints
+- CQ (Cost+Quality): Cynefin + MECE + Muda + Kent Beck's Four Rules
+- Synthesis: Cynefin + MECE + First Principles
+
+**Target:** Wildfire endorsement re-pricing + cancellation MEP calculation — extending the existing `APP_WildfireApiService` (new-business already implemented) to support endorsement and cancellation endpoints.
+**Outputs:**
+- `testing/triangle-wildfire-ec-agent-tq.md` — Time+Quality design
+- `testing/triangle-wildfire-ec-agent-tc.md` — Time+Cost design
+- `testing/triangle-wildfire-ec-agent-cq.md` — Cost+Quality design
+- `testing/triangle-wildfire-ec-synthesis.md` — Comparison and synthesis
+
+**Context:** This is the second Triangle Protocol experiment (N=2). Unlike Application 5 (greenfield integration from requirements), this tests the protocol on extending existing infrastructure — the wildfire new-business service, AOP rater V2 endorsement/cancellation, and PKG cancellation hook already exist. The agents must design around established patterns, transaction boundaries, and governor limit constraints.
+
+**Results:**
+
+| Metric | App 5 (Ping, N=1) | App 6 (Wildfire E/C, N=2) |
+|--------|-------------------|--------------------------|
+| Convergence points | 7 | 7 |
+| Divergence points | 6 | 6 |
+| Blind spots | 8 (1 P0, 5 P1, 2 P2) | 8 (2 P0, 3 P1, 3 P2) |
+| Hybrid options | 4 | 4 |
+| Effort spread | 1.9x (55h–105h) | 3.25x (24h–78h) |
+| Requirements ambiguity found | 1 (Cleared status) | 1 (date source: Quote vs InsurancePolicy) |
+
+**Structural consistency:** The synthesis produced nearly identical output structure across both experiments — 7/6/8/4 (convergence/divergence/blind spots/hybrids) in both cases. This suggests the protocol produces stable, comparable output across different problem types.
+
+**Key findings:**
+
+**1. Requirements ambiguity detected (again).** CQ sourced inception/expiration dates from `InsurancePolicy.EffectiveDate`/`ExpirationDate` (canonical policy record). TQ/TC sourced from `PKG_PolicyEffectiveDate__c`/`PKG_PolicyExpirationDate__c` on Quote (consistent with existing AOP rater pattern). This is a genuine requirements ambiguity — the wildfire API contract specifies `policy_inception_date` and `policy_expiration_date` without stating which Salesforce field is the source. A single agent would silently pick one; three agents surfaced the disagreement as a P0 blind spot.
+
+**2. P0 architectural blocker: override parameter contract.** TC and CQ both solved the DML-before-callout governor limit by passing wildfire results to the AOP rater via an in-memory override parameter. TQ took a different approach — two sequential LWC server calls. The synthesis flagged that no agent verified whether the override parameter actually exists and propagates correctly. If it doesn't, TC and CQ's entire design collapses and only TQ's approach works. A single-agent design would have silently assumed one approach without flagging the dependency.
+
+**3. Wider effort spread driven by genuine constraint divergence.** TC produced a 6-component, 24-hour design (3 fields, hardcoded constants, no CMDT). TQ produced a 15-component, 78-hour design (6 fields, 3-record CMDT with feature flags, separate payload class, two-call LWC pattern). CQ landed at 10 components, 33 hours (6 fields, 1-record CMDT, dedicated test class). The 3.25x spread (wider than Ping's 1.9x) reflects that this problem has more viable architectural approaches — extending existing code offers more degrees of freedom than greenfield.
+
+**4. Seven high-confidence convergence points.** All three agents independently chose: `InsurancePolicy.Name` as `policy_id`, 2-hop prior premium traversal (same as AOP rater V2), wildfire failure does not block AOP, MEP enforcement is soft/advisory (defer to AOP rater's T138), `APP_WfSeasonalityFactor__c` and `APP_WfMinEarnedPremiumRate__c` as core fields, `PKG_TransactionEffectiveDate__c` for transaction date. These can be adopted with high confidence.
+
+**Agent output comparison:**
+
+| Agent | Components | New Fields | New Classes | CMDT | Effort |
+|---|---|---|---|---|---|
+| **TC** (Time+Cost) | 6 | 3 | 0 | None | ~24h |
+| **CQ** (Cost+Quality) | 10 | 6 | 1 (test) | 1 record | ~33h |
+| **TQ** (Time+Quality) | 15 | 6 | 1 (payload) | 3 records | ~78h |
+
+**Insight:** This experiment confirms that the Triangle Protocol's value properties are structural, not incidental. Requirements ambiguity detection via agent disagreement appeared in both experiments (N=1 and N=2) on different problem types (greenfield vs extension). The P0 blind spot (override parameter) is a category of finding specific to extension work — it validates that the protocol adds value beyond greenfield. The protocol is also effective on Complicated-domain problems (not just Complex), surfacing tradeoffs in how to extend established patterns that a single agent would resolve silently.
+
+### Application 7: Triangle Protocol — Cross-Domain Validation (ExampleRater Batch Design)
+
+**Date:** 2026-03-28
+**Protocol:** Triangle Protocol (3 diverge agents + 1 synthesis agent)
+**Agent handles:** Same as Applications 5 and 6
+**Domain:** Azure Functions / Node.js / SharePoint — **non-Salesforce** (first cross-domain test)
+
+**Target:** Design a batch/bulk rating feature for ExampleRater, a serverless Azure Functions API that exposes Excel-based insurance raters as REST services. The system currently supports single-policy rating only; the design extends it to support batch operations (500–50,000 policies per batch).
+**Outputs:**
+- `testing/triangle-example-rating-batch-agent-tq.md` — Time+Quality design
+- `testing/triangle-example-rating-batch-agent-tc.md` — Time+Cost design
+- `testing/triangle-example-rating-batch-agent-cq.md` — Cost+Quality design
+- `testing/triangle-example-rating-batch-synthesis.md` — Comparison and synthesis
+- `testing/example-rating-batch-requirements.md` — Manufactured requirements document
+
+**Context:** This is the third Triangle Protocol experiment (N=3) and the first on a non-Salesforce platform. The purpose is to test cross-domain generalisability — whether the protocol produces genuine divergence and useful findings on Azure/Node.js without Salesforce-specific constraints (no governor limits, no DML-before-callout, no OmniStudio). Requirements were manufactured from the existing codebase context and real business need (insurance portfolio re-rating).
+
+**Results:**
+
+| Metric | App 5 (Ping, SF) | App 6 (Wildfire, SF) | App 7 (Batch, Azure/Node.js) |
+|--------|-------------------|--------------------------|------------------------------|
+| Convergence points | 7 | 7 | 6 |
+| Divergence points | 6 | 6 | 5 |
+| Blind spots | 8 (1 P0, 5 P1, 2 P2) | 8 (2 P0, 3 P1, 3 P2) | 9 (3 P0, 3 P1, 3 P2) |
+| Hybrid options | 4 | 4 | 4 |
+| Effort spread | 1.9x (55h–105h) | 3.25x (24h–78h) | 1.4x (80h–112h) |
+| Platform | Salesforce/Apex | Salesforce/Apex | Azure Functions/Node.js |
+
+**Key findings:**
+
+**1. The protocol works cross-domain.** Three genuinely different architectures emerged on Azure/Node.js: TQ used Azure Service Bus fan-out with Blob Storage and Premium Functions Plan (~£125-370/month additional). TC used a self-chaining HTTP Function on Consumption plan with zero new services. CQ used a timer-triggered orchestrator on Consumption plan with per-item retry. These are fundamentally different patterns driven by the Iron Triangle constraint pairing, not by platform-specific constraints.
+
+**2. Cynefin domain disagreement surfaced.** TQ classified worker pool contention as Complex (requiring adaptive infrastructure). TC and CQ classified the entire problem as Complicated (solvable with known patterns). This is the same category of finding as the date source disagreement (N=2) and Cleared status contradiction (N=1) — agents interpreting the problem space differently under different constraints.
+
+**3. P0 blind spots unique to cross-domain.** The synthesis flagged that single-item processing time (p50/p95/p99) is uncharacterised — if p99 exceeds 5 minutes, only TQ's Premium Plan design survives. This is a platform constraint (Azure Functions Consumption plan 10-minute limit) that would not exist on Salesforce. TC also omitted data cleanup entirely — a P0 blind spot caught by comparison with TQ and CQ, both of which addressed TTL.
+
+**4. The output structure is stable across platforms.** 6 convergence, 5 divergence, 9 blind spots, 4 hybrids — within the same range as the Salesforce experiments (7/6/8/4). The protocol produces consistent, comparable output regardless of whether the target is Salesforce/Apex or Azure/Node.js.
+
+**5. Infrastructure cost emerged as a genuine divergence axis.** On Salesforce, all designs use the same infrastructure (the org). On Azure, TQ's design adds ~£125-370/month in new services (Service Bus, Blob Storage, Premium Plan) while TC and CQ add ~£0. This is a category of divergence that only appears on infrastructure-variable platforms — the Iron Triangle constraint pairs naturally separate "throw money at it" (TQ) from "use what you have" (TC/CQ).
+
+**Agent output comparison:**
+
+| Agent | Components | New Azure Services | Functions | Hours | Monthly Cost Addition |
+|---|---|---|---|---|---|
+| **TC** (Time+Cost) | 6 | 0 | 3 | ~80h | ~£0 |
+| **CQ** (Cost+Quality) | 10 | 0 | 6 | ~112h | ~£0 |
+| **TQ** (Time+Quality) | 20 | 3 (Service Bus, Blob, Premium Plan) | 8 | ~95h | ~£125-370 |
+
+**Insight:** The Triangle Protocol's value properties transfer across platforms. Requirements ambiguity detection (via Cynefin domain disagreement), architectural blocker identification (p99 processing time as a platform constraint), and genuine divergence from constraint pairing all appeared on Azure/Node.js just as they did on Salesforce/Apex. The protocol is not platform-specific — it is a general-purpose tool for solution space exploration on any technology stack where architecture decisions have genuine tradeoffs.
+
+### Application 8: Two-Pass Code Review — Cross-Domain Validation (example-modelling)
+
+**Date:** 2026-03-28
+**Strategy:** Two-pass, fresh sessions (Pass 1: analytical, Pass 2: adversarial)
+**Pass 1 handles:** Genba + SOLID + MECE + Pyramid Principle
+**Pass 2 handles:** Chaos Engineering + Pre-mortem + Poka-yoke
+**Domain:** TypeScript / Node.js CLI tool (~184 source files) — **first non-Salesforce code review**
+
+**Target:** `example-modelling` — a TypeScript CLI that walks Salesforce repos and generates deterministic, AI-consumable models of every component (classes, objects, LWCs, OmniStudio, journeys, architecture views).
+**Outputs:**
+- `testing/review-example-modelling-pass1.md` — Analytical review
+- `testing/review-example-modelling-pass2.md` — Adversarial review
+
+**Context:** This is the first Axis Engineering code review on a non-Salesforce codebase. The purpose is to validate that the handles and two-pass strategy transfer to TypeScript/Node.js — a fundamentally different language, runtime, and error model from Salesforce/Apex.
+
+**Results:**
+
+| Metric | Pass 1 (Analytical) | Pass 2 (Adversarial) |
+|--------|--------------------|--------------------|
+| Grade | B (solid, minor issues) | C- (happy-path only, fragile) |
+| P0 findings | 2 | 3 |
+| P1 findings | 5 | 5 |
+| P2 findings | 7 | 6 |
+| P3 findings | 4 | 6 |
+| Strengths noted | 7 | 6 |
+
+**Deduplicated critical findings (P0):**
+
+| # | Finding | Found By | Category |
+|---|---------|----------|----------|
+| P0-1 | Undeclared variable `graphEdgesLoaded` — compile/runtime error | Both passes | Code defect |
+| P0-2 | Command injection via unsanitized `gitUrl` in shell exec | Pass 2 only | Security |
+| P0-3 | `logicalNameMap` last-writer-wins — silent wrong dependency resolution | Pass 2 only | Data correctness |
+| P0-4 | Division by zero when graph has zero edges | Both passes | Code defect |
+
+**Independent rediscovery:** Both passes independently found P0-1 (undeclared variable) and P0-4 (division by zero) — the same "big findings" reproducibility observed in the Salesforce experiments. Pass 2 uniquely found the security vulnerability (command injection) and the data correctness issue (logicalNameMap) — both adversarial findings that analytical review missed, confirming the value of the two-pass split.
+
+**Handle transfer to TypeScript/Node.js:**
+
+| Handle | Salesforce Effect | TypeScript Effect | Transferred? |
+|--------|-------------------|-------------------|-------------|
+| **Genba** | Reads actual Apex code, catches `without sharing` issues | Read actual TS source, caught 203 `any` usages and undeclared variable | Yes |
+| **SOLID** | SRP violations in Apex classes, DDD boundary issues | Open/Closed violation in metadata routing (3-place changes), SRP in services | Yes |
+| **MECE** | Completeness of field coverage, test coverage gaps | Missing test coverage for commands/derived generators, missing metadata types | Yes |
+| **Chaos Engineering** | DML-before-callout, governor limits, null injection | Symlink cycles, concurrent CI corruption, XML parse failure → empty models | Yes |
+| **Pre-mortem** | "It failed in production because..." | "The model was wrong and the AI made a bad decision based on it" → logicalNameMap | Yes |
+| **Poka-yoke** | Validation rules, sharing keyword checks | No guardrail against output dir overlapping source, no input validation on --root | Yes |
+
+**Insight:** The handles and two-pass strategy transfer cleanly to TypeScript/Node.js without modification. The handle names activate the same investigation behaviors regardless of language: Genba still means "read the actual code," SOLID still means "check single responsibility and open/closed," Chaos Engineering still means "inject failures." The findings are platform-appropriate (symlink cycles instead of governor limits, command injection instead of DML-before-callout) but the investigation patterns are identical. This confirms that Axis Engineering handles are language-agnostic — they activate cognitive patterns in the model, not platform-specific knowledge.
+
+### Application 9: Two-Pass Code Review — Cross-Language Validation (pkg-connect-product-mover, Python)
+
+**Date:** 2026-03-28
+**Strategy:** Two-pass, fresh sessions (Pass 1: analytical, Pass 2: adversarial)
+**Pass 1 handles:** Genba + SOLID + MECE + Pyramid Principle
+**Pass 2 handles:** Chaos Engineering + Pre-mortem + Poka-yoke
+**Domain:** Python CLI (~4,000 LOC, 16 modules) — **first Axis review on Python and first review on someone else's code**
+
+**Target:** `pkg-connect-product-mover` — a Python CLI for migrating complex Salesforce Product2 data hierarchies between orgs (export to CSV, import with smart upsert, schema comparison, purge). Built by a different developer (Nigel), not the Axis reviewer.
+**Outputs:**
+- `testing/review-product-mover-pass1.md` — Analytical review
+- `testing/review-product-mover-pass2.md` — Adversarial review
+- `testing/review-product-mover-combined.md` — Combined deduplicated review
+
+**Context:** Third language (after Salesforce/Apex and TypeScript/Node.js). First time reviewing code the reviewer has no prior context on. Tests whether Axis works as a consulting tool — "review this colleague's tool."
+
+**Results:**
+
+| Metric | Pass 1 (Analytical) | Pass 2 (Adversarial) |
+|--------|--------------------|--------------------|
+| Grade | B (solid, config gap) | D (fragile, dangerous for production) |
+| P0 findings | 2 | 4 |
+| P1 findings | 5 | 6 |
+| P2 findings | 7 | 5 |
+| P3 findings | 4 | 4 |
+
+**Deduplicated: 29 findings (4 P0, 8 P1, 10 P2, 7 P3). 4 independently rediscovered by both passes.**
+
+**Critical findings:**
+
+| # | Finding | Found By | Category |
+|---|---------|----------|----------|
+| P0-1 | Partial import failure leaves org corrupted — no rollback, delete-then-insert with no transaction boundary | Pass 2 only | Data integrity |
+| P0-2 | Upsert continues past partial failures — orphaned data, no failure threshold | Pass 2 only | Data integrity |
+| P0-3 | Salesforce access tokens logged to disk in debug mode (dataclass `__repr__`) | Both passes | Security |
+| P0-4 | PKG_Binder__c exported but never imported — silent data loss on round-trip | Both passes | Data loss |
+
+**Key observation — adversarial pass is essential for tools that write to production.** The analytical pass found code quality and architecture issues (dead code, exit codes, SOLID violations). The adversarial pass found the data integrity and safety issues that matter most: no rollback on partial failure, no org verification before destructive ops, purge deletes ALL products (not just managed), and SOQL length limits on large datasets. For a tool that writes to production Salesforce orgs, the adversarial findings are the ones that prevent incidents.
+
+**Handle transfer to Python (third language):**
+
+| Handle | Effect on Python | Transferred? |
+|--------|-----------------|-------------|
+| **Genba** | Read actual source; caught dataclass `__repr__` leaking tokens, dead code with undefined variables | Yes |
+| **SOLID** | Found exporter using globals while importer correctly uses dataclass (inconsistent SRP) | Yes |
+| **MECE** | Found PKG_Binder__c config asymmetry, missing test coverage for critical paths | Yes |
+| **Chaos Engineering** | "Network drops mid-import" → found no rollback/checkpoint; "500+ products" → SOQL length limit | Yes |
+| **Pre-mortem** | "Someone ran import against production" → no org verification; "purge deleted other systems' products" → no archive ID filter | Yes |
+| **Poka-yoke** | No guardrail against wrong org; dry-run validates nothing; CSV not checksummed | Yes |
+
+**Insight:** The handles and two-pass strategy now work across three languages (Salesforce/Apex, TypeScript/Node.js, Python) and on code written by someone other than the reviewer. The adversarial pass consistently finds the highest-severity issues that the analytical pass misses — confirming the two-pass split is not redundant but complementary. For tools that modify production data, the adversarial pass should be considered mandatory.
+
+### Application 10: Two-Pass Code Review — Premium-Critical System (example-rating, JavaScript/Azure)
+
+**Date:** 2026-03-28
+**Strategy:** Two-pass, fresh sessions (Pass 1: analytical, Pass 2: adversarial)
+**Pass 1 handles:** Genba + SOLID + MECE + Pyramid Principle
+**Pass 2 handles:** Chaos Engineering + Pre-mortem + Poka-yoke
+**Domain:** JavaScript / Azure Functions (~57 source files) — premium-critical insurance rating system
+
+**Target:** `example-rating` — a serverless REST API that exposes Excel-based insurance raters as REST services. Pre-warmed worker pools in SharePoint, multi-tenant, Azure AD auth. **Incorrect values mean wrong premiums charged to policyholders.**
+**Outputs:**
+- `testing/review-example-rating-pass1.md` — Analytical review
+- `testing/review-example-rating-pass2.md` — Adversarial review
+- `testing/review-example-rating-combined.md` — Combined deduplicated review
+
+**Context:** This is the author's own code (unlike Application 9 which was someone else's). It tests Axis on a premium-critical system where calculation correctness is paramount — the highest-stakes review domain so far.
+
+**Results:**
+
+| Metric | Pass 1 (Analytical) | Pass 2 (Adversarial) |
+|--------|--------------------|--------------------|
+| Grade | B (clean architecture, race condition) | D (silent wrong premiums, cross-tenant leakage) |
+| P0 findings | 3 | 5 |
+| P1 findings | 7 | 5 |
+| P2 findings | 6 | 5 |
+| P3 findings | 3 | 7 |
+
+**Deduplicated: 34 findings (7 P0, 10 P1, 9 P2, 8 P3). 6 independently rediscovered by both passes.**
+
+**Critical findings — the adversarial pass found the premium-critical issues:**
+
+| # | Finding | Found By | Category |
+|---|---------|----------|----------|
+| P0-1 | Excel error values (#REF!, #VALUE!) silently returned as premium results with HTTP 200 | Pass 2 only | Calculation correctness |
+| P0-2 | Recalculation failure swallowed — stale values from previous customer returned | Pass 2 only | Data leakage |
+| P0-3 | `persistChanges=true` on Excel sessions — Customer A's inputs persist in worker, contaminate Customer B | Pass 2 only | Cross-tenant contamination |
+| P0-4 | Race condition in worker locking (TOCTOU) — two requests can claim same worker | Both passes | Concurrency |
+| P0-5 | No tenant isolation on API — any Customer.Access token accesses all tenants | Pass 2 only | Security |
+| P0-6 | OData filter injection — user input interpolated into query strings | Both passes | Security |
+| P0-7 | Null dereference when entity not found in 3 of 4 table classes | Pass 1 only | Code defect |
+
+**Key observation — widest grade gap yet (B vs D) on the highest-stakes system.** The analytical pass gave a B ("clean architecture, good patterns"). The adversarial pass gave a D ("silent wrong premiums, cross-tenant data leakage"). For a system that calculates insurance premiums, the adversarial findings are the ones that prevent regulatory incidents. P0-1 through P0-3 form a chain: Excel errors returned as premiums + recalculation failure swallowed + persistent sessions contaminating across tenants = a system that can silently charge customers wrong prices based on stale or erroneous data from other tenants.
+
+**The adversarial pass found 4 of 7 P0s that the analytical pass missed entirely.** All four are premium-critical: wrong calculations, stale data, cross-tenant contamination, and no tenant isolation. These are not code quality issues — they are business-critical defects that directly affect policyholders.
+
+**Insight:** This is the strongest evidence yet that the two-pass strategy is not redundant but essential. The B-vs-D grade gap appeared in Application 9 (B vs D on product-mover) and now again here. For any system that modifies production data or calculates financial values, the adversarial pass is mandatory — the analytical pass alone gives a dangerously optimistic assessment.
+
+### Application 11: Two-Pass Review — DevOps/IaC (example-rating Deployment System, Bash/Bicep/CI/CD)
+
+**Date:** 2026-03-28
+**Strategy:** Two-pass, fresh sessions (Pass 1: analytical, Pass 2: adversarial)
+**Pass 1 handles:** Genba + SOLID + MECE + Pyramid Principle
+**Pass 2 handles:** Chaos Engineering + Pre-mortem + Poka-yoke
+**Domain:** Bash / Node.js / Bicep / Bitbucket Pipelines — **first Axis review on DevOps/IaC artifacts (not application code)**
+
+**Target:** Complete deployment system for example-rating: 10 bash scripts (~2,100 LOC) for Azure infrastructure provisioning, Azure AD setup, managed identity with Graph API permissions, secret generation, deployment, and cleanup. Plus Node.js build tools and Bitbucket Pipelines CI/CD.
+**Outputs:**
+- `testing/review-example-rating-deployment-pass1.md` — Analytical review
+- `testing/review-example-rating-deployment-pass2.md` — Adversarial review
+- `testing/review-example-rating-deployment-combined.md` — Combined deduplicated review
+
+**Context:** This tests whether Axis handles work on infrastructure-as-code and CI/CD pipelines — a fundamentally different artifact type from application code. These scripts handle the most security-sensitive operations: Azure AD registrations, Graph API permissions, client secrets, and production deployments. A bug here is worse than a bug in the application.
+
+**Results:**
+
+| Metric | Pass 1 (Analytical) | Pass 2 (Adversarial) |
+|--------|--------------------|--------------------|
+| Grade | C+ (modular but credential leaks) | D (no rollback, secrets in logs, excessive permissions) |
+| P0 findings | 3 + 3 ANDON flags | 4 |
+| P1 findings | 6 | 6 |
+| P2 findings | 6 | 6 |
+| P3 findings | 4 | 5 |
+
+**Deduplicated: 29 findings (5 P0, 8 P1, 9 P2, 7 P3). 8 independently rediscovered — highest overlap yet.**
+
+**Critical findings — credential exposure dominates:**
+
+| # | Finding | Found By | Category |
+|---|---------|----------|----------|
+| P0-1 | Client secret echoed to stdout, written to JSON, persisted as downloadable pipeline artifact | Both passes | Credential exposure |
+| P0-2 | Storage connection string (with account key) written to disk and echoed to logs | Both passes | Credential exposure |
+| P0-3 | `Sites.FullControl.All` Graph API permission — full control of ALL SharePoint sites in tenant | Both passes | Least privilege |
+| P0-4 | No rollback on partial failure; `show_spinner` never checks exit codes; orphaned AD apps with active secrets | Both passes | Failure handling |
+| P0-5 | GNU `date -d` syntax breaks on macOS and Alpine BusyBox — SAS token generation fails | Both passes | Cross-platform |
+
+**Key observation — handles transfer to DevOps/IaC.** The handle effects on deployment scripts:
+
+| Handle | Effect on Bash/CI/CD | Transferred? |
+|--------|---------------------|-------------|
+| **Genba** | Read actual bash — caught `SCRIPT_DIR` overwrite, subshell scoping, undefined variables | Yes |
+| **SOLID** | SRP per script is good; found build/verify inconsistency (verify expects what build removes) | Yes |
+| **MECE** | Found `--quiet` flag not handled in subscript, GUID validation gaps between scripts | Yes |
+| **Chaos Engineering** | "Pipeline fails halfway" → orphaned AD apps; "two pipelines run simultaneously" → no concurrency guard | Yes |
+| **Pre-mortem** | "Secret was leaked" → found in logs, artifacts, JSON files, process list; "deleted wrong environment" → no subscription verification | Yes |
+| **Poka-yoke** | No guardrail against cleanup on wrong subscription; no confirmation before AD app deletion | Yes |
+
+**Insight:** The handles and two-pass strategy extend to DevOps/IaC — a new artifact category beyond application code. The credential exposure findings (P0-1, P0-2) are the DevOps equivalent of the "wrong premium" findings in the example-rating application review — the domain-specific highest-stakes issue. The 8/29 independent rediscovery rate (28%) is higher than application code reviews (~20%), likely because credential exposure is equally obvious to both analytical ("I can see the secret in the code") and adversarial ("where would an attacker find the secret?") lenses. Axis Engineering now covers: code review, design review, design generation (Triangle Protocol), implementation retrospective, and DevOps/IaC review.
+
 ### Cross-Application Observations
 
-1. **Handles transfer across artifact types.** Genba (verify against source) works on code, design docs, and doc chains. MECE (no gaps) works on code coverage and design completeness. Pre-mortem (assume failure) works on code deployment and design readiness. Cynefin + First Principles + MECE work for solution design generation.
+1. **Handles transfer across artifact types, programming languages, and platforms.** Genba (verify against source) works on code, design docs, and doc chains. MECE (no gaps) works on code coverage and design completeness. Pre-mortem (assume failure) works on code deployment and design readiness. Cynefin + First Principles + MECE work for solution design generation. All handles tested on Salesforce/Apex, TypeScript/Node.js, and Python with consistent results.
 
 2. **The assumption ledger is valuable in every context.** In code review it catches runtime assumptions. In design review it catches field type assumptions. In retrospectives it catches framework behavior assumptions. In design generation it catches platform constraint assumptions. In multi-agent synthesis it catches requirements ambiguities. The forcing function is the same: declare what you assumed, then check.
 
@@ -700,8 +1001,215 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 5. **Design generation is the ultimate completeness test for MECE.** When generating (not reviewing), MECE forces the agent to ask "what's missing from this design?" at every level — objects, fields, classes, execution flow, scheduling, error handling. The 4 gaps in the Ping design are all things MECE *could* have caught with more exhaustive system boundary analysis (scheduler separation, date sync direction, output processing isolation).
 
-6. **Multi-agent divergence surfaces requirements ambiguities that single-agent approaches cannot.** Application 5 demonstrated that a single agent silently picks one interpretation of an ambiguous requirement, while three independent agents may pick different interpretations. The synthesis agent then flags the disagreement. This is a category of finding unavailable to any single-agent strategy — it requires independent parallel generation under different constraints. The requirements contradiction found in Application 5 (Cleared as outbound status change) would have been discovered during implementation otherwise.
+6. **Multi-agent divergence surfaces requirements ambiguities that single-agent approaches cannot.** All three Triangle Protocol experiments (Applications 5, 6, and 7) independently surfaced ambiguities through agent disagreement. Application 5: Cleared status contradiction. Application 6: date source disagreement (Quote vs InsurancePolicy). Application 7: Cynefin domain disagreement (Complex vs Complicated). This is a confirmed structural property of the protocol across platforms — not platform-specific. It requires independent parallel generation under different constraints; no single-agent strategy can produce it.
 
-7. **The Iron Triangle produces genuine divergence, not anchored variations.** Application 5 produced designs ranging from 5 to 10 classes, with fundamentally different async architectures (monolith vs separated batches), different automation scopes (fully automated vs user-driven), and different configuration strategies (key-value vs typed CMDT). Context isolation and different handle cocktails prevent the anchoring that plagues "give me 3 options" in a single context.
+7. **The Iron Triangle produces genuine divergence, not anchored variations.** Application 5: 5-10 classes, monolith vs separated batches. Application 6: 6-15 components, two LWC calls vs in-memory override. Application 7: Service Bus fan-out vs self-chaining HTTP vs timer-polling — fundamentally different orchestration patterns on Azure. Context isolation and different handle cocktails prevent the anchoring that plagues "give me 3 options" in a single context, regardless of platform.
 
-8. **Convergence across independent agents is a strong correctness signal.** When all three Triangle Protocol agents independently make the same choice (7 convergence points in Application 5), that's stronger evidence than one agent making the choice once. Convergence points can be adopted with high confidence. This is the multi-agent analogue of reproducibility in the two-pass experiments (the "big 5" findings appearing across all versions).
+8. **Convergence across independent agents is a strong correctness signal.** All three experiments produced 6-7 convergence points. These are high-confidence decisions the team can adopt without deliberation. The convergence signal works on both Salesforce (governor limits, PKG patterns) and Azure (Table Storage, worker pools).
+
+9. **The Triangle Protocol produces structurally consistent output across platforms.** Three experiments across two platforms (Salesforce/Apex and Azure/Node.js) produced 6-7 convergence, 5-6 divergence, 8-9 blind spots, and 4 hybrids. This consistency confirms the protocol is a calibrated tool, not a one-off exercise — and that its value is not tied to Salesforce-specific constraints.
+
+10. **The protocol surfaces architectural blockers that single-agent design cannot.** Application 6: override parameter contract unverified. Application 7: single-item processing time uncharacterised (if p99 > 5 min, only TQ survives). These are findings that emerge only when agents take different architectural paths and the synthesis compares them.
+
+11. **Infrastructure cost is a natural divergence axis on variable-cost platforms.** On Salesforce (fixed infrastructure), all designs use the same org. On Azure (Application 7), TQ added ~£125-370/month in new services while TC/CQ added ~£0. The Iron Triangle constraint pairs naturally separate "throw money at it" from "use what you have" — a category of divergence that only appears when the platform offers infrastructure choices.
+
+### Application 8: Source Code Audit (ExampleCo Modelling CLI)
+
+**Date:** 2026-03-28
+**Handles:** 
+- Pass 1: Seven Factors + Genba + SOLID + Pre-mortem
+- Pass 2: Genba + Chaos Engineering + Poka-yoke
+**Target:** `temp-projects/example-modelling/src`
+**Output:** `testing/review-example-modelling-cascade-combined.md`
+
+**Results:**
+
+| Metric | Value |
+|--------|-------|
+| Total findings | 9 (1 Critical, 3 High, 4 Medium, 1 Low) |
+| Assumption ledger | 4 items (3 verified, 1 unknown) |
+
+**Key Findings:**
+- **Critical (Pass 2):** Silent exception swallowing. Empty `catch` blocks in `registry.ts` and `parser/index.ts` mask true errors like file system permission failures, causing components to silently drop from the output graph rather than failing the build. (Chaos Engineering / Poka-yoke)
+- **High (Pass 1):** `Orchestrator` God Class. Violates OCP and SRP by handling project config, Git resolution, graph orchestration, and file I/O within a massive `build()` method. (SOLID)
+- **High (Pass 2):** Unbounded concurrency. `buildSourceGraph` uses a hardcoded `CONCURRENCY = 50` while doing synchronous XML parsing into memory, posing a severe risk of OOM on large XML layout files. (Pre-mortem / Chaos Engineering)
+- **Medium (Pass 1):** Global state for tracking sessions (`tracker.ts`). Prevents the CLI from safely running as a long-lived concurrent process (e.g. IDE language server).
+
+**Insight:** This run demonstrated the classic Pass 1 vs Pass 2 dichotomy perfectly. Pass 1 (SOLID / Pre-mortem) surfaced deep structural and architectural concerns. Pass 2 (Chaos Engineering / Poka-yoke) immediately pivoted to runtime failure scenarios (silent empty catch blocks, OOM concurrency limits) that the architectural pass completely ignored.
+
+### Application 8: Agent Comparison (Cascade vs Claude Code)
+
+**Date:** 2026-03-28
+**Target:** `temp-projects/example-modelling/src`
+**Strategy:** Two-pass Axis Review (Pass 1: SOLID/Genba/Pre-mortem, Pass 2: Chaos/Poka-yoke)
+**Models:** Claude 3.7 Sonnet (Claude Code) vs Gemini 3.1 Pro High Thinking (Cascade)
+
+**Context:** Both Cascade and Claude Code independently reviewed the same repository using the exact same Axis handles. This tests whether Axis Engineering produces consistent behavioral shifts across different AI agent architectures.
+
+**Results:**
+
+| Metric | Claude Code | Cascade |
+|--------|-------------|---------|
+| Total Findings | 31 | 9 |
+| Critical / P0 | 4 | 1 |
+| High / P1 | 8 | 3 |
+
+**Key Overlaps (Independent Rediscovery):**
+1. **Empty Catch Blocks (Resilience):** Both agents flagged silent exception swallowing in `registry.ts` and `parser/index.ts` as a critical operational risk.
+2. **Parser Routing (Architecture):** Both agents flagged the hardcoded switch statement for metadata types in `parser/index.ts` as a direct violation of the Open/Closed Principle.
+
+**Agent-Specific Discoveries:**
+- **Claude Code uniquely found:** Command injection via unsanitized `gitUrl` (`gitService.ts`), `logicalNameMap` collision bugs, and quantified exact occurrences of bad practices (e.g., 203 `any` usages). It performed a much broader, SAST-like repository sweep.
+- **Cascade uniquely found:** Unbounded concurrency OOM risk (`CONCURRENCY = 50` during massive synchronous XML parsing) and Global Singleton state risks in `tracker.ts`. Cascade performed a more localized, depth-first evaluation of the primary execution hot-paths.
+
+**Insight:** 
+Axis Engineering is **agent-agnostic**. Both agents exhibited the exact same cognitive separation between passes—Pass 1 focused purely on structural SOLID violations and architectural boundaries, while Pass 2 immediately pivoted to runtime failures (swallowed exceptions, concurrency limits, injections). The difference in finding volume (31 vs 9) reflects the agents' distinct codebase exploration strategies (breadth-first exhaustive sweeping vs depth-first hot-path analysis), but the *lens* applied to the code they read was consistently and successfully shaped by the behavior handles.
+
+### Application 9: Agent Comparison on Design Generation (Cascade vs Claude Code)
+
+**Date:** 2026-03-28
+**Target:** `testing/ping-requirements-only.md`
+**Protocol:** Triangle Protocol (3 independent agents + synthesis)
+
+**Context:** Cascade ran the Triangle Protocol on the Ping Vision integration requirements. The goal was to see if Cascade (Gemini 3.1 Pro High Thinking) produces similar structured divergence and convergence compared to Claude Code (Claude 3.7 Sonnet) when constrained by the Iron Triangle (Time, Cost, Quality).
+
+**Results:**
+
+| Metric | Claude Code (Original) | Cascade |
+|--------|------------------------|---------|
+| Convergence Points | 7 | 4 |
+| Divergence Axes | 5 | 3 |
+| Blind Spots / Ambiguities | 8 | 3 |
+
+**Key Overlaps:**
+1. **The Monolith vs Separated Architecture:** Both Cascade's TC agent and Claude Code's TC agent converged on the exact same "lowest cost/time" solution: a Monolithic single Batch class (`APP_PingLifecycleEngineBatch`) running on the `Case` object with no new custom objects.
+2. **The DML-Before-Callout Constraint:** Both models correctly identified the fundamental platform constraint as the driving force behind the design, forcing batching and Queueables/Platform Events to separate DML from HTTP requests.
+3. **Dedicated Domain Objects:** Both models' Quality-focused agents (TQ and CQ) independently decided to create a dedicated `APP_Ping_Submission__c` custom object rather than polluting the `Case` UI object, directly contradicting their respective TC agents.
+
+**Cascade's Unique Divergence Path (Event Polling vs Direct Polling):**
+- Cascade's TC agent explicitly decided to bypass the `/submission-events` endpoint completely, opting to poll individual `Case` records using `GET /submission?pingid={id}` to save on cursor management infrastructure.
+- Cascade's TQ and CQ agents recognized the API rate limits and forced the usage of the `/submission-events` cursor stream.
+- *Insight:* This was a brilliant, genuine architectural divergence driven by the constraint. TC chose API inefficiency to save build time, while TQ/CQ chose architectural efficiency at the cost of building cursor state management.
+
+**Cascade's Unique Blind Spot (The Cursor Storage Problem):**
+- Cascade's synthesis perfectly captured a classic Salesforce platform ambiguity: how to store a high-frequency polling cursor. TQ used a Custom Setting, TC tried a Custom Label before realizing it can't be updated via DML, and CQ stored it on the latest data record to avoid Custom Setting row locks.
+
+**Conclusion:** 
+The Triangle Protocol works seamlessly on Cascade (Gemini 3.1 Pro High Thinking). The handles forced the LLM to adopt genuinely distinct architectural postures. The TC constraint produced a hyper-pragmatic, monolithic, API-inefficient design, while the CQ constraint produced a textbook Domain-Driven Design (DDD) event-driven architecture. The synthesized outputs were structurally identical to Claude Code's, confirming the protocol is a calibrated tool, not a model-specific trick. Additionally, running these multi-agent protocols via Cascade (using Gemini 3.1 Pro High Thinking) proved significantly faster and highly cost-effective compared to executing the equivalent workflow through Claude Code.
+### Application 10: Axis Review (ExampleRater) — Cascade (GPT-5.1-Codex Max High) vs Claude Code
+
+**Date:** 2026-03-28
+**Target:** `temp-projects/example-rating`
+**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial)
+**Model:** GPT-5.1-Codex Max High (Cascade) — ran noticeably faster and cheaper than Claude Code’s run
+**Outputs:** `testing/review-example-rating-cascade-pass1.md`, `testing/review-example-rating-cascade-pass2.md`, `testing/review-example-rating-cascade-combined.md`
+
+| Metric | Claude Code | Cascade |
+|--------|-------------|---------|
+| P0 count | 7 | 2 |
+| P1 count | 10 | 3 |
+| P2+P3 count | 17 | 5 |
+
+**Key Overlaps (independent rediscovery):**
+- Excel-driven pricing can return wrong/stale premiums when recalculation or worksheet checks fail (batch read/write + recalc gap).
+- Worker pool replenishment via `setImmediate` is risky; errors are swallowed, leading to depleted/undersized pools.
+- Excessive logging of inputs/outputs risks PII leakage.
+
+**Where Claude Found More:**
+- Multi-tenant security: OData injection, missing tenant ownership checks, `persistChanges=true` on Excel sessions, and API auth gaps (customerId not enforced).
+- Concurrency: TOCTOU worker locking using custom version field, optimistic locking gaps, and transaction no-ops.
+- Surface hygiene: health endpoint leakage, Content-Disposition injection, build-time deps in prod, malformed OData on empty filters.
+
+**Where Cascade Added/Made Clearer:**
+- Emphasized silent propagation of null/error values as premiums when batch read/write/recalc fails (log-and-continue design).
+- Highlighted pool depletion visibility gap and need for telemetry/alerts when async replenishment fails.
+- Noted performance/test flakiness from hardcoded sleeps and full payload logging, suggesting correlation IDs and tighter auth checks.
+
+**Synthesis:** Claude’s broader SAST-style sweep surfaced more security and concurrency defects; Cascade’s review focused on runtime failure modes in the Excel pricing hot path. Both agree pricing integrity hinges on treating any Excel or worksheet failure as a hard error and tightening worker lifecycle/telemetry. GPT-5.1-Codex Max High delivered results faster/cheaper while maintaining the Axis handle behaviors.
+### Application 11: Batch Rating Design (ExampleRater) — Cascade (GPT-5.1-Codex Max High) vs Claude Code
+
+**Date:** 2026-03-28  
+**Target:** `testing/example-rating-batch-requirements.md` / `temp-projects/example-rating`  
+**Method:** Triangle Protocol (TQ, TC, CQ + synthesis)
+**Cascade outputs:** `testing/triangle-example-rating-batch-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`  
+**Claude outputs (kept untouched):** `testing/triangle-example-rating-batch-agent-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
+
+| Dimension | Claude Code | Cascade (GPT-5.1-Codex Max High) |
+|-----------|-------------|-----------------------------------|
+| Infra posture | TQ: Service Bus + Blob + Premium; TC: self-chaining HTTP; CQ: timer/Table-only | TQ: Table+Queue+Timer-only; TC: Consumption timer/queue; CQ: Table+Queue+Timer with audit
+| Item retry / poison | TQ yes (SB DLQ), CQ yes, TC none | TQ: reuse backoff; CQ: retries + poison handling; TC: simple, no retries
+| Result storage | TQ: Append Blob; TC/CQ: Table Storage | TQ/CQ: Table/queue, optional blob export; TC: Table-only
+| Interactive protection | TQ: heuristic delay; CQ: reserved concurrency; TC: none | TQ: respects pool cap; CQ: reserved; TC: none
+| Cancellation | Flag/session per design; some stall risk in TC | Flag on BatchJob; queue respect; in-flight finish
+| Throughput posture | TQ aims higher via Premium; TC/TQ may stall if chain breaks | TQ/CQ loop within tick while workers free; TC 30s cadence, cheap
+
+**Key overlaps (independent rediscovery):**
+- Reuse existing `calculateRisk`; batch is orchestration only.
+- Two tables (`BatchJob`, `BatchItem`), queue messages `{batchId, itemId}`; polling status + cancel endpoint.
+- Hard cap on batch size (50k) and shared output schema per batch.
+
+**Where Claude went further:**
+- Service Bus/Append Blob design with Premium plan for high throughput (TQ).  
+- Explicit stall detection for self-chaining gaps (TC) and detailed cleanup timer (CQ).  
+- Rich test plan and config matrix in CQ (12 tests, config defaults).
+
+**Where Cascade added/clarified:**
+- Emphasized treating worksheet/recalc failures as hard failures (no 200 with null/error strings).  
+- Simplified infra: all three Cascade agents stay on Table+Queue+Timer, no new Azure services.  
+- Recommended hybrid: TC cost baseline + CQ guardrails + TQ faster loop per tick.
+
+**Net:** Claude explored a higher-cost, higher-throughput path (Service Bus + Premium) and a riskier self-chaining TC. Cascade prioritized minimal dependencies with guardrails on correctness (hard-fail on Excel errors) and simpler orchestration. Both agree the core is chunked queue-driven processing over existing workers, with polling status and cancellation flags.
+
+---
+
+## Standardized Scoring Rubric (Introduced v2.0)
+
+Starting from future experiments, all reviews and design tasks should append the following rubric to ensure data-driven model comparison and tracking over time.
+
+### Review Rubric & Metrics
+- **P0 / P1 count:** [Number of critical and high findings]
+- **Rediscovery %:** [Overlap with previous/baseline runs]
+- **Model used:** [e.g., Claude 3.7 Sonnet, GPT-5.1-Codex Max High, Gemini 3.1 Pro High Thinking]
+- **Estimated Elapsed Time:** [e.g., 45 seconds, 3 minutes]
+- **Estimated Cost/Tokens:** [e.g., ~$0.10, ~120k tokens]
+
+### Application 12: Two-Pass Review (PKG Connect) — Cascade (GPT-5.1-Codex Max High)
+**Date:** 2026-03-28  
+**Target:** `temp-projects/pkg-connect/salesforce/src/main/default/classes/` (sampled 5 classes)  
+**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial) using the **v2 Two-Pass Checklist** and **Scoring Rubric**  
+**Outputs:** `testing/review-pkg-connect-measured-pass1.md`, `testing/review-pkg-connect-measured-pass2.md`, `testing/review-pkg-connect-measured-combined.md`
+
+#### Results vs v1 Methodology
+This review strictly adhered to the newly implemented v2 checklist and evidence contract.
+1. **Zero Overlap:** Pass 1 and Pass 2 yielded completely orthogonal findings. Pass 1 caught LWC mapping and type-casting issues. Pass 2 caught concurrency lock races and rollback exception masking.
+2. **Zero Hallucination:** Every single finding cited exact `file:line` locations and extracted the exact snippet causing the issue, fulfilling the new Evidence requirement.
+3. **Formalized Output:** The scoring rubric correctly quantified the effort vs impact.
+
+#### Review Rubric & Metrics
+- **P0 / P1 count:** 5 (2 P0, 3 P1)
+- **Rediscovery %:** N/A (Baseline run on this subset)
+- **Model used:** GPT-5.1-Codex Max High (Cascade)
+- **Estimated Elapsed Time:** ~3 minutes
+- **Estimated Cost/Tokens:** ~$0.15, ~120k tokens
+
+### Application 14: Triangle Protocol Re-Run (Wildfire EC) — Cascade (Gemini 3.1 Pro High Thinking)
+**Date:** 2026-03-28  
+**Target:** Wildfire Endorsement & Cancellation Integration (re-run of Application 6)  
+**Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using the **v2 Triangle Checklist**  
+**Outputs:** `testing/triangle-wildfire-ec-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
+
+#### Results vs v1 Methodology (Claude Code)
+This re-run aimed to measure if the v2 improvements (explicit checklists, assumption ledgers, scoring rubrics) forced tighter, more measurable design outputs from Gemini 3.1 Pro High Thinking compared to the original Claude Code run.
+
+| Dimension | Claude Code (v1) | Cascade (v2 - Gemini) |
+|-----------|------------------|-----------------------|
+| **Divergence Clarity** | Good, but architectural differences were somewhat blurred in the prose. | Exceptional. TQ (Method extension), TC (If-statement injection), CQ (Interface/Factory refactor) were starkly different code topologies. |
+| **Data Model Approach** | Incremental field additions across the board. | Highly opinionated. TQ used Formula fields for data integrity (Poka-yoke). TC used zero fields (YAGNI). CQ used strictly memory-mapped Domain Objects (Muda elimination). |
+| **Blind Spots Caught** | Sequencing and testing overhead. | Transaction isolation (what if Wildfire succeeds but AOP fails?) and missing Parent Policy edge cases. |
+
+**Conclusion:** The v2 checklist forced the agents to explicitly justify *why* they were sacrificing cost or time. Because Gemini had to adhere to the rigid contract, it stopped hallucinating filler text and focused purely on the architectural topology (Interface vs Extension vs If-Statement).
+
+#### Review Rubric & Metrics
+- **Model used:** Gemini 3.1 Pro High Thinking (Cascade)
+- **Estimated Elapsed Time:** ~3 minutes (Total across TQ, TC, CQ, Synthesis)
+- **Estimated Cost/Tokens:** ~$0.15, ~110k tokens
