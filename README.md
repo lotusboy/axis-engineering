@@ -45,6 +45,15 @@ Each handle belongs to one of five independent dimensions of AI behavior:
 
 **Rule of thumb:** Pick 2–3 handles across different axes (e.g. 1 dispositional + 1 pattern + 1 adversarial) to prevent overthinking.
 
+```mermaid
+flowchart LR
+    D[Dispositional\nHow to think] --> P[(Prompt Coordinates)]
+    S[Structural\nHow to report] --> P
+    R[Pattern-oriented\nWhat to recognise] --> P
+    A[Adversarial\nWhat to break] --> P
+    C[Contextual\nHow to size] --> P
+```
+
 Most prompts only shape axis 2 ("give me a bulleted list"). Axis Engineering deliberately engages all five. Pick 2-3 handles from different axes and the AI's analysis changes in depth, focus, and structure — from a single prompt line.
 
 ### Advanced: Multi-Agent Exploration (Triangle Protocol)
@@ -77,6 +86,34 @@ A synthesis pass then identifies:
 
 See `triangle-protocol.md` for full implementation details and cross-platform experimental results.
 
+### Triangle Protocol v2 Prompt Template
+
+```text
+You are Agent [TQ|TC|CQ] in the Triangle Protocol.
+
+CONSTRAINT PAIR:
+- TQ: optimise Time + Quality, sacrifice Cost
+- TC: optimise Time + Cost, sacrifice Quality
+- CQ: optimise Cost + Quality, sacrifice Time
+
+TASK:
+[paste requirements / architecture problem]
+
+OUTPUT CONTRACT:
+1) Proposed architecture (components, data flow, failure handling)
+2) Assumptions Ledger (Verified / Unknown)
+3) Key tradeoffs caused by your constraint pair
+4) Top risks (P0/P1 first)
+5) Rubric:
+   - P0 / P1 count
+   - Model used
+   - Estimated elapsed time
+   - Estimated cost/tokens
+
+EVIDENCE RULE:
+- Cite specific artifacts (`file:line`, requirement IDs, or explicit inputs) for every critical claim.
+```
+
 ---
 
 ## Get Started
@@ -104,6 +141,7 @@ If you don't want to embed anything yet, just prepend this to any prompt:
 Approach with Genba and Pre-mortem. 
 Cite file:line for findings. 
 Use Pyramid Principle.
+Maintain an Assumption Ledger (Verified/Unknown).
 ```
 
 That alone gives ~70% of the benefit.
@@ -683,8 +721,8 @@ To reduce stylistic drift and ensure consistency, use these standard checklists 
 - [ ] Synthesis: Does it explicitly map Convergences, Divergences, and Blind Spots?
 - [ ] Rubric: Is the scoring rubric appended?
 
-### 3. Model Calibration Log
-Maintain a running log of model performance to make data-driven decisions on which model to use for which task. Add this to `experiment-results.md` or a dedicated `model-calibration.md`.
+### 3. Model Calibration (Current Observations)
+These are current observations from recent runs. Continue logging in `experiment-results.md` (or a dedicated `model-calibration.md`) and treat this table as directional until sample sizes are larger.
 
 | Model | Task Type | Axis V2 Compliance | Strengths / Tendencies |
 |-------|-----------|--------------------|------------------------|
@@ -692,7 +730,7 @@ Maintain a running log of model performance to make data-driven decisions on whi
 | **GPT-5.1 (Cascade)** | Architecture / Triangle | **High.** Strictly adheres to the v2 evidence contracts. Produces tight, code-topology-focused output without the verbosity. | Excellent at runtime failure modes, concurrency, and infra minimization. Zero hallucination of evidence in tests. |
 | **Gemini 3.1 Pro** | Document / Design Review | **High.** Forces agents to explicitly justify tradeoffs. Stops hallucinating filler text when constrained by v2 checklists. | Fast synthesis, exceptional at domain/concept retention, very good at mapping architectural divergence. |
 
-*Note: The v2 scoring rubrics and checklists were introduced specifically to combat the "slop" and verbosity observed in early Claude runs. By forcing the model to cite exact `file:line` locations and append quantifiable rubrics, Axis Engineering extracts high-signal insights regardless of the underlying LLM's default chattiness.*
+*Note: The v2 scoring rubrics and checklists were introduced specifically to combat the "slop" and verbosity observed in early Claude runs. By forcing the model to cite exact `file:line` locations and append quantifiable rubrics, Axis Engineering extracts high-signal insights regardless of the underlying LLM's default chattiness. Revisit these observations quarterly as calibration data grows.*
 
 ## Regression Harnesses
 
