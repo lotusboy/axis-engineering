@@ -1213,3 +1213,39 @@ This re-run aimed to measure if the v2 improvements (explicit checklists, assump
 - **Model used:** Gemini 3.1 Pro High Thinking (Cascade)
 - **Estimated Elapsed Time:** ~3 minutes (Total across TQ, TC, CQ, Synthesis)
 - **Estimated Cost/Tokens:** ~$0.15, ~110k tokens
+
+### Application 15: Triangle Protocol (Deployment CI/CD) — ExampleDeploy (Redacted)
+**Date:** 2026-03-29  
+**Target:** `temp-projects/example-deployment` (redacted deployment automation repository)  
+**Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using v2 contracts, assumptions ledger, and rubric output  
+**Outputs:** `testing/triangle-exampledeploy-agent-tq.md`, `testing/triangle-exampledeploy-agent-tc.md`, `testing/triangle-exampledeploy-agent-cq.md`, `testing/triangle-exampledeploy-synthesis.md`
+
+#### Results
+
+**Convergences:**
+1. Keep the existing script-based deployment backbone; avoid a full rewrite.
+2. Preserve hash-based rollback model, but tighten execution guarantees.
+3. Treat partial-failure recovery and release-state consistency as primary risks.
+4. Keep module-driven deployment control (`pipeline-config*` pattern).
+
+**Divergences:**
+1. **Topology:** TQ favored parallelized modules with canary checks; TC favored sequential low-change execution; CQ favored a deterministic wrapper orchestrator.
+2. **Validation depth:** TC minimal; TQ targeted fast-fail + canary; CQ staged validation with stronger mutation preconditions.
+3. **Observability:** TC minimal telemetry; TQ moderate uplift; CQ rich per-module artifacts for deterministic triage.
+
+**Blind spots surfaced by synthesis:**
+- Postdeploy/reactivation idempotency contract not formalized.
+- Rollback atomicity gap between metadata pointer updates and deployment completion.
+- No explicit emergency-lane policy for urgent production fixes.
+- Shared API/limit contention model under parallel+retry load is under-specified.
+
+#### Meaning
+
+This run showed the protocol's practical value on CI/CD architecture decisions: it did not just produce three styles of prose — it produced three materially different operating models and forced the trade-offs into explicit choices. The best outcome was a hybrid: **TC baseline** (low implementation cost) + **TQ canary checks** (early defect capture) + **CQ idempotency/rollback artifacts** (state safety).
+
+#### Review Rubric & Metrics
+- **P0 / P1 count:** 1 P0, 4 P1 (deduplicated synthesis)
+- **Rediscovery %:** N/A (first run for this scenario)
+- **Model used:** Manual Triangle Protocol run (repo-grounded)
+- **Estimated Elapsed Time:** ~40 minutes total (3 agents + synthesis)
+- **Estimated Cost/Tokens:** N/A

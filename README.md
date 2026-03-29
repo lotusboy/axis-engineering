@@ -114,6 +114,23 @@ EVIDENCE RULE:
 - Cite specific artifacts (`file:line`, requirement IDs, or explicit inputs) for every critical claim.
 ```
 
+### Genba Baseline: Standard Artifacts
+
+For deployment/release architecture tasks, each agent should read these artifacts before proposing designs:
+- `bitbucket-pipelines.yml` (or equivalent CI orchestration file)
+- auth/bootstrap scripts (e.g. `scripts/salesforce_auth`)
+- validation scripts (e.g. `scripts/validate_changes`)
+- deploy scripts (e.g. `scripts/salesforce_deploy`, `scripts/vlocity_deploy`)
+- rollback/recovery scripts (e.g. `scripts/rollback_multi`)
+- postdeploy/reactivation scripts (e.g. `scripts/postdeploy`)
+
+### Andon Trigger (Stop Condition)
+
+Any **P0 or P1** finding is an automatic **Andon event**:
+- Halt promotion to the next environment.
+- Escalate with evidence (`file:line` or concrete artifact reference).
+- Record a verification or mitigation step before resuming.
+
 ---
 
 ## Get Started
@@ -587,7 +604,7 @@ When adversarial handles (Chaos Engineering, Pre-mortem, Red Team) are applied t
 
 ## Real-World Applications
 
-Beyond controlled experiments, Axis Engineering has been applied to eleven real-world tasks across five languages (Salesforce/Apex, TypeScript, Python, JavaScript, Bash), two artifact types (application code and DevOps/IaC), and multiple codebases including code written by other developers. These are not A/B tests — they're production use of the methodology. Applications 5-11 are documented in `experiment-results.md`.
+Beyond controlled experiments, Axis Engineering has been applied to multiple real-world tasks across five languages (Salesforce/Apex, TypeScript, Python, JavaScript, Bash), two artifact types (application code and DevOps/IaC), and multiple codebases including code written by other developers. These are not A/B tests — they're production use of the methodology. Applications 5+ are documented in `experiment-results.md`.
 
 ### Application 1: Design Review (Wildfire API Solution Design)
 
@@ -633,6 +650,16 @@ Beyond controlled experiments, Axis Engineering has been applied to eleven real-
 **Insight:** This is the most demanding test — not reviewing or finding bugs, but *generating* a complete solution from requirements alone. The ~90% match demonstrates that Cynefin (domain sizing) + First Principles (decomposition) + MECE (completeness) guide the LLM toward the same architectural decisions a human engineer reaches independently. The methodology doesn't just catch bugs faster — it can produce comparable designs from scratch.
 
 **Follow-up — Triangle Protocol:** The 4 gaps from this experiment became the test case for the Triangle Protocol. Three agents (TQ, TC, CQ) ran against the same requirements with different constraint pairings. All 4 gaps surfaced as explicit divergence points in the synthesis, plus a requirements contradiction that no single-agent run had detected. See `triangle-protocol.md` for the full protocol and experiment results.
+
+### Application 13: Triangle Protocol (Deployment CI/CD)
+
+**Handles:** TQ/TC/CQ + synthesis (Cynefin + MECE baselines)
+**Target:** Redacted deployment automation repository (`temp-projects/example-deployment`)
+**Outputs:** `testing/triangle-exampledeploy-agent-tq.md`, `testing/triangle-exampledeploy-agent-tc.md`, `testing/triangle-exampledeploy-agent-cq.md`, `testing/triangle-exampledeploy-synthesis.md`
+
+**Results:** Convergence on preserving script-based pipeline architecture and rollback hash model. Divergence on topology (parallelized vs sequential vs orchestrated wrapper), validation depth, and observability level. Synthesis surfaced 1 P0 and 4 P1 risks, with idempotency and rollback atomicity as the highest-risk blind spots.
+
+**Meaning:** The protocol provided a practical hybrid strategy (TC baseline + TQ canary checks + CQ rollback/idempotency guardrails), which balances delivery speed with production safety better than any single-corner design.
 
 ## Known Limitations
 
@@ -729,6 +756,8 @@ These are current observations from recent runs. Continue logging in `experiment
 | **Claude 3.7** | Deep Code Review | **Medium.** Tends to be overly verbose. Prone to padding outputs with filler text ("hallucinated reasoning") even when instructed not to. | Broad SAST coverage, security focus, good at structural analysis. But requires aggressive prompting to stop it generating "fluff". |
 | **GPT-5.1 (Cascade)** | Architecture / Triangle | **High.** Strictly adheres to the v2 evidence contracts. Produces tight, code-topology-focused output without the verbosity. | Excellent at runtime failure modes, concurrency, and infra minimization. Zero hallucination of evidence in tests. |
 | **Gemini 3.1 Pro** | Document / Design Review | **High.** Forces agents to explicitly justify tradeoffs. Stops hallucinating filler text when constrained by v2 checklists. | Fast synthesis, exceptional at domain/concept retention, very good at mapping architectural divergence. |
+
+Latest snapshot (Application 13, Deployment Triangle): 1 P0 + 4 P1 deduplicated in synthesis; strongest blind spots were postdeploy idempotency and rollback atomicity.
 
 *Note: The v2 scoring rubrics and checklists were introduced specifically to combat the "slop" and verbosity observed in early Claude runs. By forcing the model to cite exact `file:line` locations and append quantifiable rubrics, Axis Engineering extracts high-signal insights regardless of the underlying LLM's default chattiness. Revisit these observations quarterly as calibration data grows.*
 
