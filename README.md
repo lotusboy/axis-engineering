@@ -4,6 +4,14 @@
 
 AI coding assistants give better results when you tell them *how to think*, not just *what to do*.
 
+### The Origin: 45 Years of Rough Surfaces
+Axis Engineering is a cognitive exoskeleton built by **Steven Loftus**, a 56-year-old software engineer who wrote his first code on a ZX81 in 1981. 
+
+It was born from the intersection of 45 years of engineering "scrapes" and a neurodivergent (ADHD/Autism) cognitive profile. When you see the world as pure logic — where patterns, objects, and events move through interconnected systems — you realise that complex systems only break because of unverified assumptions and dropped context.
+
+LLMs naturally hallucinate, anchor on the first idea, and forget constraints, much like executive function drops out under stress. Axis Engineering treats AI the way a battle-scarred neurodivergent engineer treats themselves: assuming failure unless forced by a rigid, verifiable structure to read the source code, check the data shape, and think about failure modes. This framework is a map of those "rough surfaces" — a way to offload the mental burden of exhaustive verification into the environment.
+
+### The Vocabulary
 Axis Engineering is a vocabulary of 33 terms — drawn from Toyota, McKinsey, Netflix, the Gang of Four, and other well-known frameworks — that activate deep knowledge the AI already has. Each term is a **behavior handle**: a single word or phrase that shifts how the AI approaches a task, what it looks for, and how it reports findings.
 
 You don't need to teach the AI what these terms mean. It already knows — from millions of pages of engineering literature in its training data. You just need to **name** them.
@@ -41,6 +49,31 @@ Each handle belongs to one of five independent dimensions of AI behavior:
 | **Contextual** | How big is this problem? | The calibration | Cynefin, YAGNI, Poka-yoke |
 
 Most prompts only shape axis 2 ("give me a bulleted list"). Axis Engineering deliberately engages all five. Pick 2-3 handles from different axes and the AI's analysis changes in depth, focus, and structure — from a single prompt line.
+
+### Advanced: Multi-Agent Exploration (Triangle Protocol)
+
+For problems with genuine trade-offs (time vs cost vs quality), Axis Engineering extends beyond single-agent prompting into multi-agent orchestration.
+
+The **Triangle Protocol** runs three independent agents with different Iron Triangle constraint pairings:
+- **TQ (Time–Quality):** "Build it fast and build it perfectly. Money is no object."
+- **TC (Time–Cost):** "Build it fast and build it cheaply. Hack it together if you must."
+- **CQ (Cost–Quality):** "Build it perfectly and build it cheaply. Take as long as you need."
+
+A synthesis pass then identifies:
+- **Convergences:** High-confidence design decisions where all 3 agents agreed.
+- **Divergences:** The true architectural trade-offs.
+- **Blind spots:** Ambiguities in the requirements missed by all agents.
+
+**Example output:**
+> *Input: "Design a rating service for external APIs"*
+> - TQ agent → uses caching + retries, Service Bus, higher infra cost
+> - TC agent → cheapest + fastest, synchronous HTTP chaining, minimal validation, higher risk
+> - CQ agent → high-quality + low cost, table-driven batch processing, slower response
+> - **Synthesis Convergence:** API abstraction layer required
+> - **Synthesis Divergence:** Dedicated infrastructure vs reused workers
+> - **Synthesis Blind spot:** None of the agents handled Excel calculation failures correctly
+
+See `triangle-protocol.md` for full implementation details and cross-platform experimental results.
 
 ---
 
@@ -625,13 +658,13 @@ To reduce stylistic drift and ensure consistency, use these standard checklists 
 ### 3. Model Calibration Log
 Maintain a running log of model performance to make data-driven decisions on which model to use for which task. Add this to `experiment-results.md` or a dedicated `model-calibration.md`.
 
-| Model | Task Type | Strengths | Weaknesses | Avg Cost | Avg Time |
-|-------|-----------|-----------|------------|----------|----------|
-| Claude 3.7 | Deep Code Review | Broad SAST coverage, security focus | Can be overly cautious, higher cost | $$$ | Medium |
-| GPT-5.1 | Architecture / Triangle | Runtime failure modes, infra minimization | Less deep on static analysis | $$ | Fast |
-| Gemini 3.1 | Document / Design Review | Fast synthesis, good context retention | Sometimes misses nuanced edge cases | $ | Very Fast |
+| Model | Task Type | Axis V2 Compliance | Strengths / Tendencies |
+|-------|-----------|--------------------|------------------------|
+| **Claude 3.7** | Deep Code Review | **Medium.** Tends to be overly verbose. Prone to padding outputs with filler text ("hallucinated reasoning") even when instructed not to. | Broad SAST coverage, security focus, good at structural analysis. But requires aggressive prompting to stop it generating "fluff". |
+| **GPT-5.1 (Cascade)** | Architecture / Triangle | **High.** Strictly adheres to the v2 evidence contracts. Produces tight, code-topology-focused output without the verbosity. | Excellent at runtime failure modes, concurrency, and infra minimization. Zero hallucination of evidence in tests. |
+| **Gemini 3.1 Pro** | Document / Design Review | **High.** Forces agents to explicitly justify tradeoffs. Stops hallucinating filler text when constrained by v2 checklists. | Fast synthesis, exceptional at domain/concept retention, very good at mapping architectural divergence. |
 
-Status: planned. Replace the placeholder table above with measured averages only after multiple logged runs per model; until then, do not cite it as evidence.
+*Note: The v2 scoring rubrics and checklists were introduced specifically to combat the "slop" and verbosity observed in early Claude runs. By forcing the model to cite exact `file:line` locations and append quantifiable rubrics, Axis Engineering extracts high-signal insights regardless of the underlying LLM's default chattiness.*
 
 ## Regression Harnesses
 
@@ -643,3 +676,11 @@ Example common patterns to harness:
 3. **Concurrency Locking:** For stateful worker pools, assert that parallel requests for a lock cannot claim the same worker (TOCTOU).
 
 Create a small automated suite (`tests/axis-regression/`) for the top P0/P1s across your reviews to ensure Axis Engineering findings permanently harden the system.
+
+---
+
+## Provenance & Legal
+
+This framework is an original synthesis by Steven Loftus, based on publicly available engineering, systems thinking, and organisational design frameworks. It does not contain proprietary code, data, or confidential material from any employer or client.
+
+Except where otherwise noted, this original synthesis and the specific Axis Engineering methodology is licensed under CC BY 4.0. Referenced third-party frameworks, models, and terminology (e.g., Toyota Production System, McKinsey, Gang of Four) remain the property of their respective originators and are used here under fair use for educational and structural purposes.
