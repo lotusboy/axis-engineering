@@ -2,19 +2,14 @@
 
 > Created by **Steven Loftus** (2026) — Licensed under [CC BY 4.0](LICENSE)
 
-AI coding assistants give better results when you tell them *how to think*, not just *what to do*.
+Axis Engineering is a prompt methodology that changes *how* AI thinks, not just *what* it outputs.
 
-### The Origin: 45 Years of Rough Surfaces
-Axis Engineering is a cognitive exoskeleton built by **Steven Loftus**, a 56-year-old software engineer who wrote his first code on a ZX81 in 1981. 
+It does this by applying a small number of named "behavior handles" (e.g. Genba, Pre-mortem, MECE) that act as high-density tokens, activating existing reasoning patterns inside the model's training data. You are not teaching the AI — you are selecting which latent capabilities to emphasise.
 
-It was born from the intersection of 45 years of engineering "scrapes" and a neurodivergent (ADHD/Autism) cognitive profile. When you see the world as pure logic — where patterns, objects, and events move through interconnected systems — you realise that complex systems only break because of unverified assumptions and dropped context.
-
-LLMs naturally hallucinate, anchor on the first idea, and forget constraints, much like executive function drops out under stress. Axis Engineering treats AI the way a battle-scarred neurodivergent engineer treats themselves: assuming failure unless forced by a rigid, verifiable structure to read the source code, check the data shape, and think about failure modes. This framework is a map of those "rough surfaces" — a way to offload the mental burden of exhaustive verification into the environment.
 
 ### The Vocabulary
 Axis Engineering is a vocabulary of 33 terms — drawn from Toyota, McKinsey, Netflix, the Gang of Four, and other well-known frameworks — that activate deep knowledge the AI already has. Each term is a **behavior handle**: a single word or phrase that shifts how the AI approaches a task, what it looks for, and how it reports findings.
 
-You don't need to teach the AI what these terms mean. It already knows — from millions of pages of engineering literature in its training data. You just need to **name** them.
 
 ### Before and After
 
@@ -48,9 +43,16 @@ Each handle belongs to one of five independent dimensions of AI behavior:
 | **Adversarial** | What should it try to break? | The failure-finding instinct | Chaos Engineering, Pre-mortem, STRIDE |
 | **Contextual** | How big is this problem? | The calibration | Cynefin, YAGNI, Poka-yoke |
 
+**Rule of thumb:** Pick 2–3 handles across different axes (e.g. 1 dispositional + 1 pattern + 1 adversarial) to prevent overthinking.
+
 Most prompts only shape axis 2 ("give me a bulleted list"). Axis Engineering deliberately engages all five. Pick 2-3 handles from different axes and the AI's analysis changes in depth, focus, and structure — from a single prompt line.
 
 ### Advanced: Multi-Agent Exploration (Triangle Protocol)
+
+**Use this when:**
+- You're arguing about architecture in a PR
+- There are trade-offs no one agrees on
+- You want to surface hidden assumptions
 
 For problems with genuine trade-offs (time vs cost vs quality), Axis Engineering extends beyond single-agent prompting into multi-agent orchestration.
 
@@ -89,7 +91,23 @@ Cite file:line for every finding.
 Before approving, run a Pre-mortem.
 ```
 
-Compare the output to what you usually get. The difference is immediate.
+You should see:
+- Specific `file:line` issues instead of general advice
+- Failure scenarios instead of surface-level suggestions
+- Concrete risks tied to runtime behavior
+
+### Zero setup (copy/paste)
+
+If you don't want to embed anything yet, just prepend this to any prompt:
+
+```
+Approach with Genba and Pre-mortem. 
+Cite file:line for findings. 
+Use Pyramid Principle.
+```
+
+That alone gives ~70% of the benefit.
+
 
 ### Embed in your project (5 minutes)
 
@@ -125,6 +143,16 @@ That's it. From here, every new session picks up the handles automatically. Your
 ### Go deeper
 
 Browse the [full vocabulary](#the-vocabulary) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 11 real-world applications across 5 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+
+---
+
+## The Origin: 45 Years of Rough Surfaces
+
+Axis Engineering is a cognitive exoskeleton built by **Steven Loftus**, a 56-year-old software engineer who wrote his first code on a ZX81 in 1981.
+
+It was born from the intersection of 45 years of engineering "scrapes" and a neurodivergent (ADHD/Autism) cognitive profile. When you see the world as pure logic — where patterns, objects, and events move through interconnected systems — you realise that complex systems only break because of unverified assumptions and dropped context.
+
+LLMs default to plausible-sounding guesses under uncertainty, anchor on the first idea, and forget constraints, much like executive function drops out under stress. Axis Engineering treats AI the way a battle-scarred neurodivergent engineer treats themselves: assuming failure unless forced by a rigid, verifiable structure to read the source code, check the data shape, and think about failure modes. This framework externalises that verification discipline — a way to offload the mental burden of exhaustive validation into the environment.
 
 ---
 
