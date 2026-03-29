@@ -197,7 +197,7 @@ That's it. From here, every new session picks up the handles automatically. Your
 
 ### Go deeper
 
-Browse the [full vocabulary](#the-vocabulary) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 11 real-world applications across 5 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+Browse the [full vocabulary](#the-vocabulary) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 20 real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
 
 ---
 
@@ -260,7 +260,7 @@ This gives the AI everything it needs per-session. The full vocabulary and exper
 
 ## Execution Strategies
 
-Tested across 9 controlled reviews, 5 experiments, and 11 real-world applications across five languages and two artifact types (see `experiment-results.md`). Results are empirical, not theoretical.
+Tested across 9 controlled reviews, 5 experiments, and 20 real-world applications across six languages and three artifact types (see `experiment-results.md`). Results are empirical, not theoretical.
 
 | Strategy | When to use | Passes | Contract? | Session | Findings* |
 |----------|-------------|--------|-----------|---------|-----------|
@@ -604,7 +604,7 @@ When adversarial handles (Chaos Engineering, Pre-mortem, Red Team) are applied t
 
 ## Real-World Applications
 
-Beyond controlled experiments, Axis Engineering has been applied to multiple real-world tasks across five languages (Salesforce/Apex, TypeScript, Python, JavaScript, Bash), two artifact types (application code and DevOps/IaC), and multiple codebases including code written by other developers. These are not A/B tests — they're production use of the methodology. Applications 5+ are documented in `experiment-results.md`.
+Beyond controlled experiments, Axis Engineering has been applied to multiple real-world tasks across six languages (Salesforce/Apex, TypeScript, Python, JavaScript, Bash, React/TSX), three artifact types (application code, DevOps/IaC, and LLM Applications), and multiple codebases including code written by other developers. These are not A/B tests — they're production use of the methodology. Applications 5+ are documented in `experiment-results.md`.
 
 ### Application 1: Design Review (Wildfire API Solution Design)
 
@@ -712,7 +712,7 @@ The Evidence field is the key addition that prevents cargo-culting. Without it, 
 | `salesforce-triangle.md` | Salesforce-specific Triangle Protocol — output skeleton, contracts, and divergence patterns for the platform |
 | `hooks-architecture.md` | How to wire behavior handles into Claude Code hooks |
 | `vocabulary-quick-ref.md` | One-page cheat sheet with Evidence and Domain fields |
-| `experiment-results.md` | Full nine-review comparison across five experiments + eleven real-world applications |
+| `experiment-results.md` | Full nine-review comparison across five experiments + twenty real-world applications |
 | `two-pass-strategy.md` | Two-pass review strategy (structured + adversarial) |
 | `testing/` | Experiment output files — all 9 review outputs + PKG Framework reviews + wildfire design review + Triangle Protocol outputs |
 ## Scoring Rubric & Model Calibration

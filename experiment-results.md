@@ -1249,3 +1249,32 @@ This run showed the protocol's practical value on CI/CD architecture decisions: 
 - **Model used:** Manual Triangle Protocol run (repo-grounded)
 - **Estimated Elapsed Time:** ~40 minutes total (3 agents + synthesis)
 - **Estimated Cost/Tokens:** N/A
+
+### Application 16: Two-Pass Review (Example RAG App - Next.js/React + LLM App) — Antigravity (Gemini 3.1 Pro High)
+**Date:** 2026-03-29  
+**Target:** `temp-projects/example-rag-app` (Full-Stack Next.js App Router with Gemini RAG integration)  
+**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial)  
+**Outputs:** `testing/review-example-rag-app-pass1.md`, `testing/review-example-rag-app-pass2.md`, `testing/review-example-rag-app-combined.md`
+
+#### Context & Significance 
+This was the first Axis Engineering test run on a **Full-Stack React (Next.js) web application** heavily integrated with a native **LLM/RAG architecture**. It tests whether Axis handles can find domain-specific bugs like Prompt Injection, React Server/Client boundary issues, and custom GUID authentication flaws.
+
+#### Results
+**Critical Operational Discoveries (Pass 2):**
+- **Prompt Injection:** Found that `api/dump/route.ts` interpolates user strings directly into the Librarian prompt structure without using standard LLM SDK roles/schemas, allowing complete system prompt bypass.
+- **File Collision:** Identified a massive race-condition where `os.tmpdir()` relies on `Date.now()`, enabling cross-tenant data corruption under concurrent load.
+- **RAG Parse Crashing:** Found that the server drops user dumps and 500s because it assumes `JSON.parse()` on LLM strings will always succeed without a `try/catch`. 
+
+**Architectural Discoveries (Pass 1):**
+- **SRP Violations:** The entire application logic (Auth + Prompting + FS manipulation + Gemini SDK) was shoved into a single monolithic API Route block, making prompt iteration impossible to unit test.
+- **RAG Latency Hole:** Discovered that every user query recursively listed all workspaces in the Gemini API (`list()`) to find the Store ID rather than caching it, risking instant rate-limit throttling.
+
+**Conclusion:**
+Axis Engineering transferred seamlessly to Full-Stack Web and LLM Application architectures. The adversarial pass successfully pivoted to LLM-native failure modes (Prompt Injection, Unhandled LLM String outputs, and Vercel Concurrency constraints) that are entirely distinct from Salesforce or DevOps failures. 
+
+#### Review Rubric & Metrics
+- **P0 / P1 count:** 5 (3 P0, 2 P1)
+- **Rediscovery %:** N/A (First test on Next.js/React + LLM App domain)
+- **Model used:** Gemini 3.1 Pro High (Antigravity)
+- **Estimated Elapsed Time:** ~4 minutes
+- **Estimated Cost/Tokens:** ~$0.10, ~50k tokens
