@@ -621,12 +621,12 @@ Beyond controlled experiments, Axis Engineering has been applied to eleven real-
 
 **Insight:** This is the strongest evidence that Axis Engineering works beyond code review. The methodology doesn't produce a *different* design — it produces the *same* design faster by catching framework constraints before they become implementation blockers. The value is in the time saved, not the quality difference.
 
-### Application 4: Solution Design Generation (Ping Vision Integration)
+### Application 4: Solution Design Generation (ExampleVision Integration)
 
 **Handles:** Cynefin + First Principles + MECE + Pre-mortem
-**Target:** `testing/ping-requirements-only.md` — requirements stripped from 5 Ping integration docs (no solution design, no class names, no data model)
-**Output:** `testing/ping-design-from-requirements.md` (781 lines)
-**Comparison:** Steve's actual `PING_INTEGRATION_SOLUTION_DESIGN.md` (760 lines, implemented and tested)
+**Target:** `testing/examplevision-requirements-only.md` — requirements stripped from 5 ExampleVision integration docs (no solution design, no class names, no data model)
+**Output:** `testing/examplevision-design-from-requirements.md` (781 lines)
+**Comparison:** Steve's actual `EXAMPLEVISION_INTEGRATION_SOLUTION_DESIGN.md` (760 lines, implemented and tested)
 
 **Results:** ~90% architectural match. 9 of 10 Apex classes matched exactly (same names, same responsibilities, same execution patterns). Data model was identical. Configuration strategy (CMDT + Custom Setting split) was identical. 4 gaps: missing a dedicated output processor batch, missing Named Credential indirection, missing separate scheduler classes, missing Case-to-submission date sync trigger. All gaps are reasonable design choices, not architectural flaws.
 

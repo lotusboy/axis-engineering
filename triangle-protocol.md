@@ -7,7 +7,7 @@
 
 Axis Engineering is strong at **reviewing** — looking back at existing artifacts. It's weaker at **looking forward** — generating architectures, designs, and plans. This asymmetry exists because LLMs are autoregressive: they commit to the first plausible path and then elaborate on it. Within the first few sentences of a design output, the model is locked into an architecture. Asking "now give me alternatives" produces variations anchored to the first choice, not genuinely independent options.
 
-The single-pass design generation experiment (Ping Vision) demonstrated ~90% architectural match from requirements alone — impressive, but it produced **one design**. The 4 gaps (missing output processor batch, missing NC indirection, missing separate schedulers, missing date sync trigger) weren't wrong — they were **different tradeoff decisions** that were never surfaced as explicit choices because the agent never explored them.
+The single-pass design generation experiment (ExampleVision) demonstrated ~90% architectural match from requirements alone — impressive, but it produced **one design**. The 4 gaps (missing output processor batch, missing NC indirection, missing separate schedulers, missing date sync trigger) weren't wrong — they were **different tradeoff decisions** that were never surfaced as explicit choices because the agent never explored them.
 
 Human engineers know this instinctively: you sketch at least 3 options before committing. The Triangle Protocol brings that discipline to AI-assisted design.
 
@@ -83,7 +83,7 @@ STOP:         Andon — halt if a design choice creates a single point of failur
               or violates a hard constraint.
 ```
 
-**Observed tendency:** Well-separated modules with clear responsibilities, comprehensive error handling, but potentially more moving parts than necessary. May produce separate components for each concern, extensive config surface. Ships fast because it doesn't agonise over simplification — it builds the "right" thing and accepts the ops burden. First Principles drives decomposition; Pre-mortem catches failure modes that would delay delivery if discovered later. (In the Ping experiment, TQ produced 10 functional classes + 4 schedulers — the most components of any agent.)
+**Observed tendency:** Well-separated modules with clear responsibilities, comprehensive error handling, but potentially more moving parts than necessary. May produce separate components for each concern, extensive config surface. Ships fast because it doesn't agonise over simplification — it builds the "right" thing and accepts the ops burden. First Principles drives decomposition; Pre-mortem catches failure modes that would delay delivery if discovered later. (In the ExampleVision experiment, TQ produced 10 functional classes + 4 schedulers — the most components of any agent.)
 
 #### Agent TC — Time + Cost (sacrifice Quality)
 
@@ -105,7 +105,7 @@ STOP:         Andon — halt if a simplification would violate a hard constraint
               or make the system unshippable.
 ```
 
-**Observed tendency:** Fewer modules, combined responsibilities where safe, direct implementations over abstractions, minimal configuration surface. May merge processing logic into a single component, skip edge-case handling for unlikely scenarios, reduce config to essentials. The MVP — gets to market but may need hardening later. YAGNI strips non-essential components; Theory of Constraints focuses effort on the bottleneck. (In the Ping experiment, TC produced 5 classes with a single consolidated processing pipeline — the leanest of any agent.)
+**Observed tendency:** Fewer modules, combined responsibilities where safe, direct implementations over abstractions, minimal configuration surface. May merge processing logic into a single component, skip edge-case handling for unlikely scenarios, reduce config to essentials. The MVP — gets to market but may need hardening later. YAGNI strips non-essential components; Theory of Constraints focuses effort on the bottleneck. (In the ExampleVision experiment, TC produced 5 classes with a single consolidated processing pipeline — the leanest of any agent.)
 
 #### Agent CQ — Cost + Quality (sacrifice Time)
 
@@ -127,7 +127,7 @@ STOP:         Andon — halt if a design choice introduces unnecessary operation
               or maintenance burden.
 ```
 
-**Observed tendency:** Clean architecture with minimal dependencies, explicit over implicit, boring technology choices. Tends to land between TQ and TC in component count, but this is emergent — not guaranteed. Muda eliminates unnecessary components; Kent Beck's Four Rules (passes tests, reveals intention, no duplication, fewest elements) drives toward the simplest correct design. The "do it once, do it right" approach. (In the Ping experiment, CQ produced 7 functional classes — between TC's 5 and TQ's 10 — with the most thorough "Components NOT Built" justification section.)
+**Observed tendency:** Clean architecture with minimal dependencies, explicit over implicit, boring technology choices. Tends to land between TQ and TC in component count, but this is emergent — not guaranteed. Muda eliminates unnecessary components; Kent Beck's Four Rules (passes tests, reveals intention, no duplication, fewest elements) drives toward the simplest correct design. The "do it once, do it right" approach. (In the ExampleVision experiment, CQ produced 7 functional classes — between TC's 5 and TQ's 10 — with the most thorough "Components NOT Built" justification section.)
 
 ### Phase 2: Synthesize (1 Agent, Fresh Context)
 
@@ -328,7 +328,7 @@ The 3-4x token cost and 1-2 hour human review time means the protocol should be 
 
 ## Expected Benefits
 
-1. **Requirements ambiguity detection** — when agents interpret the same requirement differently, that's a signal the requirement is ambiguous. A single agent silently picks one interpretation; three agents surface the disagreement. In the Ping experiment, the synthesis agent flagged a requirements contradiction (whether "Cleared" was an outbound status change) that would have been discovered during implementation otherwise.
+1. **Requirements ambiguity detection** — when agents interpret the same requirement differently, that's a signal the requirement is ambiguous. A single agent silently picks one interpretation; three agents surface the disagreement. In the ExampleVision experiment, the synthesis agent flagged a requirements contradiction (whether "Cleared" was an outbound status change) that would have been discovered during implementation otherwise.
 2. **Solution space exploration** — the human sees 3 genuinely different architectures, not 1
 3. **Explicit tradeoffs** — divergence points become visible decisions, not silent omissions
 4. **Convergence signal** — when all 3 agents independently reach the same conclusion, that's strong evidence it's correct
@@ -339,7 +339,7 @@ The 3-4x token cost and 1-2 hour human review time means the protocol should be 
 
 1. **3-4x token usage** — three design agents + one synthesis agent vs one design agent
 2. **Synthesis complexity** — the fourth agent must compare three full designs without losing detail
-3. **Human review time** — the synthesis output is substantial (the Ping experiment produced ~400 lines of comparison with 7 convergence, 6 divergence, 4 hybrids, and 8 blind spots). Budget 1-2 hours for the human to review the synthesis and make decisions, compared to 30-60 minutes for a single-agent design
+3. **Human review time** — the synthesis output is substantial (the ExampleVision experiment produced ~400 lines of comparison with 7 convergence, 6 divergence, 4 hybrids, and 8 blind spots). Budget 1-2 hours for the human to review the synthesis and make decisions, compared to 30-60 minutes for a single-agent design
 4. **Human decision load** — the human now has to choose, which is harder than accepting a single proposal (but produces better outcomes)
 
 ## Failure Modes
@@ -360,7 +360,7 @@ The synthesis agent reads three designs sequentially. It may give disproportiona
 
 Agents may exaggerate their sacrifice to differentiate themselves (TC produces a God-class; TQ produces astronaut architecture with 100+ components for a low-volume system).
 
-**Mitigation:** The pair-based design reduces caricature (an agent optimising for *two* constraints can't go fully extreme on either axis) but does not eliminate it. In the Ping experiment, TC still produced a single-responsibility violation it explicitly acknowledged, and TQ produced ~105 metadata components for an integration handling fewer than 100 concurrent submissions. The "deprioritisation, not elimination" clause in the default contracts helps — it was added after observing this tendency. The Cynefin baseline forces complexity sizing, the MECE baseline forces completeness, and the STOP clause (Andon) guards against designs that violate hard requirements. If caricature persists, strengthen the STOP clause to explicitly halt on designs that are disproportionate to the stated requirements.
+**Mitigation:** The pair-based design reduces caricature (an agent optimising for *two* constraints can't go fully extreme on either axis) but does not eliminate it. In the ExampleVision experiment, TC still produced a single-responsibility violation it explicitly acknowledged, and TQ produced ~105 metadata components for an integration handling fewer than 100 concurrent submissions. The "deprioritisation, not elimination" clause in the default contracts helps — it was added after observing this tendency. The Cynefin baseline forces complexity sizing, the MECE baseline forces completeness, and the STOP clause (Andon) guards against designs that violate hard requirements. If caricature persists, strengthen the STOP clause to explicitly halt on designs that are disproportionate to the stated requirements.
 
 ### Requirements ambiguity surfaced by agent disagreement
 
@@ -368,13 +368,13 @@ When agents interpret the same requirement differently, this is the protocol's m
 
 **Detection:** The synthesis agent's STOP clause includes: "Flag any case where two agents interpret the same requirement differently." These should appear in the blind spots section as P0 blockers.
 
-**Example:** In the Ping experiment, requirement 3 stated "Data Entry is the ONLY outbound status change." TC took this literally. TQ and CQ both designed Cleared as an additional outbound status change. The synthesis agent flagged this as a P0 contradiction requiring human resolution before any architecture choice.
+**Example:** In the ExampleVision experiment, requirement 3 stated "Data Entry is the ONLY outbound status change." TC took this literally. TQ and CQ both designed Cleared as an additional outbound status change. The synthesis agent flagged this as a P0 contradiction requiring human resolution before any architecture choice.
 
 ### Context window pressure
 
-Full design outputs can be long. In the Ping experiment, individual designs ranged from ~420 to ~790 lines, with ~1,900 lines total to the synthesis agent. Larger projects would produce longer outputs.
+Full design outputs can be long. In the ExampleVision experiment, individual designs ranged from ~420 to ~790 lines, with ~1,900 lines total to the synthesis agent. Larger projects would produce longer outputs.
 
-**Mitigation:** Each agent produces a structured summary section (Pyramid Principle — answer first) at the top. However, the synthesis agent should read all designs in full — working only from summaries risks missing detail-level contradictions that are the protocol's most valuable output (the Cleared status contradiction in the Ping experiment was only visible in specific component definitions, not summaries). If context pressure is a concern, consider splitting the synthesis into two passes: a structural comparison pass (summaries only) followed by a detail pass on divergence points.
+**Mitigation:** Each agent produces a structured summary section (Pyramid Principle — answer first) at the top. However, the synthesis agent should read all designs in full — working only from summaries risks missing detail-level contradictions that are the protocol's most valuable output (the Cleared status contradiction in the ExampleVision experiment was only visible in specific component definitions, not summaries). If context pressure is a concern, consider splitting the synthesis into two passes: a structural comparison pass (summaries only) followed by a detail pass on divergence points.
 
 ## Implementation
 
@@ -405,11 +405,11 @@ Three parallel `messages.create` calls with different system prompts (one per co
 
 ## Experiment Results
 
-The Triangle Protocol was tested against the Ping Vision integration requirements — the same requirements used for the original single-agent design generation experiment.
+The Triangle Protocol was tested against the ExampleVision integration requirements — the same requirements used for the original single-agent design generation experiment.
 
 ### Setup
 
-- **Input:** `testing/ping-requirements-only.md` (271-line pure requirements document)
+- **Input:** `testing/examplevision-requirements-only.md` (271-line pure requirements document)
 - **Agents:** TQ, TC, CQ running in parallel as Claude Code subagents with full context isolation
 - **Synthesis:** Fourth agent comparing all three outputs
 - **Baseline comparison:** Original single-agent design (781 lines, ~90% architectural match with human-built solution, 4 silent gaps)
@@ -439,11 +439,11 @@ Beyond the original 4 gaps, the synthesis agent flagged a **requirements contrad
 
 ### Synthesis output
 
-7 convergence points, 6 divergence points, 4 hybrid opportunities, 8 blind spots (1 P0, 5 P1, 2 P2). Full outputs in `testing/triangle-ping-*.md`.
+7 convergence points, 6 divergence points, 4 hybrid opportunities, 8 blind spots (1 P0, 5 P1, 2 P2). Full outputs in `testing/triangle-examplevision-*.md`.
 
 ### Experiment 2: Wildfire Endorsement + Cancellation (N=2)
 
-The Triangle Protocol was tested a second time against a different problem type — extending the existing `APP_WildfireApiService` to support endorsement and cancellation endpoints. Unlike the greenfield Ping experiment, this tests the protocol on infrastructure extension with established patterns and constraints.
+The Triangle Protocol was tested a second time against a different problem type — extending the existing `APP_WildfireApiService` to support endorsement and cancellation endpoints. Unlike the greenfield ExampleVision experiment, this tests the protocol on infrastructure extension with established patterns and constraints.
 
 - **Input:** 6 existing design docs (wildfire integration, AOP rater V2, cancellation hook)
 - **Agents:** TQ, TC, CQ with same handle assignments as Experiment 1

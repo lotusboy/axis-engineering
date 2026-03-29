@@ -573,13 +573,13 @@ These are not controlled experiments — they are production uses of the methodo
 
 **Insight:** This is the strongest evidence that Axis Engineering works beyond code review. The methodology doesn't produce a *different* design — it produces the *same* design faster by catching framework constraints before they become implementation blockers.
 
-### Application 4: Solution Design Generation (Ping Vision Integration)
+### Application 4: Solution Design Generation (ExampleVision Integration)
 
 **Date:** 2026-03-09
 **Handles:** Cynefin + First Principles + MECE + Pre-mortem (with Axis Contract)
-**Target:** `testing/ping-requirements-only.md` — 247-line requirements-only document (all solution design stripped from 5 Ping integration docs)
-**Output:** `testing/ping-design-from-requirements.md` (781 lines)
-**Comparison baseline:** Steve's actual solution design (`docs/ping-integration/PING_INTEGRATION_SOLUTION_DESIGN.md`, 760 lines)
+**Target:** `testing/examplevision-requirements-only.md` — 247-line requirements-only document (all solution design stripped from 5 ExampleVision integration docs)
+**Output:** `testing/examplevision-design-from-requirements.md` (781 lines)
+**Comparison baseline:** Steve's actual solution design (`docs/examplevision-integration/EXAMPLEVISION_INTEGRATION_SOLUTION_DESIGN.md`, 760 lines)
 
 **Task:** Generate a complete Salesforce solution design from requirements alone — no access to any existing solution design, class names, data model, or implementation details. Then compare with the actual design that was built.
 
@@ -595,20 +595,20 @@ These are not controlled experiments — they are production uses of the methodo
 
 **What matched exactly (9 classes):**
 - `APP_EmailMessageTriggerHandler` — trigger handler with attachment check, reuse/skip logic
-- `APP_PingApiSubmissionInitiator` — Queueable, .eml construction, POST /submission, Finalizer
-- `APP_PingApiEventPoller` — Batchable, cursor-based event polling
-- `APP_PingApiInceptionDateRetriever` — Queueable, inception date fetch + trigger date calculation
-- `APP_PingApiDataEntryTrigger` — Batchable, daily date comparison
-- `APP_PingApiStatusUpdater` — Batchable, PATCH confirmation
-- `APP_PingSubmissionCreator` — 3-phase orchestrator (IP + IP + CMDT mapper)
-- `APP_PingIpInputBuilder` — IP input JSON builder with ProductConfig inner class
-- `APP_PingRecordMapper` — Phase 3: location grouping, building linking, value transforms
+- `APP_ExampleVisionApiSubmissionInitiator` — Queueable, .eml construction, POST /submission, Finalizer
+- `APP_ExampleVisionApiEventPoller` — Batchable, cursor-based event polling
+- `APP_ExampleVisionApiInceptionDateRetriever` — Queueable, inception date fetch + trigger date calculation
+- `APP_ExampleVisionApiDataEntryTrigger` — Batchable, daily date comparison
+- `APP_ExampleVisionApiStatusUpdater` — Batchable, PATCH confirmation
+- `APP_ExampleVisionSubmissionCreator` — 3-phase orchestrator (IP + IP + CMDT mapper)
+- `APP_ExampleVisionIpInputBuilder` — IP input JSON builder with ProductConfig inner class
+- `APP_ExampleVisionRecordMapper` — Phase 3: location grouping, building linking, value transforms
 
 **What was missing (4 items):**
-1. `APP_PingApiOutputProcessor` — separate batch for RUN_OUTPUTTERS polling + document download (Axis folded this into the event poller)
+1. `APP_ExampleVisionApiOutputProcessor` — separate batch for RUN_OUTPUTTERS polling + document download (Axis folded this into the event poller)
 2. Named Credential indirection — Steve's design stores the NC name in `API_Base_URL__c` CMDT field so code does `callout:{API_Base_URL__c}/submission`, allowing NC swaps without code changes
 3. Scheduler classes — Steve has 4 separate schedulers for admin reconfigurability; Axis made batch classes implement Schedulable directly
-4. Case trigger for date syncing — Steve has a dedicated trigger to sync `Data_Entry_Scheduled_Date__c` from Case to `APP_Ping_Submission__c`
+4. Case trigger for date syncing — Steve has a dedicated trigger to sync `Data_Entry_Scheduled_Date__c` from Case to `APP_ExampleVision_Submission__c`
 
 **What the Pre-mortem caught:**
 - IP rollback risk (Assumption A3: "IPs may commit internally — test whether rollback works across IP invocations") — this is the same DML constraint discovered during rater implementation
@@ -623,7 +623,7 @@ These are not controlled experiments — they are production uses of the methodo
 
 **Follow-up:** The 4 gaps from this experiment became the hypothesis test case for the Triangle Protocol (Application 5 below).
 
-### Application 5: Triangle Protocol — Solution Space Exploration (Ping Vision Integration)
+### Application 5: Triangle Protocol — Solution Space Exploration (ExampleVision Integration)
 
 **Date:** 2026-03-24
 **Protocol:** Triangle Protocol (3 diverge agents + 1 synthesis agent)
@@ -633,12 +633,12 @@ These are not controlled experiments — they are production uses of the methodo
 - CQ (Cost+Quality): Cynefin + MECE + Muda + Kent Beck's Four Rules
 - Synthesis: Cynefin + MECE + First Principles
 
-**Target:** `testing/ping-requirements-only.md` — same 271-line requirements document used in Application 4
+**Target:** `testing/examplevision-requirements-only.md` — same 271-line requirements document used in Application 4
 **Outputs:**
-- `testing/triangle-ping-agent-tq.md` — Time+Quality design
-- `testing/triangle-ping-agent-tc.md` — Time+Cost design
-- `testing/triangle-ping-agent-cq.md` — Cost+Quality design
-- `testing/triangle-ping-synthesis.md` — Comparison and synthesis
+- `testing/triangle-examplevision-agent-tq.md` — Time+Quality design
+- `testing/triangle-examplevision-agent-tc.md` — Time+Cost design
+- `testing/triangle-examplevision-agent-cq.md` — Cost+Quality design
+- `testing/triangle-examplevision-synthesis.md` — Comparison and synthesis
 
 **Comparison baseline:** Application 4's single-agent design (781 lines, ~90% match, 4 silent gaps)
 
@@ -674,11 +674,11 @@ These are not controlled experiments — they are production uses of the methodo
 | **CQ** (Cost+Quality) | 7 | 4 | 12+ | ~112 | ~105 hours |
 | **TQ** (Time+Quality) | 10 | 4 | 11 | ~105 | ~100 hours |
 
-The designs are genuinely different — not anchored variations. TC produced a God-class `APP_PingEventPollerBatch` combining all processing; TQ produced well-separated classes with 4 independent scheduled jobs; CQ produced a NULL-timestamp coordination pattern with user-driven Cleared status and the most thorough "Components NOT Built" justification.
+The designs are genuinely different — not anchored variations. TC produced a God-class `APP_ExampleVisionEventPollerBatch` combining all processing; TQ produced well-separated classes with 4 independent scheduled jobs; CQ produced a NULL-timestamp coordination pattern with user-driven Cleared status and the most thorough "Components NOT Built" justification.
 
 **Bonus finding — requirements contradiction:**
 
-The synthesis agent flagged a P0 blocker that no single-agent run had detected: requirement 3 states "Data Entry is the ONLY outbound status change," but TQ and CQ both designed Cleared as an additional outbound status change. TC took the requirement literally. This disagreement surfaced a genuine requirements ambiguity — CQ explicitly flagged it as Unknown Assumption U8 with the note "Confirm with Ping whether Cleared has `is_valid_for_user_transition = true`."
+The synthesis agent flagged a P0 blocker that no single-agent run had detected: requirement 3 states "Data Entry is the ONLY outbound status change," but TQ and CQ both designed Cleared as an additional outbound status change. TC took the requirement literally. This disagreement surfaced a genuine requirements ambiguity — CQ explicitly flagged it as Unknown Assumption U8 with the note "Confirm with ExampleVision whether Cleared has `is_valid_for_user_transition = true`."
 
 This is the strongest argument for the Triangle Protocol: multi-agent divergence surfaces **requirements ambiguities**, not just design alternatives. A single agent silently picks one interpretation. Three agents may pick different interpretations, and the synthesis agent flags the disagreement.
 
@@ -709,7 +709,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Results:**
 
-| Metric | App 5 (Ping, N=1) | App 6 (Wildfire E/C, N=2) |
+| Metric | App 5 (ExampleVision, N=1) | App 6 (Wildfire E/C, N=2) |
 |--------|-------------------|--------------------------|
 | Convergence points | 7 | 7 |
 | Divergence points | 6 | 6 |
@@ -726,7 +726,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **2. P0 architectural blocker: override parameter contract.** TC and CQ both solved the DML-before-callout governor limit by passing wildfire results to the AOP rater via an in-memory override parameter. TQ took a different approach — two sequential LWC server calls. The synthesis flagged that no agent verified whether the override parameter actually exists and propagates correctly. If it doesn't, TC and CQ's entire design collapses and only TQ's approach works. A single-agent design would have silently assumed one approach without flagging the dependency.
 
-**3. Wider effort spread driven by genuine constraint divergence.** TC produced a 6-component, 24-hour design (3 fields, hardcoded constants, no CMDT). TQ produced a 15-component, 78-hour design (6 fields, 3-record CMDT with feature flags, separate payload class, two-call LWC pattern). CQ landed at 10 components, 33 hours (6 fields, 1-record CMDT, dedicated test class). The 3.25x spread (wider than Ping's 1.9x) reflects that this problem has more viable architectural approaches — extending existing code offers more degrees of freedom than greenfield.
+**3. Wider effort spread driven by genuine constraint divergence.** TC produced a 6-component, 24-hour design (3 fields, hardcoded constants, no CMDT). TQ produced a 15-component, 78-hour design (6 fields, 3-record CMDT with feature flags, separate payload class, two-call LWC pattern). CQ landed at 10 components, 33 hours (6 fields, 1-record CMDT, dedicated test class). The 3.25x spread (wider than ExampleVision's 1.9x) reflects that this problem has more viable architectural approaches — extending existing code offers more degrees of freedom than greenfield.
 
 **4. Seven high-confidence convergence points.** All three agents independently chose: `InsurancePolicy.Name` as `policy_id`, 2-hop prior premium traversal (same as AOP rater V2), wildfire failure does not block AOP, MEP enforcement is soft/advisory (defer to AOP rater's T138), `APP_WfSeasonalityFactor__c` and `APP_WfMinEarnedPremiumRate__c` as core fields, `PKG_TransactionEffectiveDate__c` for transaction date. These can be adopted with high confidence.
 
@@ -759,7 +759,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Results:**
 
-| Metric | App 5 (Ping, SF) | App 6 (Wildfire, SF) | App 7 (Batch, Azure/Node.js) |
+| Metric | App 5 (ExampleVision, SF) | App 6 (Wildfire, SF) | App 7 (Batch, Azure/Node.js) |
 |--------|-------------------|--------------------------|------------------------------|
 | Convergence points | 7 | 7 | 6 |
 | Divergence points | 6 | 6 | 5 |
@@ -999,7 +999,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 4. **The Genba gap is consistent.** In every application, the most impactful finding was something that could only be caught by reading the actual artifact (field metadata, framework source code, existing implementation) rather than trusting documentation or abstractions. Genba is the single most valuable handle across all contexts.
 
-5. **Design generation is the ultimate completeness test for MECE.** When generating (not reviewing), MECE forces the agent to ask "what's missing from this design?" at every level — objects, fields, classes, execution flow, scheduling, error handling. The 4 gaps in the Ping design are all things MECE *could* have caught with more exhaustive system boundary analysis (scheduler separation, date sync direction, output processing isolation).
+5. **Design generation is the ultimate completeness test for MECE.** When generating (not reviewing), MECE forces the agent to ask "what's missing from this design?" at every level — objects, fields, classes, execution flow, scheduling, error handling. The 4 gaps in the ExampleVision design are all things MECE *could* have caught with more exhaustive system boundary analysis (scheduler separation, date sync direction, output processing isolation).
 
 6. **Multi-agent divergence surfaces requirements ambiguities that single-agent approaches cannot.** All three Triangle Protocol experiments (Applications 5, 6, and 7) independently surfaced ambiguities through agent disagreement. Application 5: Cleared status contradiction. Application 6: date source disagreement (Quote vs InsurancePolicy). Application 7: Cynefin domain disagreement (Complex vs Complicated). This is a confirmed structural property of the protocol across platforms — not platform-specific. It requires independent parallel generation under different constraints; no single-agent strategy can produce it.
 
@@ -1068,10 +1068,10 @@ Axis Engineering is **agent-agnostic**. Both agents exhibited the exact same cog
 ### Application 9: Agent Comparison on Design Generation (Cascade vs Claude Code)
 
 **Date:** 2026-03-28
-**Target:** `testing/ping-requirements-only.md`
+**Target:** `testing/examplevision-requirements-only.md`
 **Protocol:** Triangle Protocol (3 independent agents + synthesis)
 
-**Context:** Cascade ran the Triangle Protocol on the Ping Vision integration requirements. The goal was to see if Cascade (Gemini 3.1 Pro High Thinking) produces similar structured divergence and convergence compared to Claude Code (Claude 3.7 Sonnet) when constrained by the Iron Triangle (Time, Cost, Quality).
+**Context:** Cascade ran the Triangle Protocol on the ExampleVision integration requirements. The goal was to see if Cascade (Gemini 3.1 Pro High Thinking) produces similar structured divergence and convergence compared to Claude Code (Claude 3.7 Sonnet) when constrained by the Iron Triangle (Time, Cost, Quality).
 
 **Results:**
 
@@ -1082,12 +1082,12 @@ Axis Engineering is **agent-agnostic**. Both agents exhibited the exact same cog
 | Blind Spots / Ambiguities | 8 | 3 |
 
 **Key Overlaps:**
-1. **The Monolith vs Separated Architecture:** Both Cascade's TC agent and Claude Code's TC agent converged on the exact same "lowest cost/time" solution: a Monolithic single Batch class (`APP_PingLifecycleEngineBatch`) running on the `Case` object with no new custom objects.
+1. **The Monolith vs Separated Architecture:** Both Cascade's TC agent and Claude Code's TC agent converged on the exact same "lowest cost/time" solution: a Monolithic single Batch class (`APP_ExampleVisionLifecycleEngineBatch`) running on the `Case` object with no new custom objects.
 2. **The DML-Before-Callout Constraint:** Both models correctly identified the fundamental platform constraint as the driving force behind the design, forcing batching and Queueables/Platform Events to separate DML from HTTP requests.
-3. **Dedicated Domain Objects:** Both models' Quality-focused agents (TQ and CQ) independently decided to create a dedicated `APP_Ping_Submission__c` custom object rather than polluting the `Case` UI object, directly contradicting their respective TC agents.
+3. **Dedicated Domain Objects:** Both models' Quality-focused agents (TQ and CQ) independently decided to create a dedicated `APP_ExampleVision_Submission__c` custom object rather than polluting the `Case` UI object, directly contradicting their respective TC agents.
 
 **Cascade's Unique Divergence Path (Event Polling vs Direct Polling):**
-- Cascade's TC agent explicitly decided to bypass the `/submission-events` endpoint completely, opting to poll individual `Case` records using `GET /submission?pingid={id}` to save on cursor management infrastructure.
+- Cascade's TC agent explicitly decided to bypass the `/submission-events` endpoint completely, opting to poll individual `Case` records using `GET /submission?exampleid={id}` to save on cursor management infrastructure.
 - Cascade's TQ and CQ agents recognized the API rate limits and forced the usage of the `/submission-events` cursor stream.
 - *Insight:* This was a brilliant, genuine architectural divergence driven by the constraint. TC chose API inefficiency to save build time, while TQ/CQ chose architectural efficiency at the cost of building cursor state management.
 

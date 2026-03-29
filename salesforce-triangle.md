@@ -83,17 +83,17 @@ All three agents share the Cynefin baseline. The Salesforce-specific domain mapp
 |--------|----------------------|-----------------|
 | **Simple** | Named Credentials, Permission Sets, Validation Rules, Picklist Values, Custom Object creation | Configure and move on. No custom code needed. |
 | **Complicated** | MIME/.eml construction, IP input JSON assembly, CMDT field mapping, location grouping, value transformations | Deterministic once understood. Build once, test the tricky parts. |
-| **Complex** | External API timing (when statuses transition), polling cursor management, inception_date availability, stuck submission recovery | Ping's internal timing is opaque. Make it configurable, observable, and manually overridable. Feature flags let you disable subsystems independently. |
+| **Complex** | External API timing (when statuses transition), polling cursor management, inception_date availability, stuck submission recovery | ExampleVision's internal timing is opaque. Make it configurable, observable, and manually overridable. Feature flags let you disable subsystems independently. |
 
 ---
 
 ## Salesforce-Specific Divergence Patterns
 
-Based on the Ping Vision experiment (N=1), these are the divergence patterns observed when running the Triangle Protocol against a Salesforce integration:
+Based on the ExampleVision experiment (N=1), these are the divergence patterns observed when running the Triangle Protocol against a Salesforce integration:
 
 ### 1. Async Architecture: Monolith vs Separated Batches
 
-The highest-stakes divergence in the Ping experiment. TC consolidated all processing into a single `Batchable + Schedulable` class. TQ and CQ each produced 4 independent batch classes with 4 scheduler wrappers.
+The highest-stakes divergence in the ExampleVision experiment. TC consolidated all processing into a single `Batchable + Schedulable` class. TQ and CQ each produced 4 independent batch classes with 4 scheduler wrappers.
 
 **Why this diverges on Salesforce specifically:**
 - Salesforce forces the choice between Batch, Queueable, and Schedulable — you can't compose them freely
@@ -261,7 +261,7 @@ In addition to the failure modes listed in the [main protocol](triangle-protocol
 
 ### Governor limit blind spot
 
-All three agents may design around the same governor limit assumption (e.g., "fewer than 100 active submissions") without testing what happens if the assumption is wrong. In the Ping experiment, all three agents used batch size of 1 without calculating the actual callout budget — a batch size of 10 would use ~30 of the 100-callout limit, well within bounds.
+All three agents may design around the same governor limit assumption (e.g., "fewer than 100 active submissions") without testing what happens if the assumption is wrong. In the ExampleVision experiment, all three agents used batch size of 1 without calculating the actual callout budget — a batch size of 10 would use ~30 of the 100-callout limit, well within bounds.
 
 **Detection:** The synthesis agent's blind spots section should flag identical-without-justification governor strategies.
 
@@ -273,13 +273,13 @@ Salesforce has hard constraints that aren't obvious from requirements alone: IPs
 
 ### OmniStudio / PKG Connect assumptions
 
-When the integration touches OmniStudio Integration Procedures (IPs), all three agents may assume IPs are callable from Apex. This assumption needs validation in a sandbox before sprint planning. The Ping experiment flagged this as ANDON condition A2 across all agents.
+When the integration touches OmniStudio Integration Procedures (IPs), all three agents may assume IPs are callable from Apex. This assumption needs validation in a sandbox before sprint planning. The ExampleVision experiment flagged this as ANDON condition A2 across all agents.
 
 ---
 
 ## Experiment Evidence
 
-The Triangle Protocol was validated on the Ping Vision integration (a Salesforce + external API integration). Full results are in the [main protocol](triangle-protocol.md#experiment-results), with design outputs in `testing/triangle-ping-*.md`.
+The Triangle Protocol was validated on the ExampleVision integration (a Salesforce + external API integration). Full results are in the [main protocol](triangle-protocol.md#experiment-results), with design outputs in `testing/triangle-examplevision-*.md`.
 
 Key Salesforce-specific observations from the experiment:
 
