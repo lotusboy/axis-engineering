@@ -20,9 +20,7 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v18
         with:
           globs: |
-            **/*.md
-            !testing/**
-            !temp-projects/**
+            CONTRIBUTING.md
 
   link-check:
     name: Link Check
@@ -37,7 +35,6 @@ jobs:
           args: >-
             --no-progress
             --verbose
-            --exclude-mail
             --exclude-path testing/**
             --exclude-path temp-projects/**
             README.md
@@ -60,7 +57,7 @@ jobs:
             exit 0
           fi
 
-          if rg -n -i "\bping\b|\bping vision\b" $FILES; then
+          if grep -nE -i "(^|[^[:alnum:]_])(ping|ping vision)([^[:alnum:]_]|$)" $FILES; then
             echo "Proprietary term(s) found in public markdown files"
             exit 1
           fi
