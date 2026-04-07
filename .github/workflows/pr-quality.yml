@@ -1,0 +1,68 @@
+name: PR Quality
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v18
+        with:
+          globs: |
+            **/*.md
+            !testing/**
+            !temp-projects/**
+
+  link-check:
+    name: Link Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --verbose
+            --exclude-mail
+            --exclude-path testing/**
+            --exclude-path temp-projects/**
+            README.md
+            *.md
+          fail: true
+
+  redaction-scan:
+    name: Public Redaction Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fail on proprietary public terms
+        run: |
+          set -euo pipefail
+          FILES=$(git ls-files '*.md' ':!:testing/**' ':!:temp-projects/**')
+          if [ -z "$FILES" ]; then
+            echo "No markdown files to scan"
+            exit 0
+          fi
+
+          if rg -n -i "\bping\b|\bping vision\b" $FILES; then
+            echo "Proprietary term(s) found in public markdown files"
+            exit 1
+          fi
+
+          echo "Redaction scan passed"

@@ -1,0 +1,41 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+no-changes-template: '- No user-facing changes in this cycle.'
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+
+categories:
+  - title: 'Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
+  - title: 'Experiments and Calibration'
+    labels:
+      - 'experiment'
+      - 'calibration'
+  - title: 'Maintenance'
+    labels:
+      - 'chore'
+      - 'maintenance'
+
+template: |
+  ## Changes
+
+  $CHANGES
+
+  ## Notes
+
+  - Public documentation remains redacted for proprietary terms.
+  - See `experiment-results.md` for latest calibration entries.
