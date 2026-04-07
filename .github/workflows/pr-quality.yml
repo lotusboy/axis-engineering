@@ -24,6 +24,7 @@ jobs:
             !testing/**
             !temp-projects/**
             !triangle-protocol.md
+            !vocabulary-quick-ref.md
 
   link-check:
     name: Link Check
