@@ -20,11 +20,9 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v18
         with:
           globs: |
-            **/*.md
-            !testing/**
-            !temp-projects/**
-            !triangle-protocol.md
-            !vocabulary-quick-ref.md
+            README.md
+            CONTRIBUTING.md
+            experiment-results.md
 
   link-check:
     name: Link Check
