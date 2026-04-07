@@ -60,7 +60,7 @@ jobs:
             exit 0
           fi
 
-          if rg -n -i "\bping\b|\bping vision\b" $FILES; then
+          if grep -nE -i "(^|[^[:alnum:]_])(ping|ping vision)([^[:alnum:]_]|$)" $FILES; then
             echo "Proprietary term(s) found in public markdown files"
             exit 1
           fi

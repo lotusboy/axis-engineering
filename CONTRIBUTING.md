@@ -1,8 +1,11 @@
 # Contributing to Axis Engineering
 
-Axis Engineering is designed to be cross-platform and domain-agnostic. Currently, the experimental evidence in `experiment-results.md` is weighted heavily toward Salesforce and Azure environments.
+Axis Engineering is designed to be cross-platform and domain-agnostic.
+Currently, the experimental evidence in `experiment-results.md` is weighted heavily
+toward Salesforce and Azure environments.
 
 We actively welcome contributions that test the methodology in other domains, particularly:
+
 - Frontend frameworks (React, Vue, etc.)
 - Data engineering and pipelines (Spark, Airflow, dbt)
 - Mobile development (iOS, Android, React Native)
@@ -11,15 +14,20 @@ We actively welcome contributions that test the methodology in other domains, pa
 
 ## How to Contribute an Experiment
 
-If you have run an Axis Engineering Two-Pass Review or a Triangle Protocol experiment, you can submit your results via a Pull Request.
+If you have run an Axis Engineering Two-Pass Review or a Triangle Protocol
+experiment, you can submit your results via a Pull Request.
 
 ### 1. Run the Experiment
-Run your selected protocol against a piece of code or a design document. 
 
-**Important:** Please ensure that any code or designs you use are either public/open-source or that you have heavily redacted any proprietary or confidential information before submission.
+Run your selected protocol against a piece of code or a design document.
+
+**Important:** Please ensure that any code or designs you use are either
+public/open-source or that you have heavily redacted any proprietary or
+confidential information before submission.
 
 ### 2. Format the Output
-Follow the structure of existing applications in `experiment-results.md`. 
+
+Follow the structure of existing applications in `experiment-results.md`.
 Include the **Scoring Rubric** at the bottom of your submission to ensure standardisation:
 
 ```markdown
@@ -32,8 +40,11 @@ Include the **Scoring Rubric** at the bottom of your submission to ensure standa
 ```
 
 ### 3. Submit a Pull Request
-Add your writeup to `experiment-results.md` (incrementing the Application number) and place your raw, redacted AI outputs in the `testing/` directory if you wish to share them. 
 
-Submit your PR against the `main` branch. 
+Add your writeup to `experiment-results.md` (incrementing the Application number)
+and place your raw, redacted AI outputs in the `testing/` directory if you wish
+to share them.
+
+Submit your PR against the `main` branch.
 
 By contributing, you agree that your contributions will be licensed under the project's [CC BY 4.0](LICENSE) license.
