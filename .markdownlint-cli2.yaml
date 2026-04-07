@@ -1,8 +1,10 @@
 config:
   MD013: false
+  MD031: false
   MD022: false
   MD032: false
   MD040: false
+  MD058: false
 
 globs:
   - "README.md"
