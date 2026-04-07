@@ -5,3 +5,7 @@ config:
   MD032: false
   MD040: false
   MD058: false
+  MD060: false
+  MD024:
+    siblings_only: true
+

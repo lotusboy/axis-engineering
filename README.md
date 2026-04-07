@@ -6,10 +6,8 @@ Axis Engineering is a prompt methodology that changes *how* AI thinks, not just 
 
 It does this by applying a small number of named "behavior handles" (e.g. Genba, Pre-mortem, MECE) that act as high-density tokens, activating existing reasoning patterns inside the model's training data. You are not teaching the AI — you are selecting which latent capabilities to emphasise.
 
-
-### The Vocabulary
+## The Full Vocabulary
 Axis Engineering is a vocabulary of 33 terms — drawn from Toyota, McKinsey, Netflix, the Gang of Four, and other well-known frameworks — that activate deep knowledge the AI already has. Each term is a **behavior handle**: a single word or phrase that shifts how the AI approaches a task, what it looks for, and how it reports findings.
-
 
 ### Before and After
 
@@ -163,7 +161,6 @@ Maintain an Assumption Ledger (Verified/Unknown).
 
 That alone gives ~70% of the benefit.
 
-
 ### Embed in your project (5 minutes)
 
 This is the recommended path for teams. Once embedded, the AI selects and applies handles automatically on every task — nobody needs to memorise the vocabulary.
@@ -197,7 +194,7 @@ That's it. From here, every new session picks up the handles automatically. Your
 
 ### Go deeper
 
-Browse the [full vocabulary](#the-vocabulary) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 20 real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+Browse the [full vocabulary](#vocabulary-reference) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 20 real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
 
 ---
 
@@ -342,7 +339,7 @@ Axis Engineering identifies five independent axes of agent behavior, each addres
 
 Most prompts only use axis 2 (structural — "give me a bulleted list"). Axis Engineering deliberately engages all five.
 
-## The Vocabulary
+## Vocabulary Reference
 
 ### Axis 1: Dispositional — How to Think
 

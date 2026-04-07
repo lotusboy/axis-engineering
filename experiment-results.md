@@ -1016,7 +1016,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 ### Application 8: Source Code Audit (ExampleCo Modelling CLI)
 
 **Date:** 2026-03-28
-**Handles:** 
+**Handles:**
 - Pass 1: Seven Factors + Genba + SOLID + Pre-mortem
 - Pass 2: Genba + Chaos Engineering + Poka-yoke
 **Target:** `temp-projects/example-modelling/src`
@@ -1062,7 +1062,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 - **Claude Code uniquely found:** Command injection via unsanitized `gitUrl` (`gitService.ts`), `logicalNameMap` collision bugs, and quantified exact occurrences of bad practices (e.g., 203 `any` usages). It performed a much broader, SAST-like repository sweep.
 - **Cascade uniquely found:** Unbounded concurrency OOM risk (`CONCURRENCY = 50` during massive synchronous XML parsing) and Global Singleton state risks in `tracker.ts`. Cascade performed a more localized, depth-first evaluation of the primary execution hot-paths.
 
-**Insight:** 
+**Insight:**
 Axis Engineering is **agent-agnostic**. Both agents exhibited the exact same cognitive separation between passes—Pass 1 focused purely on structural SOLID violations and architectural boundaries, while Pass 2 immediately pivoted to runtime failures (swallowed exceptions, concurrency limits, injections). The difference in finding volume (31 vs 9) reflects the agents' distinct codebase exploration strategies (breadth-first exhaustive sweeping vs depth-first hot-path analysis), but the *lens* applied to the code they read was consistently and successfully shaped by the behavior handles.
 
 ### Application 9: Agent Comparison on Design Generation (Cascade vs Claude Code)
@@ -1094,7 +1094,7 @@ Axis Engineering is **agent-agnostic**. Both agents exhibited the exact same cog
 **Cascade's Unique Blind Spot (The Cursor Storage Problem):**
 - Cascade's synthesis perfectly captured a classic Salesforce platform ambiguity: how to store a high-frequency polling cursor. TQ used a Custom Setting, TC tried a Custom Label before realizing it can't be updated via DML, and CQ stored it on the latest data record to avoid Custom Setting row locks.
 
-**Conclusion:** 
+**Conclusion:**
 The Triangle Protocol works seamlessly on Cascade (Gemini 3.1 Pro High Thinking). The handles forced the LLM to adopt genuinely distinct architectural postures. The TC constraint produced a hyper-pragmatic, monolithic, API-inefficient design, while the CQ constraint produced a textbook Domain-Driven Design (DDD) event-driven architecture. The synthesized outputs were structurally identical to Claude Code's, confirming the protocol is a calibrated tool, not a model-specific trick. Additionally, running these multi-agent protocols via Cascade (using Gemini 3.1 Pro High Thinking) proved significantly faster and highly cost-effective compared to executing the equivalent workflow through Claude Code.
 ### Application 10: Axis Review (ExampleRater) — Cascade (GPT-5.1-Codex Max High) vs Claude Code
 
@@ -1128,20 +1128,20 @@ The Triangle Protocol works seamlessly on Cascade (Gemini 3.1 Pro High Thinking)
 **Synthesis:** Claude’s broader SAST-style sweep surfaced more security and concurrency defects; Cascade’s review focused on runtime failure modes in the Excel pricing hot path. Both agree pricing integrity hinges on treating any Excel or worksheet failure as a hard error and tightening worker lifecycle/telemetry. GPT-5.1-Codex Max High delivered results faster/cheaper while maintaining the Axis handle behaviors.
 ### Application 11: Batch Rating Design (ExampleRater) — Cascade (GPT-5.1-Codex Max High) vs Claude Code
 
-**Date:** 2026-03-28  
-**Target:** `testing/example-rating-batch-requirements.md` / `temp-projects/example-rating`  
+**Date:** 2026-03-28
+**Target:** `testing/example-rating-batch-requirements.md` / `temp-projects/example-rating`
 **Method:** Triangle Protocol (TQ, TC, CQ + synthesis)
-**Cascade outputs:** `testing/triangle-example-rating-batch-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`  
+**Cascade outputs:** `testing/triangle-example-rating-batch-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
 **Claude outputs (kept untouched):** `testing/triangle-example-rating-batch-agent-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
 
 | Dimension | Claude Code | Cascade (GPT-5.1-Codex Max High) |
-|-----------|-------------|-----------------------------------|
-| Infra posture | TQ: Service Bus + Blob + Premium; TC: self-chaining HTTP; CQ: timer/Table-only | TQ: Table+Queue+Timer-only; TC: Consumption timer/queue; CQ: Table+Queue+Timer with audit
-| Item retry / poison | TQ yes (SB DLQ), CQ yes, TC none | TQ: reuse backoff; CQ: retries + poison handling; TC: simple, no retries
-| Result storage | TQ: Append Blob; TC/CQ: Table Storage | TQ/CQ: Table/queue, optional blob export; TC: Table-only
-| Interactive protection | TQ: heuristic delay; CQ: reserved concurrency; TC: none | TQ: respects pool cap; CQ: reserved; TC: none
-| Cancellation | Flag/session per design; some stall risk in TC | Flag on BatchJob; queue respect; in-flight finish
-| Throughput posture | TQ aims higher via Premium; TC/TQ may stall if chain breaks | TQ/CQ loop within tick while workers free; TC 30s cadence, cheap
+|-----------|-------------|-----------------------------------| |
+| Infra posture | TQ: Service Bus + Blob + Premium; TC: self-chaining HTTP; CQ: timer/Table-only | TQ: Table+Queue+Timer-only; TC: Consumption timer/queue; CQ: Table+Queue+Timer with audit |
+| Item retry / poison | TQ yes (SB DLQ), CQ yes, TC none | TQ: reuse backoff; CQ: retries + poison handling; TC: simple, no retries |
+| Result storage | TQ: Append Blob; TC/CQ: Table Storage | TQ/CQ: Table/queue, optional blob export; TC: Table-only |
+| Interactive protection | TQ: heuristic delay; CQ: reserved concurrency; TC: none | TQ: respects pool cap; CQ: reserved; TC: none |
+| Cancellation | Flag/session per design; some stall risk in TC | Flag on BatchJob; queue respect; in-flight finish |
+| Throughput posture | TQ aims higher via Premium; TC/TQ may stall if chain breaks | TQ/CQ loop within tick while workers free; TC 30s cadence, cheap |
 
 **Key overlaps (independent rediscovery):**
 - Reuse existing `calculateRisk`; batch is orchestration only.
@@ -1149,13 +1149,13 @@ The Triangle Protocol works seamlessly on Cascade (Gemini 3.1 Pro High Thinking)
 - Hard cap on batch size (50k) and shared output schema per batch.
 
 **Where Claude went further:**
-- Service Bus/Append Blob design with Premium plan for high throughput (TQ).  
-- Explicit stall detection for self-chaining gaps (TC) and detailed cleanup timer (CQ).  
+- Service Bus/Append Blob design with Premium plan for high throughput (TQ).
+- Explicit stall detection for self-chaining gaps (TC) and detailed cleanup timer (CQ).
 - Rich test plan and config matrix in CQ (12 tests, config defaults).
 
 **Where Cascade added/clarified:**
-- Emphasized treating worksheet/recalc failures as hard failures (no 200 with null/error strings).  
-- Simplified infra: all three Cascade agents stay on Table+Queue+Timer, no new Azure services.  
+- Emphasized treating worksheet/recalc failures as hard failures (no 200 with null/error strings).
+- Simplified infra: all three Cascade agents stay on Table+Queue+Timer, no new Azure services.
 - Recommended hybrid: TC cost baseline + CQ guardrails + TQ faster loop per tick.
 
 **Net:** Claude explored a higher-cost, higher-throughput path (Service Bus + Premium) and a riskier self-chaining TC. Cascade prioritized minimal dependencies with guardrails on correctness (hard-fail on Excel errors) and simpler orchestration. Both agree the core is chunked queue-driven processing over existing workers, with polling status and cancellation flags.
@@ -1174,9 +1174,9 @@ Starting from future experiments, all reviews and design tasks should append the
 - **Estimated Cost/Tokens:** [e.g., ~$0.10, ~120k tokens]
 
 ### Application 12: Two-Pass Review (PKG Connect) — Cascade (GPT-5.1-Codex Max High)
-**Date:** 2026-03-28  
-**Target:** `temp-projects/pkg-connect/salesforce/src/main/default/classes/` (sampled 5 classes)  
-**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial) using the **v2 Two-Pass Checklist** and **Scoring Rubric**  
+**Date:** 2026-03-28
+**Target:** `temp-projects/pkg-connect/salesforce/src/main/default/classes/` (sampled 5 classes)
+**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial) using the **v2 Two-Pass Checklist** and **Scoring Rubric**
 **Outputs:** `testing/review-pkg-connect-measured-pass1.md`, `testing/review-pkg-connect-measured-pass2.md`, `testing/review-pkg-connect-measured-combined.md`
 
 #### Results vs v1 Methodology
@@ -1193,9 +1193,9 @@ This review strictly adhered to the newly implemented v2 checklist and evidence 
 - **Estimated Cost/Tokens:** ~$0.15, ~120k tokens
 
 ### Application 14: Triangle Protocol Re-Run (Wildfire EC) — Cascade (Gemini 3.1 Pro High Thinking)
-**Date:** 2026-03-28  
-**Target:** Wildfire Endorsement & Cancellation Integration (re-run of Application 6)  
-**Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using the **v2 Triangle Checklist**  
+**Date:** 2026-03-28
+**Target:** Wildfire Endorsement & Cancellation Integration (re-run of Application 6)
+**Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using the **v2 Triangle Checklist**
 **Outputs:** `testing/triangle-wildfire-ec-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
 
 #### Results vs v1 Methodology (Claude Code)
@@ -1215,9 +1215,9 @@ This re-run aimed to measure if the v2 improvements (explicit checklists, assump
 - **Estimated Cost/Tokens:** ~$0.15, ~110k tokens
 
 ### Application 15: Triangle Protocol (Deployment CI/CD) — ExampleDeploy (Redacted)
-**Date:** 2026-03-29  
-**Target:** `temp-projects/example-deployment` (redacted deployment automation repository)  
-**Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using v2 contracts, assumptions ledger, and rubric output  
+**Date:** 2026-03-29
+**Target:** `temp-projects/example-deployment` (redacted deployment automation repository)
+**Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using v2 contracts, assumptions ledger, and rubric output
 **Outputs:** `testing/triangle-exampledeploy-agent-tq.md`, `testing/triangle-exampledeploy-agent-tc.md`, `testing/triangle-exampledeploy-agent-cq.md`, `testing/triangle-exampledeploy-synthesis.md`
 
 #### Results
@@ -1251,26 +1251,26 @@ This run showed the protocol's practical value on CI/CD architecture decisions: 
 - **Estimated Cost/Tokens:** N/A
 
 ### Application 16: Two-Pass Review (Example RAG App - Next.js/React + LLM App) — Antigravity (Gemini 3.1 Pro High)
-**Date:** 2026-03-29  
-**Target:** `temp-projects/example-rag-app` (Full-Stack Next.js App Router with Gemini RAG integration)  
-**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial)  
+**Date:** 2026-03-29
+**Target:** `temp-projects/example-rag-app` (Full-Stack Next.js App Router with Gemini RAG integration)
+**Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial)
 **Outputs:** `testing/review-example-rag-app-pass1.md`, `testing/review-example-rag-app-pass2.md`, `testing/review-example-rag-app-combined.md`
 
-#### Context & Significance 
+#### Context & Significance
 This was the first Axis Engineering test run on a **Full-Stack React (Next.js) web application** heavily integrated with a native **LLM/RAG architecture**. It tests whether Axis handles can find domain-specific bugs like Prompt Injection, React Server/Client boundary issues, and custom GUID authentication flaws.
 
 #### Results
 **Critical Operational Discoveries (Pass 2):**
 - **Prompt Injection:** Found that `api/dump/route.ts` interpolates user strings directly into the Librarian prompt structure without using standard LLM SDK roles/schemas, allowing complete system prompt bypass.
 - **File Collision:** Identified a massive race-condition where `os.tmpdir()` relies on `Date.now()`, enabling cross-tenant data corruption under concurrent load.
-- **RAG Parse Crashing:** Found that the server drops user dumps and 500s because it assumes `JSON.parse()` on LLM strings will always succeed without a `try/catch`. 
+- **RAG Parse Crashing:** Found that the server drops user dumps and 500s because it assumes `JSON.parse()` on LLM strings will always succeed without a `try/catch`.
 
 **Architectural Discoveries (Pass 1):**
 - **SRP Violations:** The entire application logic (Auth + Prompting + FS manipulation + Gemini SDK) was shoved into a single monolithic API Route block, making prompt iteration impossible to unit test.
 - **RAG Latency Hole:** Discovered that every user query recursively listed all workspaces in the Gemini API (`list()`) to find the Store ID rather than caching it, risking instant rate-limit throttling.
 
 **Conclusion:**
-Axis Engineering transferred seamlessly to Full-Stack Web and LLM Application architectures. The adversarial pass successfully pivoted to LLM-native failure modes (Prompt Injection, Unhandled LLM String outputs, and Vercel Concurrency constraints) that are entirely distinct from Salesforce or DevOps failures. 
+Axis Engineering transferred seamlessly to Full-Stack Web and LLM Application architectures. The adversarial pass successfully pivoted to LLM-native failure modes (Prompt Injection, Unhandled LLM String outputs, and Vercel Concurrency constraints) that are entirely distinct from Salesforce or DevOps failures.
 
 #### Review Rubric & Metrics
 - **P0 / P1 count:** 5 (3 P0, 2 P1)
