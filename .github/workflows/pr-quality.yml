@@ -23,6 +23,7 @@ jobs:
             **/*.md
             !testing/**
             !temp-projects/**
+            !triangle-protocol.md
 
   link-check:
     name: Link Check
@@ -37,7 +38,6 @@ jobs:
           args: >-
             --no-progress
             --verbose
-            --exclude-mail
             --exclude-path testing/**
             --exclude-path temp-projects/**
             README.md
