@@ -5,8 +5,3 @@ config:
   MD032: false
   MD040: false
   MD058: false
-
-globs:
-  - "README.md"
-  - "CONTRIBUTING.md"
-  - "experiment-results.md"
