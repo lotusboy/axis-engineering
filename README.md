@@ -165,6 +165,23 @@ That alone gives ~70% of the benefit.
 
 This is the recommended path for teams. Once embedded, the AI selects and applies handles automatically on every task — nobody needs to memorise the vocabulary.
 
+#### Option A: Agent Skills format (recommended for Claude Code, Cascade, compatible agents)
+
+Install as a skill that agents can load automatically:
+
+```bash
+# One-line install
+curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash
+
+# Or manually:
+mkdir -p .agent/skills/axis-engineering
+curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agent/skills/axis-engineering/SKILL.md > .agent/skills/axis-engineering/SKILL.md
+```
+
+Agents that support the Agent Skills format (<https://agentskills.io>) will automatically detect and apply Axis Engineering when relevant.
+
+#### Option B: Manual embedding (works with any AI assistant)
+
 **Step 1.** Copy the Axis files into your project:
 
 ```bash
@@ -187,7 +204,7 @@ using the recipes, contract template, and key handle definitions from the
 ```
 When performing any project work — writing code, reviewing code, investigating bugs,
 designing solutions — automatically select and apply the appropriate Axis handles
-for the task. State the active handles briefly at the start (e.g. "Axes: Poka-yoke + YAGNI").
+for the task. State the active handles briefly at the start (e.g., "Axes: Poka-yoke + YAGNI").
 ```
 
 That's it. From here, every new session picks up the handles automatically. Your team says "review this trigger" and the AI applies the right combination and produces a deeper review — without anyone needing to know the methodology by heart.
