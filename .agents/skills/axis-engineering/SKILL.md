@@ -122,16 +122,16 @@ This keeps Axis pure (cognitive framework) while domain skills handle technology
 
 ## Installation
 
-Copy this skill to your project's `.agent/skills/` folder:
+Copy this skill to your project's `.agents/skills/` folder (the open standard path, supported by Claude Code, Cursor, Windsurf, Codex, and GitHub Copilot):
 
 ```bash
-mkdir -p .agent/skills/axis-engineering
-curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agent/skills/axis-engineering/SKILL.md > .agent/skills/axis-engineering/SKILL.md
+mkdir -p .agents/skills/axis-engineering
+curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering/SKILL.md > .agents/skills/axis-engineering/SKILL.md
 ```
 
 Or use as a git submodule:
 ```bash
-git submodule add https://github.com/lotusboy/axis-engineering.git .agent/skills/axis-engineering
+git submodule add https://github.com/lotusboy/axis-engineering.git .agents/skills/axis-engineering
 ```
 
 ## Provenance & Legal

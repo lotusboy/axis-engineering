@@ -165,7 +165,7 @@ That alone gives ~70% of the benefit.
 
 This is the recommended path for teams. Once embedded, the AI selects and applies handles automatically on every task — nobody needs to memorise the vocabulary.
 
-#### Option A: Agent Skills format (recommended for Claude Code, Cascade, compatible agents)
+#### Option A: Agent Skills format (recommended for Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot)
 
 Install as a skill that agents can load automatically:
 
@@ -174,8 +174,8 @@ Install as a skill that agents can load automatically:
 curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash
 
 # Or manually:
-mkdir -p .agent/skills/axis-engineering
-curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agent/skills/axis-engineering/SKILL.md > .agent/skills/axis-engineering/SKILL.md
+mkdir -p .agents/skills/axis-engineering
+curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering/SKILL.md > .agents/skills/axis-engineering/SKILL.md
 ```
 
 Agents that support the Agent Skills format (<https://agentskills.io>) will automatically detect and apply Axis Engineering when relevant.

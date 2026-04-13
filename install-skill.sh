@@ -4,8 +4,8 @@
 
 set -e
 
-REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agent/skills/axis-engineering"
-INSTALL_DIR=".agent/skills/axis-engineering"
+REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering"
+INSTALL_DIR=".agents/skills/axis-engineering"
 
 echo "Installing Axis Engineering Agent Skill..."
 
@@ -30,4 +30,5 @@ echo ""
 echo "✅ Axis Engineering skill installed to $INSTALL_DIR/"
 echo ""
 echo "The skill is now available to agents that support the Agent Skills format."
+echo "Supported: Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot (VS Code)"
 echo "Visit https://agentskills.io for more information on how agents use skills."
