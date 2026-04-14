@@ -6,6 +6,7 @@ set -e
 
 REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering"
 INSTALL_DIR=".agents/skills/axis-engineering"
+CLAUDE_DIR=".claude/skills/axis-engineering"
 
 echo "Installing Axis Engineering Agent Skill..."
 
@@ -26,9 +27,19 @@ curl -fsSL "$REPO_URL/references/anti-patterns.md" > "$INSTALL_DIR/references/an
 echo "Downloading assets..."
 curl -fsSL "$REPO_URL/assets/contract-template.md" > "$INSTALL_DIR/assets/contract-template.md"
 
+# Claude Code currently scans .claude/skills/ rather than .agents/skills/
+# Copy files to both paths so the skill is discoverable on all OSes
+echo "Copying to .claude/skills/ for Claude Code..."
+mkdir -p "$CLAUDE_DIR"/{references,assets}
+cp "$INSTALL_DIR/SKILL.md" "$CLAUDE_DIR/SKILL.md"
+cp "$INSTALL_DIR/references/vocabulary.md" "$CLAUDE_DIR/references/vocabulary.md"
+cp "$INSTALL_DIR/references/recipes.md" "$CLAUDE_DIR/references/recipes.md"
+cp "$INSTALL_DIR/references/anti-patterns.md" "$CLAUDE_DIR/references/anti-patterns.md"
+cp "$INSTALL_DIR/assets/contract-template.md" "$CLAUDE_DIR/assets/contract-template.md"
+
 echo ""
 echo "✅ Axis Engineering skill installed to $INSTALL_DIR/"
+echo "   Copied to $CLAUDE_DIR/ for Claude Code"
 echo ""
-echo "The skill is now available to agents that support the Agent Skills format."
-echo "Supported: Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot (VS Code)"
+echo "Supported agents: Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot (VS Code)"
 echo "Visit https://agentskills.io for more information on how agents use skills."

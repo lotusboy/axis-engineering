@@ -165,20 +165,25 @@ That alone gives ~70% of the benefit.
 
 This is the recommended path for teams. Once embedded, the AI selects and applies handles automatically on every task — nobody needs to memorise the vocabulary.
 
-#### Option A: Agent Skills format (recommended for Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot)
+#### Option A: Agent Skills format (Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot)
 
 Install as a skill that agents can load automatically:
 
 ```bash
-# One-line install
+# One-line install (works for all agents — handles Claude Code automatically)
 curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash
-
-# Or manually:
-mkdir -p .agents/skills/axis-engineering
-curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering/SKILL.md > .agents/skills/axis-engineering/SKILL.md
 ```
 
-Agents that support the Agent Skills format (<https://agentskills.io>) will automatically detect and apply Axis Engineering when relevant.
+The installer writes to `.agents/skills/` (the [open standard](https://agentskills.io) cross-vendor path) and copies to `.claude/skills/` for Claude Code, which currently uses its own path rather than `.agents/skills/`.
+
+```bash
+# Or manually (open standard path — Cursor, Windsurf, Codex, Copilot):
+mkdir -p .agents/skills/axis-engineering
+curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering/SKILL.md > .agents/skills/axis-engineering/SKILL.md
+
+# Also add for Claude Code (until it adopts .agents/skills/):
+cp -r .agents/skills/axis-engineering .claude/skills/axis-engineering
+```
 
 #### Option B: Manual embedding (works with any AI assistant)
 
