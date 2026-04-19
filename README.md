@@ -165,23 +165,30 @@ That alone gives ~70% of the benefit.
 
 This is the recommended path for teams. Once embedded, the AI selects and applies handles automatically on every task — nobody needs to memorise the vocabulary.
 
-#### Option A: Agent Skills format (Claude Code, Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot)
+#### Option A: Agent Skills format (Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot)
 
 Install as a skill that agents can load automatically:
 
 ```bash
-# One-line install (works for all agents — handles Claude Code automatically)
+# One-line install (open standard path — detected by Cursor, Windsurf, Codex, Copilot)
 curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash
 ```
 
-The installer writes to `.agents/skills/` (the [open standard](https://agentskills.io) cross-vendor path) and copies to `.claude/skills/` for Claude Code, which currently uses its own path rather than `.agents/skills/`.
+The installer writes to `.agents/skills/` — the [open standard](https://agentskills.io) cross-vendor path. Most agents (Cursor, Windsurf, OpenAI Codex, GitHub Copilot) scan this path automatically.
 
 ```bash
-# Or manually (open standard path — Cursor, Windsurf, Codex, Copilot):
+# Or manually (open standard path):
 mkdir -p .agents/skills/axis-engineering
 curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering/SKILL.md > .agents/skills/axis-engineering/SKILL.md
+```
 
-# Also add for Claude Code (until it adopts .agents/skills/):
+**Claude Code users:** Anthropic has signed up to the open standard but Claude Code currently only scans `.claude/skills/`. Add the `--claude` flag:
+
+```bash
+# Install for Claude Code (also installs to .claude/skills/)
+curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash -s -- --claude
+
+# Or manually for Claude Code:
 cp -r .agents/skills/axis-engineering .claude/skills/axis-engineering
 ```
 
