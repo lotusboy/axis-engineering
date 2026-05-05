@@ -296,7 +296,7 @@ Is this a review of existing artefacts?
 2. **Substrate cost legibility** — the empty overlay lens explicitly costs the absence of platform overlays. ExampleMGA's NIPR sync run produced "~6 months of avoidable build" as a quantifiable cost statement, not a vague "we'd save time on the mga-overlay." Lands with non-engineering audiences.
 3. **Requirements ambiguity surfacing** — when actor lenses produce mutually contradictory needs from the same requirement, that's a customer-side ambiguity the materials missed.
 4. **Year-5 imbalance detection** — schema-shift lens routinely surfaces "Day-1 model breaks under realistic future" signals that single-pass modelling misses.
-5. **Reproducibility** — N=2 blind agent runs converge ~70% on findings (NIPR sync experiment). Strong evidence the protocol's mechanism is reproducible across agents.
+5. **Reproducibility** — N=2 blind agent runs converge in a 67-71% band across six multi-agent calibrations (two industries, three substrate configurations, two requirement shapes). Strong evidence the protocol's mechanism is reproducible across agents and across domains. See `experiment-results.md` for catalogue.
 
 ## Expected Costs
 
@@ -339,43 +339,23 @@ Phase 1 instructs agents to say "this lens didn't fire" when honest. There's a r
 
 ## Experiment Results
 
-### Experiment 1: ExampleMGA carrier appointment lifecycle (single agent, full conversation context)
+The Prism Protocol's empirical evidence base is catalogued in [`experiment-results.md`](experiment-results.md) under "Prism Protocol Calibrations" (Applications 17-20). At time of writing the evidence base spans:
 
-- **Input:** ExampleMGA `CLAUDE.md`, data dictionary v2, FSC adoption decision, deferred Module C scope.
-- **Setup:** single-agent, full conversation context. No customer SOW available.
-- **Output:** [`testing/prism-examplemga-carrier-appointments.md`](testing/prism-examplemga-carrier-appointments.md).
-- **Key signals surfaced:**
-  - Portal-readiness from Year-5 lens (would have been missed at Day-1-only thinking)
-  - `NIPR_Key__c` external-ID at Day-1 (cheap insurance for Phase 2)
-  - State×LOA child object (regulator lens forces clean audit)
-  - `Program__c` × appointment ambiguity (escalate before modelling)
-  - mga-overlay empty-lens cost: ~6–8 weeks vs days for mga-overlay customers
-- **Protocol refinement surfaced:** output should be three distinct artefacts (model fragment + seesaw log + open questions), not interleaved sections. Adopted in subsequent runs.
+- **Six N=2 multi-agent runs** across two industries (insurance.mga, dev-tools), three substrate configurations, and two requirement shapes (system-build vs utility-tool).
+- **Convergence-rate band 67-71%** across all six runs (NIPR ~70%, Ping R1 68%, Ping R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%) — see Phase 2 tuning diagnostics for corollaries.
+- **Two paired calibrations validating the v0.2 substrate-curation discipline.** Ping (Application 18) showed substrate omission produces architecturally-confounded findings; Rater (Application 19) showed curating overlay substrate closes 3 of 4 protocol-attributable gaps fully and 1 partially-but-appropriately. The character of findings shifts predictably from *invention* to *wiring*.
+- **Substrate-conditional actor-lens hypothesis** confirmed three times across two domains (Actuary in two rater-context runs; Document Template Author in PDF Butler) — flagged as a v0.3 candidate.
 
-### Experiment 2: NIPR sync (multi-agent N=2, blind)
-
-- **Input:** ExampleMGA `CLAUDE.md` excerpts + Phase 2 NIPR scope statement.
-- **Setup:** Two parallel agents, full context isolation. Same prompt, same materials, no shared output.
-- **Outputs:**
-  - [`testing/prism-examplemga-nipr-sync-blind-a.md`](testing/prism-examplemga-nipr-sync-blind-a.md)
-  - [`testing/prism-examplemga-nipr-sync-blind-b.md`](testing/prism-examplemga-nipr-sync-blind-b.md)
-  - [`testing/prism-examplemga-nipr-sync-synthesis.md`](testing/prism-examplemga-nipr-sync-synthesis.md) — convergence/divergence synthesis.
-- **Key results:**
-  - **~70% convergence on findings** (16/23 combined findings agreed by both agents)
-  - **3 genuine architectural divergence points** (staging chain naming, reconciliation modelling shape, NIPR Alerts default)
-  - **4 unique edge-case catches** (compact licenses, carrier visibility, AgentSync-as-service alternative, etc.)
-  - **Verbatim convergence on 3 protocol meta-findings**: empty-overlay lens is dominant value driver; Seesaw discipline is most valuable rule; Underwriter/Carrier/Regulator lenses fired weakly *appropriately* (requirement-shape signal, not protocol failure)
-- **Protocol validation:** N=2 blind convergence/divergence ratio mirrors Triangle Protocol's ratio on architecture decisions. Strong evidence the protocol's mechanism is reproducible across agents.
+See `experiment-results.md` for per-application detail. Per-run blind/synthesis/calibration writeups live in `testing/` (gitignored — they reference customer-specific artefacts).
 
 ### Limitations
 
-- **N=2 across one requirement type** (insurance regulatory integration). Other requirement types untested:
-  - Greenfield data model from blank materials
-  - Pure-UI requirement (form, screen flow)
-  - Cross-functional requirement (e.g., commission calculation spanning Finance + Compliance + UW)
-- **Single industry tested** (insurance.mga). Cross-industry transferability theoretically supported by config-as-data design but unverified.
-- **Single substrate tested** (Salesforce + ExampleMGA overlay, mga-overlay empty). Other substrate combinations untested.
-- **No long-running maintenance loop yet** — Phase 4 (model amendment over time) is design-only, no empirical data.
+Honest caveats are catalogued in `experiment-results.md` under "Honest Caveats (Prism Evidence Base)". Headline points:
+
+- **N=2 multi-agent at each datapoint.** Larger N (3, 4, 5 agents) is untested.
+- **Five of six runs are on Salesforce-substrate projects.** Cross-platform breadth has a single datapoint (Application 20).
+- **Phase 4 maintenance loop** (model amendment over time) is design-only; no empirical data.
+- **v0.3 candidates exist but aren't yet landed:** substrate-conditional actor lenses (mature), YAGNI-pass operator discipline for tool-shape requirements (N=1), and `dev-tools.salesforce-config-migration` industry-config formalisation (nice-to-have).
 
 ## Implementation
 

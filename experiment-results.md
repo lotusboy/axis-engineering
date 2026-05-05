@@ -1385,7 +1385,7 @@ The character-shift from *invention* to *wiring* is the strongest qualitative re
 
 #### Significance
 
-First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-corpus datapoint. All three experimental questions confirmed. A new diagnostic also emerged outside the planned questions: **agents over-engineer relative to two-person teams** (both agents proposed elaborate machinery — per-org YAML config, JSONL ledger, separate `status`/`resume` commands — that the actual builders Steve+Nigel rejected for YAGNI). One datapoint, recorded as a v0.3 candidate operator-discipline note pending more evidence.
+First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-corpus datapoint. All three experimental questions confirmed. A new diagnostic also emerged outside the planned questions: **agents over-engineer relative to two-person teams** (both agents proposed elaborate machinery — per-org YAML config, JSONL ledger, separate `status`/`resume` commands — that the actual two-person team rejected for YAGNI reasons). One datapoint, recorded as a v0.3 candidate operator-discipline note pending more evidence.
 
 ---
 
