@@ -129,6 +129,32 @@ Any **P0 or P1** finding is an automatic **Andon event**:
 - Escalate with evidence (`file:line` or concrete artifact reference).
 - Record a verification or mitigation step before resuming.
 
+### The Methodology Family
+
+Triangle isn't the only multi-agent extension. Axis Engineering organises into a family of protocols, each addressing a different kind of problem, with Seesaw as a cross-cutting diagnostic that fires inside any of them.
+
+```
+Axis Engineering
+├── Triangle Protocol      (decisions — multi-agent + synthesis)
+├── Prism Protocol         (modelling — multi-lens refraction)
+├── Two-Pass Strategy      (review — sequential constructive then adversarial)
+└── Seesaw Principle       (cross-cutting diagnostic — fires inside any of the above)
+```
+
+- **[Triangle Protocol](triangle-protocol.md)** — multi-agent decision exploration (TQ/TC/CQ). Use when the architecture has genuine tradeoffs.
+- **[Prism Protocol](prism-protocol.md)** — multi-lens modelling (actor / implementation / lifecycle). Use when the system shape itself isn't yet stable. Substrate and industry are first-class config inputs (`salesforce + mga-overlay + fsc`, `insurance.mga`) so the protocol generalises across stacks without code branches.
+- **[Two-Pass Strategy](two-pass-strategy.md)** — sequential constructive-then-adversarial review in fresh contexts. Use when reviewing existing artefacts.
+- **[Seesaw Principle](seesaw-principle.md)** — diagnostic that fires when a 3-pole tension surfaces an imbalance (Test↔Design↔Implementation, Actor↔Model↔Framework, User↔Design↔UI). Always raises a ticket. Always fixes upstream, not downstream.
+
+**Quick guide:**
+
+```
+Producing first-draft model from raw customer materials?  → Prism
+Choosing between viable architectures with real tradeoffs? → Triangle
+Reviewing an existing artefact for issues?                 → Two-Pass
+Tooling/test/model fighting back during any of the above?  → Seesaw fires
+```
+
 ---
 
 ## Get Started
