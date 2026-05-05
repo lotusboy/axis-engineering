@@ -1278,3 +1278,168 @@ Axis Engineering transferred seamlessly to Full-Stack Web and LLM Application ar
 - **Model used:** Gemini 3.1 Pro High (Antigravity)
 - **Estimated Elapsed Time:** ~4 minutes
 - **Estimated Cost/Tokens:** ~$0.10, ~50k tokens
+
+---
+
+## Prism Protocol Calibrations
+
+The Prism Protocol (modelling discipline; see `prism-protocol.md`) was validated through six N=2 multi-agent calibration runs across two industries, three substrate configurations, and two requirement shapes (system-build vs utility-tool). The runs are catalogued below as Applications 17-20. Detailed calibration writeups for the latest four runs live in `testing/` and are linked per-application; they are gitignored to keep customer-specific evidence local while the public catalogue summarises the structural findings.
+
+### Application 17: Prism Protocol — ExampleMGA NIPR Sync (v0.1 validation)
+
+**Date:** 2026-05-05
+**Target:** ExampleMGA insurance MGA's NIPR (National Insurance Producer Registry) sync requirement — outbound licensure synchronisation, structured-payload-in-structured-payload-out
+**Method:** Prism Protocol Phase 1b multi-agent (N=2 blind, full context isolation) + Phase 2 synthesis
+**Stack:** `salesforce + mga-overlay + nipr.api`
+**Outputs (gitignored):** `testing/prism-examplemga-nipr-sync-blind-a.md`, `testing/prism-examplemga-nipr-sync-blind-b.md`, `testing/prism-examplemga-nipr-sync-synthesis.md`
+
+#### Results
+
+- **Convergence rate:** ~70% (16 of 23 combined findings)
+- **Architectural divergences:** 3 (staging chain naming, reconciliation modelling shape, NIPR Alerts default)
+- **Unique catches:** 4 per agent
+- **Verbatim convergence on three protocol meta-findings:** empty-overlay lens is dominant value driver; Seesaw discipline is most valuable rule; weak lenses are honest signal not failure.
+
+#### Significance
+
+This was Prism's v0.1 validation run. The convergence:divergence ratio mirrored Triangle Protocol's ratios on architecture decisions — different problem shape, similar structural pattern. The ~70% convergence became the first datapoint in what is now a six-run empirical regularity (see Cross-Experiment Patterns below).
+
+### Application 18: Prism Protocol — example-broker Intake-Vendor Integration (v0.2 motivating paired calibration)
+
+**Date:** 2026-05-05
+**Target:** example-broker (Salesforce-app MGA) — SOV-extraction vendor ingestion lifecycle (inbound email → async file upload chain → external AI extraction → status events polling → outbound clearance push)
+**Method:** Paired Prism runs. **Run 1:** substrate-omitted (`salesforce + mga-overlay + (empty)`). **Run 2:** substrate-curated (`salesforce + mga-overlay + intake-vendor.api`). Same requirement, same FAM, same agent prompts; only difference is whether the `intake-vendor.api` substrate was supplied to agents.
+**Outputs (gitignored):** `testing/prism-example-broker-intake-vendor-{blind-a,blind-b,synthesis,calibration}.md`, `testing/prism-example-broker-intake-vendor-r2-{blind-a,blind-b,synthesis}.md`
+
+#### Results — paired runs
+
+| Dimension | Run 1 (substrate-omitted) | Run 2 (substrate-curated) |
+|---|---|---|
+| Convergence rate | 26/38 (68%) | 28/41 (68%) |
+| Substrate citations per agent | 0 | A≈22, B≈24 |
+| Object-set hits vs FAM | 6/9 + 1 partial + 2 miss | 7/9 + 1 partial + 1 miss |
+| Apex-class hits vs FAM | 2 of ~14 named | 4 of ~14 named |
+| State-machine alignment | rough 7-state shape | substrate-grounded specifics |
+
+#### Significance
+
+This run identified **substrate omission as a discipline gap** — Run 1's findings were architecturally-confounded because agents inferred vendor behaviour from the customer requirements doc rather than from the vendor API contract. Curating the substrate (Run 2) closed substrate-attributable gaps in object alignment and state-machine specifics, but the four protocol-attributable gaps (Case as first-class intake, Phase 1/2/3 IP mapping, reverse-link patterns, mga-overlay vs custom field-naming) reproduced — all mga-overlay-shaped Salesforce-side normalisation choices.
+
+The convergence rate held flat at 68% across both runs. **Substrate is a quality multiplier, not a quantity multiplier.** This run motivated the v0.2 substrate-curation discipline now in `prism-protocol.md`.
+
+### Application 19: Prism Protocol — example-broker Rater Integration (v0.2 sufficiency test)
+
+**Date:** 2026-05-05
+**Target:** example-broker — synchronous rating integration via Excel-as-API service through Azure Functions middleware (push inputs, recalculate, read outputs, repeat)
+**Method:** Paired Prism runs testing v0.2's implicit closure claim: are the protocol-attributable gaps from Application 18 *closable* by overlay substrate, or fundamentally customer-extension? **Run 1:** `salesforce + (empty mga-overlay) + rater-api` substrate. **Run 2:** `salesforce + mga-overlay + rater-api` (mga-overlay now curated).
+**Outputs (gitignored):** `testing/prism-example-broker-rater-{blind-a,blind-b,synthesis,calibration}.md`, `testing/prism-example-broker-rater-r2-{blind-a,blind-b,synthesis,calibration}.md`
+
+#### Results — paired runs
+
+| Dimension | Run 1 (empty mga-overlay) | Run 2 (mga-overlay curated) |
+|---|---|---|
+| Convergence rate | 26/38 (68%) | 24/34 (70.6%) |
+| Architectural divergences | 3 | 3 |
+| Unique catches per agent | 5 / 4 | 3 / 4 |
+| Substrate citations per agent (rater-api) | A≈14, B≈13 | (unchanged) |
+| Substrate citations per agent (mga-overlay) | n/a | A≈25, B≈30 |
+| Empty-overlay finding | dominant Seesaw trigger | **closed (both agents independently confirm)** |
+| Character of new findings | "the layer is empty, costs ~5-6 named primitives" | "given the layer's primitives, here's how customer-extension wires up against them" |
+
+#### Gap-closure analysis (the v0.2 sufficiency test)
+
+| Run 1 protocol-attributable gap | Run 2 status |
+|---|---|
+| Endorsement/Cancellation v2 transaction model (Trans/Delta/PoC) | ✅ Closed — both agents grounded in mga-overlay §4 dimension architecture + §9 endorsement calc + bypass toggle |
+| Six-group MGA_* mirror pattern (Annual/Trans/PoC × non-subscription) | ✅ Closed — both agents grounded in mga-overlay §4 + §5 |
+| Trigger-rolled-up Building → Location → Quote rollup chain | ⚠ Partially closed — substrate provides framework (mga-overlay §10), specific tenant rollup wiring remains bounded customer-extension |
+| Aggregate computation pattern at rating time | ✅ Closed — both agents grounded in mga-overlay §8 (Rate IP with `MGA_Rate_Before/After` extension hooks) |
+
+**Three of four gaps fully close, one partially closes appropriately. The "substrate floor" hypothesis is rejected. v0.2 substrate-curation is sufficient at the protocol level.**
+
+#### Significance
+
+The character-shift from *invention* to *wiring* is the strongest qualitative result of the entire Prism evidence base. Run 1's findings are about "what to invent." Run 2's findings are about "how to wire up against what exists." This is what the substrate-curation discipline was claimed to do; this run confirms the claim empirically.
+
+### Application 20: Prism Protocol — example-pdfbutler Cross-Domain Test
+
+**Date:** 2026-05-05
+**Target:** example-pdfbutler — PDF Butler config-migration CLI tool. First non-`insurance.mga`, non-Salesforce-as-target Prism run. Different industry (`dev-tools.salesforce-config-migration`), different scale (utility-tool, not multi-month system), different corpus (single synthesised requirement statement; no SOW, no transcripts, no requirements doc).
+**Method:** Prism Phase 1b multi-agent (N=2 blind) + Phase 2 synthesis. Stack: `python.cli + salesforce-cli + pdf-butler-cli-plugin` with only the third layer substrate-curated (the first two declared as background-knowledge).
+**Outputs (gitignored):** `testing/prism-example-pdfbutler-{blind-a,blind-b,synthesis,calibration}.md`
+
+#### Results
+
+- **Convergence rate:** 33/49 (**67.3%**) — band-hold under sparse corpus
+- **Architectural divergences:** 4 (wrapper command surface; `--id` separator handling; manifest topology; auth-strategy abstraction timing)
+- **Unique catches per agent:** 5 / 7
+- **Substrate citations per agent:** A≈39, B≈37 (~3.0–3.25/kB on a ~12kB substrate; ~3× the 1.0/kB regime)
+- **Open-questions density:** A=15, B=20 (~50–100% above prior fuller-corpus runs — sparse corpus expressed as OQ pressure, not model invention)
+- **Convergent lens addition:** **Document Template Author** — both agents independently propose, both anchored in substrate §4 (the `.docx` template artefact)
+
+#### Three experimental questions answered
+
+1. **Cross-domain transferability — confirmed.** Prism's mechanism reproduced in dev-tools without modification. The Seesaw-shaped substrate-gap forcing functions (per-row import dispatch driven by no `--partial` on import) are exact analogues of `insurance.mga` substrate-gap forcing functions, but in a different domain.
+2. **Sparse-corpus behaviour — graceful degradation.** Convergence held at 67.3% (band-hold within one finding of the 68-71% lower bound). No model invention; the missing corpus expressed itself as OQ density.
+3. **Substrate-conditional actor-lens hypothesis — third confirmation.** Both agents independently propose Document Template Author as a lens addition, both citing substrate §4 (the `.docx` template artefact). The pattern: **substrate-conditional actor lens = role tied to artifacts the substrate operates on.**
+
+#### Significance
+
+First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-corpus datapoint. All three experimental questions confirmed. A new diagnostic also emerged outside the planned questions: **agents over-engineer relative to two-person teams** (both agents proposed elaborate machinery — per-org YAML config, JSONL ledger, separate `status`/`resume` commands — that the actual two-person team rejected for YAGNI reasons). One datapoint, recorded as a v0.3 candidate operator-discipline note pending more evidence.
+
+---
+
+## Cross-Experiment Patterns (Prism)
+
+### Convergence-rate band: 67-71% across six runs
+
+Six N=2 multi-agent runs, all in band:
+
+| Run | Convergence | Industry | Stack | Corpus |
+|---|---|---|---|---|
+| Application 17 — NIPR | ~70% | insurance.mga | `salesforce + mga-overlay + nipr.api` | rich |
+| Application 18 — Intake R1 | 68% | insurance.mga | `salesforce + mga-overlay + (empty)` | rich |
+| Application 18 — Intake R2 | 68% | insurance.mga | `salesforce + mga-overlay + intake-vendor.api` | rich |
+| Application 19 — Rater R1 | 68% | insurance.mga | `salesforce + (empty mga-overlay) + rater-api` | rich |
+| Application 19 — Rater R2 | 70.6% | insurance.mga | `salesforce + mga-overlay + rater-api` | rich |
+| Application 20 — PDF Butler | 67.3% | dev-tools | `python.cli + salesforce-cli + pdf-butler-cli-plugin` | sparse |
+
+Treated as an empirical regularity (not yet a fixed point of the protocol's mechanism — six observations of N=2 each, larger N untested). Practical corollaries are now formalised in `prism-protocol.md` Phase 2 tuning notes.
+
+### v0.2 gap-closure validation — the substrate-curation discipline works
+
+Two paired calibrations independently validated v0.2:
+
+- **Application 18 (Intake):** substrate omission (Run 1) produced architecturally-confounded findings; substrate curation (Run 2) closed substrate-attributable gaps. Convergence flat at 68%; substrate citations went 0 → ~22-24 per agent.
+- **Application 19 (Rater):** empty-overlay produced four protocol-attributable gaps clustering on mga-overlay conventions (Run 1); curating the overlay closed three of four fully and one partially-but-appropriately (Run 2).
+
+The **character-shift from invention to wiring** is the strongest qualitative result. This is what the v0.2 substrate-curation discipline was claimed to produce; the paired runs confirmed the claim empirically.
+
+### Substrate-conditional actor-lens hypothesis (v0.3 candidate, N=3 across two domains)
+
+| Run | Substrate-conditional lens that emerged | Tied to substrate exposure of |
+|---|---|---|
+| Application 19 R1 (insurance.mga) | Actuary / rate card owner | Excel-as-API rating workbook, version-by-effective-date |
+| Application 19 R2 (insurance.mga) | Actuary / rate card owner (re-confirmed) | Same |
+| Application 20 (dev-tools) | Document Template Author | `.docx` artefact in export tree |
+
+**Pattern:** the substrate-conditional lens that emerges is **the role tied to the artifacts the substrate operates on** — not the substrate vendor itself, but the owner of the artifacts moved through the substrate. Three confirmations across two domains. Promoted from "candidate" to "supported pattern" pending one or two more cross-platform datapoints.
+
+### Citation-density value-band
+
+Six runs show citation density between ~1.0 and ~3.25 per kB. The diagnostic in `prism-protocol.md` is now expressed as a band rather than a target:
+
+- **Below ~0.3/kB:** warning — substrate not engaged.
+- **~1-4/kB:** healthy engagement.
+- **Above ~4/kB:** signal that customer corpus is sparse and substrate is carrying weight beyond its share. Not a failure; consider whether the corpus should be enriched.
+
+---
+
+## Honest Caveats (Prism Evidence Base)
+
+The evidence base is the strongest the protocol has had, but it has known limits worth surfacing:
+
+- **N=2 multi-agent at each datapoint.** Larger N (3, 4, 5 agents) is untested. The 67-71% convergence band could be a property of N=2 specifically rather than a fixed point of the protocol's mechanism.
+- **Five of six runs are on Salesforce-substrate projects.** The cross-platform / cross-vendor breadth has a single datapoint (Application 20), and even that is on Salesforce CLI underneath. A second non-insurance run on a fundamentally different platform would strengthen the cross-domain claim.
+- **The "agents over-engineer relative to two-person teams" finding has only one datapoint** (Application 20) and is not yet formalised as protocol guidance. It's a real limitation of the protocol's output for tool-shape requirements where the team-is-the-customer.
+- **v0.3 candidates exist but aren't yet landed.** Substrate-conditional actor lenses (N=3, mature enough to land), YAGNI-pass operator discipline for tool-shape requirements (N=1, needs more datapoints), and the `dev-tools.salesforce-config-migration` industry-config formalisation (nice-to-have, not load-bearing) are all queued as future work.
