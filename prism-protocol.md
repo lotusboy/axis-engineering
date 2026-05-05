@@ -1,6 +1,6 @@
 # Axis Engineering — Prism Protocol
 
-> **Status:** DRAFT (v0.1, 2026-05-05). Authored by Steven Loftus.
+> **Status:** DRAFT (v0.2, 2026-05-05). Authored by Steven Loftus. v0.2 adds operator pre-launch substrate-curation responsibilities under "Substrate and Industry as Inputs" — motivated by example-broker Ping integration calibration.
 >
 > **Domain-specific companions:** `salesforce-prism.md` (TBD — substrate config for `salesforce + mga-overlay` and `salesforce + (no MGA frame)` stacks).
 >
@@ -165,6 +165,29 @@ prism({
 Substrates compose. `salesforce + mga-overlay + fsc` loads three substrate configs, each contributing patterns to the implementation lens. `salesforce + (no MGA frame)` loads only Salesforce — the overlay lens is empty.
 
 The protocol code never branches on substrate or industry name. Configs are data the protocol loads and refracts through. New substrate = new YAML file. New industry = new YAML file. No protocol fork.
+
+### Operator pre-launch responsibilities (v0.2)
+
+Before launching agents, the operator MUST produce or identify a **sanitised substrate file for each non-empty layer in the stack string**. The protocol cannot trust that the operator hands it clean substrate — the protocol must require the operator to demonstrate they have one.
+
+**Why this matters.** Vendor API documentation in any integrator's repo is typically co-located with the team's implementation choices (per-endpoint "how we use this" notes, deploy-time discoveries dressed as docs facts, change logs of the team's own usage). Including such an annotated reference raw leaks ground truth. Excluding it entirely leaves the substrate-stdlib lens for that layer empty, which produces architecturally-confounded findings:
+
+- Agents infer substrate behaviour from customer-side materials, which carry the customer's mental model rather than the platform contract.
+- Agents may invent reasonable-but-wrong specifics (class names, endpoint shapes) that pattern-match plausibly but don't match reality.
+- The implementation lens fires with a hidden hole — divergences land at the wrong granularity (substrate-level, not architectural).
+
+**Motivating experiment.** The example-broker Ping integration calibration (Runs 1 and 2). Run 1 ran with `salesforce + mga-overlay + (empty)` for ping.api; Run 2 ran with the substrate properly curated. Convergence rate stayed flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 citations per agent vs zero in Run 1), and substrate-attributable gaps in object alignment and state-machine specifics closed. See `testing/prism-example-broker-ping-calibration.md`.
+
+**Sanitisation checklist (per non-empty stack layer):**
+
+1. **Strip implementation cross-references** — every "[project] usage:", every "this class implements this endpoint", every project-specific binding.
+2. **Strip team-specific architectural decisions dressed as docs facts** — e.g., sequential-vs-parallel upload patterns the team chose, storage conventions, deploy-time discoveries.
+3. **Strip change logs of the team's own usage.**
+4. **Keep:** endpoints, request/response shapes, auth, rate limits, vendor-side state machines, vendor-side data model.
+
+**Sanitisation test:** does the file declare what the platform CAN do, or what THIS implementation does WITH the platform? Only the former is substrate.
+
+**For empty-by-design layers** (e.g. `salesforce + (no MGA frame)`): the protocol still requires the operator to declare them empty. The empty-lens cost is itself a value driver; the protocol must know which layer is empty by design vs missing-by-omission.
 
 ## Why Lens-Sets, Not Triangle Pairs
 
