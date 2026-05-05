@@ -178,12 +178,13 @@ Before launching agents, the operator MUST produce or identify a **sanitised sub
 - Agents may invent reasonable-but-wrong specifics (class names, endpoint shapes) that pattern-match plausibly but don't match reality.
 - The implementation lens fires with a hidden hole — divergences land at the wrong granularity (substrate-level, not architectural).
 
-**Motivating experiments (paired calibrations).** Two example-broker calibrations on substantively different requirement shapes:
+**Motivating experiments (paired calibrations on example-broker).**
 
-- **Ping integration** (lifecycle ingestion). Paired runs with substrate omitted (Run 1) vs curated (Run 2). Convergence flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 per agent vs zero in Run 1) and substrate-attributable gaps closed. See `testing/prism-example-broker-ping-calibration.md`.
-- **Rater integration** (synchronous request/response calculation, v0.2 discipline applied from start). Convergence again at 68%, agents grounded in substrate (~13-14 citations per agent), and the **protocol-attributable gap pattern reproduced cleanly** — same shape of misses (mga-overlay-shaped Salesforce-side normalisation choices), different specific items. See `testing/prism-example-broker-rater-calibration.md`.
+- **Ping integration** (lifecycle ingestion, paired runs). Run 1 substrate-omitted vs Run 2 substrate-curated. Convergence flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 per agent vs zero in Run 1) and substrate-attributable gaps closed. See `testing/prism-example-broker-ping-calibration.md`.
+- **Rater integration Run 1** (synchronous request/response, v0.2 discipline applied to the vendor-API substrate with mga-overlay declared empty). Convergence at 68%, and **the protocol-attributable gap pattern reproduced** — same shape of misses (mga-overlay-shaped Salesforce-side normalisation choices), different specific items. See `testing/prism-example-broker-rater-calibration.md`.
+- **Rater integration Run 2** (paired with Run 1; mga-overlay substrate now curated). Tested v0.2's implicit closure claim: are the gap-pattern misses *closable* by overlay substrate, or fundamentally customer-extension? Result: **3 of 4 protocol-attributable gaps closed, 1 partially closed appropriately. Character of findings shifted from invention to wiring** — agents now ask "how does customer-extension wire up against substrate-shipped primitives?" not "what primitives must we invent?" See `testing/prism-example-broker-rater-r2-calibration.md`.
 
-Reproducibility across two requirements with different shapes (lifecycle ingestion vs synchronous calculation) is the strongest evidence so far that the substrate-curation discipline is a real protocol-level property: when overlay substrate is empty, the protocol-attributable gap pattern reproduces with same shape, different specific items.
+The combined evidence — gap-pattern *reproduction* across two requirements (Ping R1, Rater R1) and gap-pattern *closure* when overlay is curated (Rater R2) — establishes the substrate-curation discipline as a protocol-level property, not a one-off artefact. Convergence band held at 68-70% across all five paired multi-agent runs (NIPR ~70%, Ping R1 68%, Ping R2 68%, Rater R1 68%, Rater R2 70.6%). v0.2 is empirically sufficient.
 
 **Sanitisation checklist (per non-empty stack layer):**
 
