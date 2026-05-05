@@ -70,6 +70,9 @@ STOP:         [Andon — halt on data-loss or security vuln]
 | Single pass, with contract | Feature review | ~14-19 |
 | Two-pass, fresh sessions | Pre-production audit | **~30** |
 | Triangle Protocol | Architecture tradeoffs | 3 designs + synthesis |
+| Prism Protocol | Modelling: raw materials → system shape | 3 lens-sets (+ optional N=2 synthesis) |
+
+**Cross-cutting diagnostic:** the **Seesaw Principle** fires *inside* any of the strategies above when a 3-pole tension (e.g. Test↔Design↔Implementation, Actor↔Model↔Framework) surfaces an imbalance. Log a ticket and fix upstream — don't paper over downstream.
 
 **Key finding:** The Axis Contract increases evidence density by 70%. Always use it for anything above routine.
 

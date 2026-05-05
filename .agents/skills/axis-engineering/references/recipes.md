@@ -146,6 +146,99 @@ STRUCTURE: Convergences + Divergences + Blind Spots
 EVIDENCE: Cite specific agent outputs for each finding
 ```
 
+## Prism Protocol Recipes
+
+Use Prism for **modelling**: turning raw customer materials (SOWs, transcripts, samples) into a stable, reviewable outline of the system. Different problem from Triangle — Prism asks "which viewpoint are we missing?", not "which constraint do we sacrifice?".
+
+**Phase 1 — Single-agent refraction (default mode):**
+
+```
+You are running the Prism Protocol on a modelling task.
+
+INVOCATION:
+  industry:    [e.g. insurance.mga]                    // dotted-path config
+  stack:       [e.g. salesforce + mga-overlay + fsc]   // composed substrate
+  materials:   [SOW, transcripts, samples, …]
+  requirement: [the requirement statement]
+
+AXES: Genba + MECE + Cynefin + Pre-mortem
+
+REFRACTION (walk three lens-sets in order):
+  1. Actor lenses — set is industry-specific (loaded from industry config).
+     Each lens asks "what do I need from this system to do my job?"
+     Cite source materials for every lens that fires. Honest "fires weakly"
+     or "doesn't fire because [reason]" is signal, not failure — do not pad.
+  2. Implementation lenses — substrate stdlib first, overlay pattern second,
+     customer extension only with rationale.
+  3. Lifecycle lenses — Day-1 launch, Year-3 maintenance, Year-5 schema-shift.
+
+SEESAW (during refraction, watch for):
+  - Actor-view ↔ model imbalance (stakeholder doesn't fit any model slot)
+  - Model ↔ framework imbalance (model can't sit in stdlib + overlay)
+  - Lifecycle imbalance (Day-1 model breaks under Year-3 / Year-5)
+  Each imbalance is a ticket to log, not a problem to paper over.
+
+OUTPUT (three distinct artefacts, not interleaved):
+  1. Model fragment — objects, fields, relationships, status state machines
+  2. Seesaw log — imbalances surfaced, with signal and forced action
+  3. Open questions — real ambiguities, each with audience for resolution
+
+STOP: Andon — halt if a requirement is genuinely contradictory across two
+      actor lenses (requirements-level ambiguity; resolve before continuing).
+```
+
+**Phase 1b — Multi-agent refraction (high-stakes / ambiguous requirements):**
+
+Run N=2 (or N=3) agents in parallel under context isolation. Each receives the identical Phase 1 prompt above — same protocol, same materials, same industry+stack, same requirement. Agents must not see each other's output.
+
+```
+You are Agent A (or B, or N) in a Prism Protocol multi-agent run.
+[Identical Phase 1 prompt — see above]
+You will not see other agents' output. Synthesis happens after all complete.
+```
+
+**Phase 2 — Synthesis (multi-agent only):**
+
+```
+AXES: MECE + First Principles
+TARGET: N agent outputs (model fragments + seesaw logs + open questions)
+TASK: Compare and synthesise. Do NOT pick a winner — the human decides.
+STRUCTURE:
+  - Convergence (multiple agents agreed — high confidence)
+  - Divergence (genuine architectural choices the human must decide)
+  - Unique catches (an edge case caught by only one agent)
+  - Meta-findings (signals about the protocol's behaviour itself)
+EVIDENCE: Cite each agent's output for every comparison point.
+          Read all agent outputs in full before writing comparison.
+STOP: Flag any case where two agents interpret the same requirement
+      differently (requirements-level ambiguity, must be resolved).
+```
+
+**Empirical baseline:** N=2 blind runs on insurance.mga regulatory integration produced ~70% finding convergence with 3 architectural divergences and 4 unique edge-case catches per agent. If your synthesis reports >90% convergence, the requirement was overdetermined — default to single-agent next time.
+
+## Seesaw Triggers (cross-cutting)
+
+The Seesaw Principle is a **diagnostic that fires inside other protocols**, not a recipe of its own. When a 3-pole tension surfaces an imbalance during Triangle, Prism, or Two-Pass work, Seesaw fires.
+
+**Subtypes (recognise and name):**
+
+- **Test ↔ Design ↔ Implementation** — testing harness fights the design (e.g., test relies on accessibility-impaired selectors → fix the component, not the test).
+- **Test ↔ Design ↔ Component** — test struggles → component-shape problem.
+- **User ↔ Design ↔ UI** — UX struggles → design problem, not a UI patch.
+- **Actor ↔ Model ↔ Framework** — modelling tension; the subtype that fires inside Prism's refraction.
+- **Actor ↔ Design ↔ Implementation** — generalised form (any actor struggling with any implementation is signal to look at the design in the middle).
+
+**Response (always the same):**
+
+```
+1. Stop. Name the subtype.
+2. Log a ticket — what the imbalance is, which pole struggled, why.
+3. Fix the middle pole (design / model). Do not work around at the easier pole.
+4. Reference the commit that closes the ticket.
+```
+
+**Don't paper over.** Seesaw's discipline is that the visible struggle is *signal* about the upstream artefact, not a problem to suppress with a workaround.
+
 ## Selection Algorithm
 
 If unsure which handles to pick:
