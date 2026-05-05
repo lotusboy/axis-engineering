@@ -123,6 +123,12 @@ STOP:         Flag any case where two agents interpret the same requirement
 
 Empirical anchors so far: Ping ~21kB substrate → ~22 citations per agent (~1.0/kB, fuller corpus); Rater ~9kB → ~13 citations (~1.4/kB); PDF Butler ~12kB → ~38 citations (~3.2/kB, sparse corpus shifted weight onto substrate). The ~1/kB number is one anchor, not a target.
 
+**Tuning diagnostic — convergence-rate band.** N=2 multi-agent runs across calibrations to date all land in a **67-71% convergence band** (NIPR ~70%, Ping R1 68%, Ping R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%). Six observations across two industries, three substrate configurations, and two requirement shapes (system-build vs utility-tool); range from rich corpus to single-paragraph corpus. Treat as an empirical regularity, not yet a fixed point of the protocol's mechanism. Practical corollaries:
+
+- **Substantially higher than ~71%** suggests the requirement was overdetermined. Single-agent next time may be fine.
+- **Substantially lower than ~67%** suggests requirements-level ambiguity (Andon-class) or substrate-confounded inputs (operator should re-check substrate sanitisation).
+- **Within band:** healthy multi-agent run; expected character of divergence is *real architectural choices the human gate must resolve*, not contradictory readings.
+
 ### Phase 3: Sign-Off (the human gate)
 
 The model fragment + seesaw log + open questions are reviewed by:
