@@ -1,6 +1,6 @@
 # Axis Engineering — Prism Protocol
 
-> **Status:** DRAFT (v0.2, 2026-05-05). Authored by Steven Loftus. v0.2 adds operator pre-launch responsibilities (substrate sanitisation + requirement-statement framing) and a substrate-citation-density tuning diagnostic — motivated by paired example-broker Ping and Rater integration calibrations confirming gap-pattern reproducibility across requirements.
+> **Status:** DRAFT (v0.2, 2026-05-05). Authored by Steven Loftus. v0.2 adds operator pre-launch responsibilities (substrate sanitisation + requirement-statement framing) and a substrate-citation-density tuning diagnostic — motivated by paired example-broker intake-vendor and rater integration calibrations confirming gap-pattern reproducibility across requirements.
 >
 > **Domain-specific companions:** `salesforce-prism.md` (TBD — substrate config for `salesforce + mga-overlay` and `salesforce + (no MGA frame)` stacks).
 >
@@ -121,9 +121,9 @@ STOP:         Flag any case where two agents interpret the same requirement
 - **~1-4/kB:** healthy engagement. Agents are grounding decisions in specific substrate sections.
 - **Above ~4/kB:** signal that customer corpus is sparse and the substrate is carrying weight beyond its share. Not a failure — agents correctly shift evidence-weight onto the only cite-able anchor — but worth flagging the corpus as thin and asking whether the materials set should be enriched.
 
-Empirical anchors so far: Ping ~21kB substrate → ~22 citations per agent (~1.0/kB, fuller corpus); Rater ~9kB → ~13 citations (~1.4/kB); PDF Butler ~12kB → ~38 citations (~3.2/kB, sparse corpus shifted weight onto substrate). The ~1/kB number is one anchor, not a target.
+Empirical anchors so far: intake-vendor ~21kB substrate → ~22 citations per agent (~1.0/kB, fuller corpus); rater ~9kB → ~13 citations (~1.4/kB); PDF Butler ~12kB → ~38 citations (~3.2/kB, sparse corpus shifted weight onto substrate). The ~1/kB number is one anchor, not a target.
 
-**Tuning diagnostic — convergence-rate band.** N=2 multi-agent runs across calibrations to date all land in a **67-71% convergence band** (NIPR ~70%, Ping R1 68%, Ping R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%). Six observations across two industries, three substrate configurations, and two requirement shapes (system-build vs utility-tool); range from rich corpus to single-paragraph corpus. Treat as an empirical regularity, not yet a fixed point of the protocol's mechanism. Practical corollaries:
+**Tuning diagnostic — convergence-rate band.** N=2 multi-agent runs across calibrations to date all land in a **67-71% convergence band** (NIPR ~70%, Intake R1 68%, Intake R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%). Six observations across two industries, three substrate configurations, and two requirement shapes (system-build vs utility-tool); range from rich corpus to single-paragraph corpus. Treat as an empirical regularity, not yet a fixed point of the protocol's mechanism. Practical corollaries:
 
 - **Substantially higher than ~71%** suggests the requirement was overdetermined. Single-agent next time may be fine.
 - **Substantially lower than ~67%** suggests requirements-level ambiguity (Andon-class) or substrate-confounded inputs (operator should re-check substrate sanitisation).
@@ -192,11 +192,11 @@ Before launching agents, the operator MUST produce or identify a **sanitised sub
 
 **Motivating experiments (paired calibrations on example-broker).**
 
-- **Ping integration** (lifecycle ingestion, paired runs). Run 1 substrate-omitted vs Run 2 substrate-curated. Convergence flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 per agent vs zero in Run 1) and substrate-attributable gaps closed. See `testing/prism-example-broker-ping-calibration.md`.
+- **Intake-vendor integration** (lifecycle ingestion, paired runs). Run 1 substrate-omitted vs Run 2 substrate-curated. Convergence flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 per agent vs zero in Run 1) and substrate-attributable gaps closed. See `testing/prism-example-broker-intake-vendor-calibration.md`.
 - **Rater integration Run 1** (synchronous request/response, v0.2 discipline applied to the vendor-API substrate with mga-overlay declared empty). Convergence at 68%, and **the protocol-attributable gap pattern reproduced** — same shape of misses (mga-overlay-shaped Salesforce-side normalisation choices), different specific items. See `testing/prism-example-broker-rater-calibration.md`.
 - **Rater integration Run 2** (paired with Run 1; mga-overlay substrate now curated). Tested v0.2's implicit closure claim: are the gap-pattern misses *closable* by overlay substrate, or fundamentally customer-extension? Result: **3 of 4 protocol-attributable gaps closed, 1 partially closed appropriately. Character of findings shifted from invention to wiring** — agents now ask "how does customer-extension wire up against substrate-shipped primitives?" not "what primitives must we invent?" See `testing/prism-example-broker-rater-r2-calibration.md`.
 
-The combined evidence — gap-pattern *reproduction* across two requirements (Ping R1, Rater R1) and gap-pattern *closure* when overlay is curated (Rater R2) — establishes the substrate-curation discipline as a protocol-level property, not a one-off artefact. Convergence band held at 68-70% across all five paired multi-agent runs (NIPR ~70%, Ping R1 68%, Ping R2 68%, Rater R1 68%, Rater R2 70.6%). v0.2 is empirically sufficient.
+The combined evidence — gap-pattern *reproduction* across two requirements (Intake R1, Rater R1) and gap-pattern *closure* when overlay is curated (Rater R2) — establishes the substrate-curation discipline as a protocol-level property, not a one-off artefact. Convergence band held at 68-70% across all five paired multi-agent runs (NIPR ~70%, Intake R1 68%, Intake R2 68%, Rater R1 68%, Rater R2 70.6%). v0.2 is empirically sufficient.
 
 **Sanitisation checklist (per non-empty stack layer):**
 
@@ -342,8 +342,8 @@ Phase 1 instructs agents to say "this lens didn't fire" when honest. There's a r
 The Prism Protocol's empirical evidence base is catalogued in [`experiment-results.md`](experiment-results.md) under "Prism Protocol Calibrations" (Applications 17-20). At time of writing the evidence base spans:
 
 - **Six N=2 multi-agent runs** across two industries (insurance.mga, dev-tools), three substrate configurations, and two requirement shapes (system-build vs utility-tool).
-- **Convergence-rate band 67-71%** across all six runs (NIPR ~70%, Ping R1 68%, Ping R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%) — see Phase 2 tuning diagnostics for corollaries.
-- **Two paired calibrations validating the v0.2 substrate-curation discipline.** Ping (Application 18) showed substrate omission produces architecturally-confounded findings; Rater (Application 19) showed curating overlay substrate closes 3 of 4 protocol-attributable gaps fully and 1 partially-but-appropriately. The character of findings shifts predictably from *invention* to *wiring*.
+- **Convergence-rate band 67-71%** across all six runs (NIPR ~70%, Intake R1 68%, Intake R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%) — see Phase 2 tuning diagnostics for corollaries.
+- **Two paired calibrations validating the v0.2 substrate-curation discipline.** Intake (Application 18) showed substrate omission produces architecturally-confounded findings; Rater (Application 19) showed curating overlay substrate closes 3 of 4 protocol-attributable gaps fully and 1 partially-but-appropriately. The character of findings shifts predictably from *invention* to *wiring*.
 - **Substrate-conditional actor-lens hypothesis** confirmed three times across two domains (Actuary in two rater-context runs; Document Template Author in PDF Butler) — flagged as a v0.3 candidate.
 
 See `experiment-results.md` for per-application detail. Per-run blind/synthesis/calibration writeups live in `testing/` (gitignored — they reference customer-specific artefacts).

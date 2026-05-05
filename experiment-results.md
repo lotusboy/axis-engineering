@@ -1304,12 +1304,12 @@ The Prism Protocol (modelling discipline; see `prism-protocol.md`) was validated
 
 This was Prism's v0.1 validation run. The convergence:divergence ratio mirrored Triangle Protocol's ratios on architecture decisions — different problem shape, similar structural pattern. The ~70% convergence became the first datapoint in what is now a six-run empirical regularity (see Cross-Experiment Patterns below).
 
-### Application 18: Prism Protocol — example-broker Ping Integration (v0.2 motivating paired calibration)
+### Application 18: Prism Protocol — example-broker Intake-Vendor Integration (v0.2 motivating paired calibration)
 
 **Date:** 2026-05-05
-**Target:** example-broker (Salesforce-app MGA) — Ping Vision SOV ingestion lifecycle (inbound email → async file upload chain → external AI extraction → status events polling → outbound clearance push)
-**Method:** Paired Prism runs. **Run 1:** substrate-omitted (`salesforce + mga-overlay + (empty)`). **Run 2:** substrate-curated (`salesforce + mga-overlay + ping.api`). Same requirement, same FAM, same agent prompts; only difference is whether the `ping.api` vendor substrate was supplied to agents.
-**Outputs (gitignored):** `testing/prism-example-broker-ping-{blind-a,blind-b,synthesis,calibration}.md`, `testing/prism-example-broker-ping-r2-{blind-a,blind-b,synthesis}.md`
+**Target:** example-broker (Salesforce-app MGA) — SOV-extraction vendor ingestion lifecycle (inbound email → async file upload chain → external AI extraction → status events polling → outbound clearance push)
+**Method:** Paired Prism runs. **Run 1:** substrate-omitted (`salesforce + mga-overlay + (empty)`). **Run 2:** substrate-curated (`salesforce + mga-overlay + intake-vendor.api`). Same requirement, same FAM, same agent prompts; only difference is whether the `intake-vendor.api` substrate was supplied to agents.
+**Outputs (gitignored):** `testing/prism-example-broker-intake-vendor-{blind-a,blind-b,synthesis,calibration}.md`, `testing/prism-example-broker-intake-vendor-r2-{blind-a,blind-b,synthesis}.md`
 
 #### Results — paired runs
 
@@ -1323,7 +1323,7 @@ This was Prism's v0.1 validation run. The convergence:divergence ratio mirrored 
 
 #### Significance
 
-This run identified **substrate omission as a discipline gap** — Run 1's findings were architecturally-confounded because agents inferred Ping behaviour from the customer requirements doc rather than from the vendor API contract. Curating the substrate (Run 2) closed substrate-attributable gaps in object alignment and state-machine specifics, but the four protocol-attributable gaps (Case as first-class intake, Phase 1/2/3 IP mapping, reverse-link patterns, mga-overlay vs custom field-naming) reproduced — all mga-overlay-shaped Salesforce-side normalisation choices.
+This run identified **substrate omission as a discipline gap** — Run 1's findings were architecturally-confounded because agents inferred vendor behaviour from the customer requirements doc rather than from the vendor API contract. Curating the substrate (Run 2) closed substrate-attributable gaps in object alignment and state-machine specifics, but the four protocol-attributable gaps (Case as first-class intake, Phase 1/2/3 IP mapping, reverse-link patterns, mga-overlay vs custom field-naming) reproduced — all mga-overlay-shaped Salesforce-side normalisation choices.
 
 The convergence rate held flat at 68% across both runs. **Substrate is a quality multiplier, not a quantity multiplier.** This run motivated the v0.2 substrate-curation discipline now in `prism-protocol.md`.
 
@@ -1398,8 +1398,8 @@ Six N=2 multi-agent runs, all in band:
 | Run | Convergence | Industry | Stack | Corpus |
 |---|---|---|---|---|
 | Application 17 — NIPR | ~70% | insurance.mga | `salesforce + mga-overlay + nipr.api` | rich |
-| Application 18 — Ping R1 | 68% | insurance.mga | `salesforce + mga-overlay + (empty)` | rich |
-| Application 18 — Ping R2 | 68% | insurance.mga | `salesforce + mga-overlay + ping.api` | rich |
+| Application 18 — Intake R1 | 68% | insurance.mga | `salesforce + mga-overlay + (empty)` | rich |
+| Application 18 — Intake R2 | 68% | insurance.mga | `salesforce + mga-overlay + intake-vendor.api` | rich |
 | Application 19 — Rater R1 | 68% | insurance.mga | `salesforce + (empty mga-overlay) + rater-api` | rich |
 | Application 19 — Rater R2 | 70.6% | insurance.mga | `salesforce + mga-overlay + rater-api` | rich |
 | Application 20 — PDF Butler | 67.3% | dev-tools | `python.cli + salesforce-cli + pdf-butler-cli-plugin` | sparse |
@@ -1410,7 +1410,7 @@ Treated as an empirical regularity (not yet a fixed point of the protocol's mech
 
 Two paired calibrations independently validated v0.2:
 
-- **Application 18 (Ping):** substrate omission (Run 1) produced architecturally-confounded findings; substrate curation (Run 2) closed substrate-attributable gaps. Convergence flat at 68%; substrate citations went 0 → ~22-24 per agent.
+- **Application 18 (Intake):** substrate omission (Run 1) produced architecturally-confounded findings; substrate curation (Run 2) closed substrate-attributable gaps. Convergence flat at 68%; substrate citations went 0 → ~22-24 per agent.
 - **Application 19 (Rater):** empty-overlay produced four protocol-attributable gaps clustering on mga-overlay conventions (Run 1); curating the overlay closed three of four fully and one partially-but-appropriately (Run 2).
 
 The **character-shift from invention to wiring** is the strongest qualitative result. This is what the v0.2 substrate-curation discipline was claimed to produce; the paired runs confirmed the claim empirically.
