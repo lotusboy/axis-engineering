@@ -115,7 +115,13 @@ STOP:         Flag any case where two agents interpret the same requirement
               resolved before modelling continues.
 ```
 
-**Tuning diagnostic — substrate-citation density.** Multi-agent calibrations to date show citation density tracks substrate file size at roughly **~1 explicit substrate-section citation per kilobyte** of substrate file (Ping ~21kB → ~22 citations per agent; Rater ~9kB → ~13 citations per agent). The ratio is a cheap diagnostic for "did the agents engage with the substrate, or just nod at it?" If a future run shows citation density dropping to ~0.3/kB or lower while the substrate is normal-sized, that is a signal the substrate is not doing its job — likely too generic, too removed from the requirement, or padded with content the implementation lens cannot use. Treat as input to the next sanitisation pass, not as an agent failure.
+**Tuning diagnostic — substrate-citation density.** Multi-agent calibrations to date show citation density scales with substrate file size and corpus richness. Read it as a value-band, not a single target:
+
+- **Below ~0.3/kB:** warning signal. Substrate is not doing its job — likely too generic, too removed from the requirement, or padded with content the implementation lens cannot use. Treat as input to the next sanitisation pass, not as an agent failure.
+- **~1-4/kB:** healthy engagement. Agents are grounding decisions in specific substrate sections.
+- **Above ~4/kB:** signal that customer corpus is sparse and the substrate is carrying weight beyond its share. Not a failure — agents correctly shift evidence-weight onto the only cite-able anchor — but worth flagging the corpus as thin and asking whether the materials set should be enriched.
+
+Empirical anchors so far: Ping ~21kB substrate → ~22 citations per agent (~1.0/kB, fuller corpus); Rater ~9kB → ~13 citations (~1.4/kB); PDF Butler ~12kB → ~38 citations (~3.2/kB, sparse corpus shifted weight onto substrate). The ~1/kB number is one anchor, not a target.
 
 ### Phase 3: Sign-Off (the human gate)
 
