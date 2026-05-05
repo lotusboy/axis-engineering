@@ -1,6 +1,6 @@
 # Axis Engineering — Prism Protocol
 
-> **Status:** DRAFT (v0.2, 2026-05-05). Authored by Steven Loftus. v0.2 adds operator pre-launch substrate-curation responsibilities under "Substrate and Industry as Inputs" — motivated by example-broker Ping integration calibration.
+> **Status:** DRAFT (v0.2, 2026-05-05). Authored by Steven Loftus. v0.2 adds operator pre-launch responsibilities (substrate sanitisation + requirement-statement framing) and a substrate-citation-density tuning diagnostic — motivated by paired example-broker Ping and Rater integration calibrations confirming gap-pattern reproducibility across requirements.
 >
 > **Domain-specific companions:** `salesforce-prism.md` (TBD — substrate config for `salesforce + mga-overlay` and `salesforce + (no MGA frame)` stacks).
 >
@@ -115,6 +115,8 @@ STOP:         Flag any case where two agents interpret the same requirement
               resolved before modelling continues.
 ```
 
+**Tuning diagnostic — substrate-citation density.** Multi-agent calibrations to date show citation density tracks substrate file size at roughly **~1 explicit substrate-section citation per kilobyte** of substrate file (Ping ~21kB → ~22 citations per agent; Rater ~9kB → ~13 citations per agent). The ratio is a cheap diagnostic for "did the agents engage with the substrate, or just nod at it?" If a future run shows citation density dropping to ~0.3/kB or lower while the substrate is normal-sized, that is a signal the substrate is not doing its job — likely too generic, too removed from the requirement, or padded with content the implementation lens cannot use. Treat as input to the next sanitisation pass, not as an agent failure.
+
 ### Phase 3: Sign-Off (the human gate)
 
 The model fragment + seesaw log + open questions are reviewed by:
@@ -176,7 +178,12 @@ Before launching agents, the operator MUST produce or identify a **sanitised sub
 - Agents may invent reasonable-but-wrong specifics (class names, endpoint shapes) that pattern-match plausibly but don't match reality.
 - The implementation lens fires with a hidden hole — divergences land at the wrong granularity (substrate-level, not architectural).
 
-**Motivating experiment.** The example-broker Ping integration calibration (Runs 1 and 2). Run 1 ran with `salesforce + mga-overlay + (empty)` for ping.api; Run 2 ran with the substrate properly curated. Convergence rate stayed flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 citations per agent vs zero in Run 1), and substrate-attributable gaps in object alignment and state-machine specifics closed. See `testing/prism-example-broker-ping-calibration.md`.
+**Motivating experiments (paired calibrations).** Two example-broker calibrations on substantively different requirement shapes:
+
+- **Ping integration** (lifecycle ingestion). Paired runs with substrate omitted (Run 1) vs curated (Run 2). Convergence flat at 68%, but Run 2's findings cited specific substrate sections (~22-24 per agent vs zero in Run 1) and substrate-attributable gaps closed. See `testing/prism-example-broker-ping-calibration.md`.
+- **Rater integration** (synchronous request/response calculation, v0.2 discipline applied from start). Convergence again at 68%, agents grounded in substrate (~13-14 citations per agent), and the **protocol-attributable gap pattern reproduced cleanly** — same shape of misses (mga-overlay-shaped Salesforce-side normalisation choices), different specific items. See `testing/prism-example-broker-rater-calibration.md`.
+
+Reproducibility across two requirements with different shapes (lifecycle ingestion vs synchronous calculation) is the strongest evidence so far that the substrate-curation discipline is a real protocol-level property: when overlay substrate is empty, the protocol-attributable gap pattern reproduces with same shape, different specific items.
 
 **Sanitisation checklist (per non-empty stack layer):**
 
@@ -188,6 +195,21 @@ Before launching agents, the operator MUST produce or identify a **sanitised sub
 **Sanitisation test:** does the file declare what the platform CAN do, or what THIS implementation does WITH the platform? Only the former is substrate.
 
 **For empty-by-design layers** (e.g. `salesforce + (no MGA frame)`): the protocol still requires the operator to declare them empty. The empty-lens cost is itself a value driver; the protocol must know which layer is empty by design vs missing-by-omission.
+
+### Requirement-statement framing — name load-bearing dimensions explicitly
+
+When drafting the requirement statement to pass to agents, customer-terms purity is a goal but not at the cost of dimensions that are load-bearing in the model. Agents do not recover transaction-type, temporal-lifecycle, or multi-tenancy dimensions from input materials alone — those dimensions live in the team's institutional model and need to be named explicitly.
+
+**Empirical motivation.** The example-broker Rater calibration. The drafted requirement statement was customer-terms-clean ("calculate the premium and write the result back") and implicitly assumed "rate" = "New Business rate." Both blind agents missed the entire Endorsement / Cancellation / Renewal / Reinstatement transaction model (Trans / Delta / PoC field family, prior-quote read for delta math, pro-rata calculations). The team's actual implementation has an entire field family for this — invisible to agents because the requirement statement omitted the dimension and the input materials alone didn't surface it.
+
+**Operator discipline.** Before drafting the requirement statement, ask: what dimensions are load-bearing in the customer's existing system that aren't in the customer's words? Common ones to name explicitly:
+
+- **Transaction types** — New Business / Endorsement / Cancellation / Renewal / Reinstatement / Reversal. Each may have its own pro-rata, delta, or prior-policy-traversal logic.
+- **Temporal lifecycle** — Day-1 launch / Year-3 maintenance / Year-5 schema-shift are already in Prism's lifecycle lens-set, but the requirement may have its own time horizons (renewal cycles, regulatory reporting cadences) worth naming.
+- **Multi-tenancy** — single-tenant vs multi-tenant, OWD model, sharing implications.
+- **Multi-vendor** — when one vendor exists, ask if there might be a second class of vendor in scope (e.g. wildfire as a second rater alongside AOP — the multi-rater modelling question that emerged as a unique-catch in the rater run).
+
+If a dimension is load-bearing, name it in the requirement statement even at the cost of customer-terms purity. Customer-terms framing belongs in stakeholder-facing artefacts; agent-facing framing should declare every dimension.
 
 ## Why Lens-Sets, Not Triangle Pairs
 
