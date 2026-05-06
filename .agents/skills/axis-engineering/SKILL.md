@@ -27,6 +27,8 @@ Before approving, run a Pre-mortem.
 
 **Rule of thumb:** Pick 2–3 handles across different axes.
 
+**For non-routine work, pick a protocol first:** Triangle (architecture tradeoffs) · Prism (modelling from raw materials) · Two-Pass (review existing artefacts) · Single-pass with handles (routine). Seesaw is a cross-cutting diagnostic that fires inside any of them. See README.md "Protocol selector" or `references/recipes.md` for full mechanics.
+
 ## The Five Axes
 
 | Axis | Question | Example Handles |
