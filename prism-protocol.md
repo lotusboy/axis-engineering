@@ -339,12 +339,13 @@ Phase 1 instructs agents to say "this lens didn't fire" when honest. There's a r
 
 ## Experiment Results
 
-The Prism Protocol's empirical evidence base is catalogued in [`experiment-results.md`](experiment-results.md) under "Prism Protocol Calibrations" (Applications 17-20). At time of writing the evidence base spans:
+The Prism Protocol's empirical evidence base is catalogued in [`experiment-results.md`](experiment-results.md) under "Prism Protocol Calibrations" (Applications 17-21). At time of writing the evidence base spans:
 
-- **Six N=2 multi-agent runs** across two industries (insurance.mga, dev-tools), three substrate configurations, and two requirement shapes (system-build vs utility-tool).
-- **Convergence-rate band 67-71%** across all six runs (NIPR ~70%, Intake R1 68%, Intake R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%) — see Phase 2 tuning diagnostics for corollaries.
+- **Seven N=2 multi-agent runs** (six Phase 1b + one Phase 4) across two industries (insurance.mga, dev-tools), three substrate configurations, and two requirement shapes (system-build vs utility-tool).
+- **Convergence-rate band 67-71%** across all seven runs — see Phase 2 tuning diagnostics for corollaries.
 - **Two paired calibrations validating the v0.2 substrate-curation discipline.** Intake (Application 18) showed substrate omission produces architecturally-confounded findings; Rater (Application 19) showed curating overlay substrate closes 3 of 4 protocol-attributable gaps fully and 1 partially-but-appropriately. The character of findings shifts predictably from *invention* to *wiring*.
 - **Substrate-conditional actor-lens hypothesis** confirmed three times across two domains (Actuary in two rater-context runs; Document Template Author in PDF Butler) — flagged as a v0.3 candidate.
+- **Phase 4 (Maintenance Loop) empirically validated** by Application 21 with one caveat — the mechanism reproduces structurally (PARTIALLY ABSORBS verdict, convergence band held on delta denominator, "amends not forks" promise held) but the run surfaced a Phase-4-specific failure mode (anchoring bias toward the existing model's named primitives) that produced an architectural-choice miss. Recorded as a v0.3 candidate refinement.
 
 See `experiment-results.md` for per-application detail. Per-run blind/synthesis/calibration writeups live in `testing/` (gitignored — they reference customer-specific artefacts).
 
@@ -353,9 +354,9 @@ See `experiment-results.md` for per-application detail. Per-run blind/synthesis/
 Honest caveats are catalogued in `experiment-results.md` under "Honest Caveats (Prism Evidence Base)". Headline points:
 
 - **N=2 multi-agent at each datapoint.** Larger N (3, 4, 5 agents) is untested.
-- **Five of six runs are on Salesforce-substrate projects.** Cross-platform breadth has a single datapoint (Application 20).
-- **Phase 4 maintenance loop** (model amendment over time) is design-only; no empirical data.
-- **v0.3 candidates exist but aren't yet landed:** substrate-conditional actor lenses (mature), YAGNI-pass operator discipline for tool-shape requirements (N=1), and `dev-tools.salesforce-config-migration` industry-config formalisation (nice-to-have).
+- **Six of seven runs are on Salesforce-substrate projects.** Cross-platform breadth has a single datapoint (Application 20).
+- **Phase 4 (Maintenance Loop) has one empirical datapoint** (Application 21). Mechanism reproduced structurally and the convergence band held, but a Phase-4-specific failure mode (anchoring bias toward the existing model's named primitives) produced an architectural-choice miss. A second Phase 4 datapoint would solidify the empirical regularity.
+- **v0.3 candidates accumulating but not yet landed:** substrate-conditional actor lenses (mature, N=3), Phase 4 anchoring-bias caveat (N=1), R2-deferred-decisions-as-Phase-4-amendment-blockers note (N=1), YAGNI-pass operator discipline for tool-shape requirements (N=1), substrate-size operator-instruction note (N=1), and `dev-tools.salesforce-config-migration` industry-config formalisation (nice-to-have).
 
 ## Implementation
 

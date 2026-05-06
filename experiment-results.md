@@ -1387,24 +1387,52 @@ The character-shift from *invention* to *wiring* is the strongest qualitative re
 
 First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-corpus datapoint. All three experimental questions confirmed. A new diagnostic also emerged outside the planned questions: **agents over-engineer relative to two-person teams** (both agents proposed elaborate machinery — per-org YAML config, JSONL ledger, separate `status`/`resume` commands — that the actual two-person team rejected for YAGNI reasons). One datapoint, recorded as a v0.3 candidate operator-discipline note pending more evidence.
 
+### Application 21: Prism Protocol — example-broker Rater Phase 4 (Maintenance Loop) — first empirical Phase 4 run
+
+**Date:** 2026-05-06
+**Target:** example-broker — wildfire premium discretionary adjustment requirement (KET-264 ticket-shape) added mid-stream against an existing Phase 3 sign-off model
+**Method:** Prism Phase 4 (Maintenance Loop). Starting model: the Application 19 R2 synthesis treated as frozen Phase 3 sign-off. New requirement (one paragraph, deliberately under-specifying *where* the multiplication happens — vendor-side, AOP-rater-side, or Apex-side). Stack expanded from Application 19's three layers to four: `salesforce + mga-overlay + rater-api + wildfire-api` with all four substrated.
+**Outputs (gitignored):** `testing/prism-example-broker-rater-phase4-{blind-a,blind-b,synthesis,calibration}.md`. Calibration target: actual KET-264 implementation (5 field changes, AOP-rater-internal multiplication via cross-API value injection).
+
+#### Results
+
+- **Convergence rate:** 24/35 (~68.2%) on the delta denominator — within the 67-71% Phase 1b band.
+- **Model-shape verdict:** Both agents independently reached **PARTIALLY ABSORBS** — convergent, matches the team's actual experience (KET-264 was a clean amendment, not a re-architecture).
+- **Calculation-locus prediction:** Both agents predicted Apex-side multiplication via `MGA_Rate_After`. **The team's actual choice was AOP-rater-internal cross-API value injection** — a third option neither agent surfaced because the starting model named `MGA_Rate_After` as the canonical extension surface.
+- **Field-level prediction:** 3 of 5 functional changes predicted with right shape (varying naming). Both missed the bundled `KET_WildfireDeductible__c` addition and the `KET_WfTechnicalPremium__c` repurposing-as-intermediate signature of cross-API injection.
+- **Substrate-citation density** on the new wildfire substrate: ~0.65-0.92/kB combined — within healthy band, comparable to existing-substrate density.
+- **Andon flags:** None.
+- **Cost:** ~353k tokens (Agent A 134k + Agent B 131k + synthesis 89k) — **~35% MORE expensive than Application 19 R2** despite agents' self-reports of "feeling cheaper." Phase 4 saves cognitive effort (delta-scoped output) but costs more in input load (starting model + extra substrate + same materials).
+
+#### Significance
+
+**Phase 4 mechanism is empirically validated** for the first time. The protocol's "amends not forks" promise held structurally — neither agent forced re-architecture. Convergence band held. Substrate-curation discipline ports cleanly to Phase 4. Multi-substrate orchestration questions surfaced as expected open questions rather than silent defaults.
+
+**One Phase-4-specific failure mode discovered:** *anchoring bias toward the existing model's named primitives*. Both agents converged on the wrong architectural choice (Apex-side multiplication) because the R2 starting model had named `MGA_Rate_After` as the canonical extension surface. Cross-API value injection — the team's actual choice — wasn't surfaced because the starting model didn't model that pattern. **Phase 4 trades exploration breadth for amendment efficiency.** This is a genuine protocol limitation worth recording as a v0.3 candidate refinement (e.g., for amendments touching multi-substrate orchestration, consider running fresh Phase 1b in parallel with Phase 4 as an exploration check).
+
+A second v0.3 candidate also emerged: **R2-deferred decisions become Phase 4 amendment-blockers.** Both agents independently noticed that three R2 open questions / divergences (D1 wildfire temporal framing, D2 iteration audit destination, D3 pre-flight semantics) had to *close* inside this Phase 4 amendment. Phase 3 deferral isn't free — some deferrals propagate to Phase 4 sign-off as forced closures.
+
+A small operator-discipline note also emerged: **substrate-size self-reporting is unreliable** (both agents under-reported the wildfire substrate size by ~2× — this propagated into their citation-density math). Pass substrate sizes externally; don't trust agent self-reports.
+
 ---
 
 ## Cross-Experiment Patterns (Prism)
 
-### Convergence-rate band: 67-71% across six runs
+### Convergence-rate band: 67-71% across seven runs (six Phase 1b + one Phase 4)
 
-Six N=2 multi-agent runs, all in band:
+Seven N=2 multi-agent runs, all in band:
 
-| Run | Convergence | Industry | Stack | Corpus |
-|---|---|---|---|---|
-| Application 17 — NIPR | ~70% | insurance.mga | `salesforce + mga-overlay + nipr.api` | rich |
-| Application 18 — Intake R1 | 68% | insurance.mga | `salesforce + mga-overlay + (empty)` | rich |
-| Application 18 — Intake R2 | 68% | insurance.mga | `salesforce + mga-overlay + intake-vendor.api` | rich |
-| Application 19 — Rater R1 | 68% | insurance.mga | `salesforce + (empty mga-overlay) + rater-api` | rich |
-| Application 19 — Rater R2 | 70.6% | insurance.mga | `salesforce + mga-overlay + rater-api` | rich |
-| Application 20 — PDF Butler | 67.3% | dev-tools | `python.cli + salesforce-cli + pdf-butler-cli-plugin` | sparse |
+| Run | Convergence | Industry | Stack | Corpus | Phase |
+|---|---|---|---|---|---|
+| Application 17 — NIPR | ~70% | insurance.mga | `salesforce + mga-overlay + nipr.api` | rich | 1b |
+| Application 18 — Intake R1 | 68% | insurance.mga | `salesforce + mga-overlay + (empty)` | rich | 1b |
+| Application 18 — Intake R2 | 68% | insurance.mga | `salesforce + mga-overlay + intake-vendor.api` | rich | 1b |
+| Application 19 — Rater R1 | 68% | insurance.mga | `salesforce + (empty mga-overlay) + rater-api` | rich | 1b |
+| Application 19 — Rater R2 | 70.6% | insurance.mga | `salesforce + mga-overlay + rater-api` | rich | 1b |
+| Application 20 — PDF Butler | 67.3% | dev-tools | `python.cli + salesforce-cli + pdf-butler-cli-plugin` | sparse | 1b |
+| Application 21 — Phase 4 | 68.2% | insurance.mga | `salesforce + mga-overlay + rater-api + wildfire-api` | n/a (delta-scoped) | **4** |
 
-Treated as an empirical regularity (not yet a fixed point of the protocol's mechanism — six observations of N=2 each, larger N untested). Practical corollaries are now formalised in `prism-protocol.md` Phase 2 tuning notes.
+Treated as an empirical regularity (not yet a fixed point of the protocol's mechanism — seven observations of N=2 each, larger N untested). Phase 4 (Application 21) lands centre-band on a *delta denominator*, suggestive evidence that the convergence regularity is a property of the protocol mechanism rather than specific to Phase 1b. Practical corollaries are formalised in `prism-protocol.md` Phase 2 tuning notes.
 
 ### v0.2 gap-closure validation — the substrate-curation discipline works
 
@@ -1427,11 +1455,18 @@ The **character-shift from invention to wiring** is the strongest qualitative re
 
 ### Citation-density value-band
 
-Six runs show citation density between ~1.0 and ~3.25 per kB. The diagnostic in `prism-protocol.md` is now expressed as a band rather than a target:
+Six Phase 1b runs show citation density between ~1.0 and ~3.25 per kB; Phase 4 (Application 21) attenuated to ~0.65-0.92/kB which is appropriate for delta-scoped refraction (the existing model carries findings the substrate previously had to produce). The diagnostic in `prism-protocol.md` is expressed as a band rather than a target:
 
 - **Below ~0.3/kB:** warning — substrate not engaged.
-- **~1-4/kB:** healthy engagement.
+- **~1-4/kB:** healthy engagement (Phase 1b).
+- **~0.5-1/kB acceptable for Phase 4** — attenuation reflects starting-model carrying weight that substrate would otherwise.
 - **Above ~4/kB:** signal that customer corpus is sparse and substrate is carrying weight beyond its share. Not a failure; consider whether the corpus should be enriched.
+
+### Phase 4 (Maintenance Loop) — empirically validated with one caveat
+
+Application 21 is the protocol's first empirical Phase 4 datapoint. The "amends not forks" promise held structurally, model-shape verdict converged across agents (PARTIALLY ABSORBS, matching team experience), and convergence-rate band held on the delta denominator. **One Phase-4-specific failure mode surfaced:** *anchoring bias toward the existing model's named primitives*. When the new requirement touches a multi-substrate orchestration question that the starting model didn't anticipate, agents tend to anchor on the model's named extension surface rather than exploring alternative substrates. Recorded as a v0.3 candidate refinement: for amendments touching multi-substrate orchestration, consider running fresh Phase 1b in parallel with Phase 4 as an exploration check.
+
+**Phase 4 cost finding:** ~35% MORE tokens than Phase 1b on a comparable requirement, despite agents' self-reports of feeling cheaper. Output-side cost lower (delta-scoped); input-side cost higher (starting model + extra substrates). Phase 4 saves *cognitive effort*, not necessarily *token spend*.
 
 ---
 
@@ -1440,6 +1475,12 @@ Six runs show citation density between ~1.0 and ~3.25 per kB. The diagnostic in 
 The evidence base is the strongest the protocol has had, but it has known limits worth surfacing:
 
 - **N=2 multi-agent at each datapoint.** Larger N (3, 4, 5 agents) is untested. The 67-71% convergence band could be a property of N=2 specifically rather than a fixed point of the protocol's mechanism.
-- **Five of six runs are on Salesforce-substrate projects.** The cross-platform / cross-vendor breadth has a single datapoint (Application 20), and even that is on Salesforce CLI underneath. A second non-insurance run on a fundamentally different platform would strengthen the cross-domain claim.
-- **The "agents over-engineer relative to two-person teams" finding has only one datapoint** (Application 20) and is not yet formalised as protocol guidance. It's a real limitation of the protocol's output for tool-shape requirements where the team-is-the-customer.
-- **v0.3 candidates exist but aren't yet landed.** Substrate-conditional actor lenses (N=3, mature enough to land), YAGNI-pass operator discipline for tool-shape requirements (N=1, needs more datapoints), and the `dev-tools.salesforce-config-migration` industry-config formalisation (nice-to-have, not load-bearing) are all queued as future work.
+- **Six of seven runs are on Salesforce-substrate projects.** Cross-platform / cross-vendor breadth has a single datapoint (Application 20, PDF Butler), and even that is on Salesforce CLI underneath. A second non-insurance run on a fundamentally different platform would strengthen the cross-domain claim.
+- **Phase 4 (Maintenance Loop) has one empirical datapoint** (Application 21). The mechanism reproduced structurally and the convergence band held, but the run discovered a Phase-4-specific failure mode (anchoring bias toward the existing model's named primitives) that produced an architectural-choice miss. A second Phase 4 run on a different requirement shape — particularly one *not* involving multi-substrate orchestration where anchoring bias wouldn't bite — would solidify the empirical regularity.
+- **v0.3 candidates accumulating but not yet landed.** Several findings are mature enough to land but are queued as a future PR rather than bundled with v0.2:
+  - **Substrate-conditional actor lenses** (N=3 across two domains — Application 19 R1+R2 + Application 20). Mature enough to land.
+  - **Phase 4 anchoring bias caveat** (N=1, Application 21). Needs at least one more Phase 4 datapoint to confirm.
+  - **R2-deferred-decisions-as-Phase-4-amendment-blockers** operator-discipline note (N=1, Application 21).
+  - **YAGNI-pass operator discipline** for tool-shape requirements (N=1, Application 20).
+  - **Substrate-size operator-instruction note** (pass externally; agent self-report is unreliable — N=1, Application 21).
+  - **`dev-tools.salesforce-config-migration` industry-config formalisation** (nice-to-have, not load-bearing).
