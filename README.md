@@ -6,6 +6,25 @@ Axis Engineering is a prompt methodology that changes *how* AI thinks, not just 
 
 It does this by applying a small number of named "behavior handles" (e.g. Genba, Pre-mortem, MECE) that act as high-density tokens, activating existing reasoning patterns inside the model's training data. You are not teaching the AI — you are selecting which latent capabilities to emphasise.
 
+## Protocol selector — which protocol fits this task?
+
+```
+Is the work routine (config change, small feature)?
+  → Single-pass with 2–3 handles
+Are you choosing between viable architectures with real tradeoffs?
+  → Triangle Protocol (TQ/TC/CQ multi-agent + synthesis)
+Are you producing a first-draft system shape from raw customer materials?
+  → Prism Protocol (multi-lens refraction; substrate as data)
+Are you reviewing an existing artefact for issues?
+  → Two-Pass Strategy (constructive then adversarial in fresh contexts)
+
+Seesaw Principle fires inside any of the above when a 3-pole tension
+(Test↔Design↔Implementation, Actor↔Model↔Framework, User↔Design↔UI)
+surfaces an imbalance — log a ticket, fix upstream, don't paper over.
+```
+
+See protocol docs for full mechanics: [Triangle](triangle-protocol.md) · [Prism](prism-protocol.md) · [Two-Pass](two-pass-strategy.md) · [Seesaw](seesaw-principle.md).
+
 ## The Full Vocabulary
 Axis Engineering is a vocabulary of 33 terms — drawn from Toyota, McKinsey, Netflix, the Gang of Four, and other well-known frameworks — that activate deep knowledge the AI already has. Each term is a **behavior handle**: a single word or phrase that shifts how the AI approaches a task, what it looks for, and how it reports findings.
 
