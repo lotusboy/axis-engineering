@@ -398,6 +398,4 @@ The combination — Triangle's multi-agent structure + Soft Systems' multi-persp
 - [ ] Define the substrate config YAML schema (currently described only narratively). Suggested approach: schema follows usage; build the first 2–3 substrate configs informally, then formalise.
 - [ ] Define the industry config YAML schema. Same approach.
 - [ ] Write `salesforce-prism.md` companion (the Salesforce-substrate-flavoured version of this protocol, mirroring how `salesforce-triangle.md` extends `triangle-protocol.md`).
-- [ ] Run N=3 blind experiment on a different requirement type to test cross-domain transferability.
-- [ ] Test on a non-insurance industry (greenfield, Salesforce-only) to validate the industry-config separation.
-- [ ] Test on past projects with known outcomes (example-broker, example-mga-ref, example-finance, example-sf-1, example-sf-2) to calibrate against ground truth — same pattern Triangle Protocol used (`testing/triangle-examplevision-*.md`).
+- [ ] Land v0.3 candidates as they mature: substrate-conditional actor lenses (already N=3 across two domains), YAGNI-pass operator discipline for tool-shape requirements (currently N=1), and post-hoc industry-config formalisation for non-insurance domains. See `experiment-results.md` § Honest Caveats for current status.
