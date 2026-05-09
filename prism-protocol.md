@@ -1,6 +1,8 @@
 # Axis Engineering — Prism Protocol
 
-> **Status:** DRAFT (v0.2, 2026-05-05). Authored by Steven Loftus. v0.2 adds operator pre-launch responsibilities (substrate sanitisation + requirement-statement framing) and a substrate-citation-density tuning diagnostic — motivated by paired example-broker intake-vendor and rater integration calibrations confirming gap-pattern reproducibility across requirements.
+> **Status:** v1.0 (2026-05-09). Authored by Steven Loftus.
+>
+> **What v1.0 adds over v0.2:** dual-rate convergence reporting (strict + broad), three-way unique-catch subdivision (complementary / hidden divergence / fluke), mermaid diagram as standard Phase 2 output, Phase 4 anti-anchoring guard, materials-richness as a tuning diagnostic, and the dev-tools-wider-band hypothesis revised to a measurement artifact. Empirical basis: ten multi-agent calibration runs across two industries and four substrate compositions.
 >
 > **Domain-specific companions:** `salesforce-prism.md` (TBD — substrate config for `salesforce + mga-overlay` and `salesforce + (no MGA frame)` stacks).
 >
@@ -13,6 +15,22 @@ Axis Engineering's single-pass design works when the architecture is overdetermi
 Modelling — the activity of taking raw customer materials and producing a stable, reviewable outline of the system — has its own asymmetry. Single-agent modelling commits to a first-pass shape and elaborates it; alternative shapes never surface. Triangle would generate three competing models, but the question at modelling-time isn't "which tradeoff?" — it's "which viewpoints have we accounted for?" Constraint pairings (TQ/TC/CQ) don't surface viewpoint gaps.
 
 The Prism Protocol does for modelling what Triangle does for decisions: it surfaces the solution space rather than committing to one point in it. The mechanism is *refraction* through multiple viewpoints, with the Seesaw Principle as the diagnostic that surfaces imbalances during refraction.
+
+## Why bring your own substrate?
+
+Prism takes three inputs from the operator: **stack documentation** (what the platform CAN do), **industry documentation** (the actor lens-set, pipeline shape, domain vocabulary), and **customer materials** (SOW, transcripts, samples). All three are mandatory. None can be filled in from "the LLM probably knows."
+
+**The alternative is the LLM defaulting to its training-data view of your platform.** That view may be:
+
+- **Stale** — training cutoffs are months or years old; platform releases since then are invisible.
+- **Too broad** — the LLM has seen all of Salesforce/Azure/etc., not the slice your project lives in. Without scoping, it pulls patterns from contexts that don't apply.
+- **Cross-contaminated** — the LLM may have absorbed other customers' implementation patterns from public Q&A, blog posts, or open-source repos. Without your scoped substrate, those patterns leak into the model it produces for you.
+
+**Substrate is how you tell the model: "use this, not whatever you happened to absorb."** The same logic applies to industry and customer materials. The discipline isn't bureaucracy — it's the *opposite*. It deliberately constrains the LLM to current, relevant, scoped knowledge instead of letting it default to generic training data.
+
+If you don't bring substrate, Prism still runs — but the implementation lens fires from the LLM's defaults, and you lose the protocol's ability to honestly distinguish "platform capability" from "customer extension." The empty-by-design lens (where a stack layer is deliberately absent) only carries signal value if all *non*-empty layers are explicitly populated. Substrate is opt-in but uniformly so.
+
+See `## Substrate and Industry as Inputs` below for the operator pre-launch checklist and sanitisation discipline.
 
 ## The Three Lens-Sets
 
@@ -91,29 +109,42 @@ Agents must not see each other's output. Each produces three artefacts independe
 
 ### Phase 2: Synthesis
 
-Each refraction (whether single- or multi-agent) produces three artefacts:
+Each refraction (whether single- or multi-agent) produces **four artefacts** (v1.0):
 
 1. **Model fragment** — objects, fields, relationships, status state machines, sharing implications. Substrate-flavoured (Salesforce primitives if substrate=salesforce, etc.).
 2. **Seesaw log** — list of imbalances surfaced during refraction, with the signal each indicates and the action it forces.
 3. **Open questions** — real ambiguities the materials don't resolve, each with an audience for resolution (UW domain expert, compliance lead, product owner, etc.).
+4. **Mermaid model diagram** — a spatial representation of the model fragment intended for human-gate / stakeholder consumption. ~15-30 nodes, subgraphs by lifecycle stage or structural concern, risk markers placed at Seesaw imbalance points, substrate-origin distinction (substrate / overlay / customer-extension / external) made visually explicit. The diagram is a spatial view of artefact 1, not a separate model.
 
 For multi-agent runs, a synthesis pass produces:
 
 ```
 AXES:         MECE + First Principles
-TARGET:       N agent outputs (model fragments + seesaw logs + open questions)
+TARGET:       N agent outputs (model fragments + seesaw logs + open questions
+              + mermaid diagrams)
 TASK:         Compare and synthesise.
               Do NOT pick a winner — the human decides.
               Surface convergence (high-confidence — multiple agents agreed),
               divergence (genuine architectural choices),
               and unique catches (an edge case caught by only one agent).
-STRUCTURE:    Convergence → Divergence → Unique catches → Meta-findings
+STRUCTURE:    Convergence → Divergence → Unique catches → Mermaid comparison
+              → Meta-findings
 EVIDENCE:     Cite each agent's output for every comparison point.
               Read all agent outputs in full before writing comparison.
 STOP:         Flag any case where two agents interpret the same requirement
               differently — that's requirements-level ambiguity, must be
               resolved before modelling continues.
 ```
+
+**Unique-catches three-way subdivision (v1.0):** classify each unique catch as one of:
+
+- **Complementary coverage** — real signal, no contradiction; the other agent simply didn't surface this thread.
+- **Hidden divergence** — the catch implies a position the other agent took the opposite of (without saying so explicitly). Hidden divergences are model disagreements in substance and should be promoted to the Divergence list for human-gate visibility.
+- **Fluke / noise** — invented, low-evidence, or one-agent imagination.
+
+This subdivision exists because lumping all uniques as non-convergence inflates the disagreement signal: most uniques are complementary (one agent saw something the other didn't, no conflict), only some are hidden divergences (real model disagreement), and fluke is rare.
+
+**Mermaid comparison section** reports: structural overlap (node-by-node), connection overlap (edge-by-edge), risk-marker placement (per-node), diagram type and granularity, stakeholder-readability verdict, and **diagram-vs-text alignment per agent** (the diagram should match each agent's own textual model fragment; drift is a quality concern).
 
 **Tuning diagnostic — substrate-citation density.** Multi-agent calibrations to date show citation density scales with substrate file size and corpus richness. Read it as a value-band, not a single target:
 
@@ -123,11 +154,24 @@ STOP:         Flag any case where two agents interpret the same requirement
 
 Empirical anchors so far: intake-vendor ~21kB substrate → ~22 citations per agent (~1.0/kB, fuller corpus); rater ~9kB → ~13 citations (~1.4/kB); PDF Butler ~12kB → ~38 citations (~3.2/kB, sparse corpus shifted weight onto substrate). The ~1/kB number is one anchor, not a target.
 
-**Tuning diagnostic — convergence-rate band.** N=2 multi-agent runs across calibrations to date all land in a **67-71% convergence band** (NIPR ~70%, Intake R1 68%, Intake R2 68%, Rater R1 68%, Rater R2 70.6%, PDF Butler 67.3%). Six observations across two industries, three substrate configurations, and two requirement shapes (system-build vs utility-tool); range from rich corpus to single-paragraph corpus. Treat as an empirical regularity, not yet a fixed point of the protocol's mechanism. Practical corollaries:
+**Tuning diagnostic — convergence rate (v1.0 dual reporting).** Report two rates as standard:
 
-- **Substantially higher than ~71%** suggests the requirement was overdetermined. Single-agent next time may be fine.
-- **Substantially lower than ~67%** suggests requirements-level ambiguity (Andon-class) or substrate-confounded inputs (operator should re-check substrate sanitisation).
+- **Strict rate** = `convergence / (convergence + divergence + unique-catches-total)`. This is the v0.2 measurement, retained for backwards compatibility.
+- **Broad rate** = `convergence / (convergence + divergence)` — where "divergence" includes both explicit and hidden-divergence subtypes. Broad measures *agreement that survives commitment to shape*, excluding complementary-coverage uniques (which are real signal but not model disagreement).
+
+**Empirical band (v1.0):** the **broad rate** lands in a **62-65% band** across multi-agent runs spanning two industries, four substrate compositions, and Phase 1, Phase 4, and mermaid-augmented variants. The strict rate is materials-richness-dependent and ranges more widely (40-71%); read the strict rate as a tuning diagnostic for materials richness rather than a model-shape convergence measure.
+
+Practical corollaries (apply to broad rate):
+
+- **Substantially higher than ~65%** suggests the requirement was overdetermined. Single-agent next time may be fine.
+- **Substantially lower than ~62%** suggests requirements-level ambiguity (Andon-class) or substrate-confounded inputs (operator should re-check substrate sanitisation).
 - **Within band:** healthy multi-agent run; expected character of divergence is *real architectural choices the human gate must resolve*, not contradictory readings.
+
+**Tuning diagnostic — materials richness affects strict rate.** Materials with explicit empty zones (e.g., "Follow-Up Questions" columns, TBD lists, open issue trackers) inflate complementary-uniques volume without indicating model-shape divergence. Strict rate will be deflated proportionally. Broad rate is the right comparator across runs with different materials shapes. Operator-side mitigation: aim for substrates and materials that pull both blind agents to similar reading depth; asymmetric reading depth produces asymmetric catch character.
+
+**Phase 4 has its own band.** Phase 4 (Maintenance Loop) outputs amendment-shape choices that have more granular ways to disagree than Phase 1 model-shape claims. Phase 4 broad rate sits provisionally at **40-50%** (N=1 datapoint with anti-anchoring guard applied). Don't compare Phase 4 numbers to Phase 1 numbers.
+
+**Historical note — dev-tools-wider-band hypothesis revised.** An earlier conjecture that dev-tools utility runs have wider effective convergence bands than insurance.mga runs was a v0.2 strict-measurement artifact. Under v0.3+ broad-rate measurement, dev-tools and insurance.mga produce similar convergence (~62-65%). Retained as historical note.
 
 ### Phase 3: Sign-Off (the human gate)
 
@@ -151,6 +195,12 @@ The model fragment is the long-running artefact. As new requirements arrive:
 3. The seesaw log accumulates — it's the project's institutional memory of architectural decisions.
 
 When customer materials change (SOW amendment, regulatory change, integration vendor change), the affected model fragments are re-refracted. The Prism doesn't fork the model; it amends it.
+
+**Anti-anchoring guard (v1.0 — required for Phase 4 agent prompts).** Phase 4 has a known failure mode: agents anchor on the existing model's named primitives instead of refracting the new requirement freshly. This produces architectural-choice misses where the new requirement should suggest a different shape than the existing model used. Empirical evidence shows the failure mode is **prompt-mitigable**, not model-fundamental — the guard below has held across the Phase 4 datapoints where it was applied. **Include this instruction verbatim in every Phase 4 agent prompt:**
+
+> Treat the existing model's named primitives as candidates, not commitments. If the new requirement suggests a different shape, propose the different shape with rationale rather than forcing the new requirement into the existing names. Weight new-requirement materials over existing-model materials when they conflict.
+
+The guard is mandatory, not optional. Omitting it returns Phase 4 to its pre-v1.0 anchoring failure mode.
 
 ## Substrate and Industry as Inputs
 
@@ -180,9 +230,11 @@ Substrates compose. `salesforce + mga-overlay + fsc` loads three substrate confi
 
 The protocol code never branches on substrate or industry name. Configs are data the protocol loads and refracts through. New substrate = new YAML file. New industry = new YAML file. No protocol fork.
 
-### Operator pre-launch responsibilities (v0.2)
+### Operator pre-launch responsibilities
 
 Before launching agents, the operator MUST produce or identify a **sanitised substrate file for each non-empty layer in the stack string**. The protocol cannot trust that the operator hands it clean substrate — the protocol must require the operator to demonstrate they have one.
+
+**Honest caveat (v1.0):** substrate sanitisation is **operator discipline, not yet schema-enforced**. The checklist below is reliable when followed but manual; leaks happen when operators reuse substrate across customer engagements without re-sanitising for the new context. A schema + automated validator (lint for known customer-namespace prefixes, structural check against the substrate template) is a v1.x candidate. Until then: read substrate carefully before reuse, especially the extension-points section where customer-prefix examples typically live.
 
 **Why this matters.** Vendor API documentation in any integrator's repo is typically co-located with the team's implementation choices (per-endpoint "how we use this" notes, deploy-time discoveries dressed as docs facts, change logs of the team's own usage). Including such an annotated reference raw leaks ground truth. Excluding it entirely leaves the substrate-stdlib lens for that layer empty, which produces architecturally-confounded findings:
 
@@ -339,24 +391,28 @@ Phase 1 instructs agents to say "this lens didn't fire" when honest. There's a r
 
 ## Experiment Results
 
-The Prism Protocol's empirical evidence base is catalogued in [`experiment-results.md`](experiment-results.md) under "Prism Protocol Calibrations" (Applications 17-21). At time of writing the evidence base spans:
+The Prism Protocol's empirical evidence base is catalogued in [`experiment-results.md`](experiment-results.md). At v1.0, the evidence base spans:
 
-- **Seven N=2 multi-agent runs** (six Phase 1b + one Phase 4) across two industries (insurance.mga, dev-tools), three substrate configurations, and two requirement shapes (system-build vs utility-tool).
-- **Convergence-rate band 67-71%** across all seven runs — see Phase 2 tuning diagnostics for corollaries.
-- **Two paired calibrations validating the v0.2 substrate-curation discipline.** Intake (Application 18) showed substrate omission produces architecturally-confounded findings; Rater (Application 19) showed curating overlay substrate closes 3 of 4 protocol-attributable gaps fully and 1 partially-but-appropriately. The character of findings shifts predictably from *invention* to *wiring*.
-- **Substrate-conditional actor-lens hypothesis** confirmed three times across two domains (Actuary in two rater-context runs; Document Template Author in PDF Butler) — flagged as a v0.3 candidate.
-- **Phase 4 (Maintenance Loop) empirically validated** by Application 21 with one caveat — the mechanism reproduces structurally (PARTIALLY ABSORBS verdict, convergence band held on delta denominator, "amends not forks" promise held) but the run surfaced a Phase-4-specific failure mode (anchoring bias toward the existing model's named primitives) that produced an architectural-choice miss. Recorded as a v0.3 candidate refinement.
+- **Ten multi-agent calibration runs** (Phase 1b, Phase 4, and mermaid-augmented variants) across two industries (insurance.mga, dev-tools), four substrate compositions (salesforce + mga-overlay; python + salesforce; bash + azure.cli + bicep + bitbucket-pipelines; salesforce + mga-overlay + mermaid), and multiple requirement shapes (system-build, utility-tool, infrastructure, maintenance-loop).
+- **Broad convergence-rate band 62-65%** under v1.0 dual-rate measurement (strict + broad). The strict rate ranges 40-71% depending on materials richness; the broad rate is the model-shape convergence measure and is materially more stable across domains.
+- **Substrate-curation discipline validated** by paired calibrations (Intake R1/R2, Rater R1/R2). Curating overlay substrate shifts agent character predictably from *invention* (making up plausible-but-wrong primitives) to *wiring* (asking how customer-extension wires up against substrate-shipped primitives).
+- **Phase 4 anchoring bias is prompt-mitigable.** The verbatim anti-anchoring guard (see Phase 4 above) held the failure mode at bay across the Phase 4 datapoints where it was applied. Operating without the guard returns Phase 4 to the original anchoring failure mode.
+- **Mermaid as Phase 2 output is additive.** The mermaid ask exposes architectural commitments that text-only runs leave soft (forced spatial commitment surfaces silent disagreement) without disrupting strict or broad convergence rates beyond noise. Two diagrams from blind agents agree on shape (~18 shared entities) when they agree on text.
+- **Hidden-divergence subtype is doing real classification work.** Across runs, ~25% of unique catches classify as hidden divergences — model disagreements where one agent's framing presupposes the opposite of what the other agent committed to, without saying so. v0.2 strict measurement collapsed these into "non-convergence" undifferentiated; v1.0 broad measurement promotes them to the divergence list for human-gate visibility.
+- **Fluke / noise subtype empty across N=10 runs.** Retained as safety category through N=15; reconsider for v1.x if still empty.
 
 See `experiment-results.md` for per-application detail. Per-run blind/synthesis/calibration writeups live in `testing/` (gitignored — they reference customer-specific artefacts).
 
 ### Limitations
 
-Honest caveats are catalogued in `experiment-results.md` under "Honest Caveats (Prism Evidence Base)". Headline points:
+Honest caveats:
 
 - **N=2 multi-agent at each datapoint.** Larger N (3, 4, 5 agents) is untested.
-- **Six of seven runs are on Salesforce-substrate projects.** Cross-platform breadth has a single datapoint (Application 20).
-- **Phase 4 (Maintenance Loop) has one empirical datapoint** (Application 21). Mechanism reproduced structurally and the convergence band held, but a Phase-4-specific failure mode (anchoring bias toward the existing model's named primitives) produced an architectural-choice miss. A second Phase 4 datapoint would solidify the empirical regularity.
-- **v0.3 candidates accumulating but not yet landed:** substrate-conditional actor lenses (mature, N=3), Phase 4 anchoring-bias caveat (N=1), R2-deferred-decisions-as-Phase-4-amendment-blockers note (N=1), YAGNI-pass operator discipline for tool-shape requirements (N=1), substrate-size operator-instruction note (N=1), and `dev-tools.salesforce-config-migration` industry-config formalisation (nice-to-have).
+- **Substrate sanitisation is operator discipline, not yet schema-enforced.** Manual leaks happen, especially when substrates are reused across customer engagements. A formal schema + automated validator (lint for known customer-namespace prefixes, structural check against the substrate template) is a v1.x candidate.
+- **Phase 4 has one datapoint with the anti-anchoring guard applied.** A replication-without-the-guard would lift the prompt-mitigable claim from N=1 to N=2.
+- **Mermaid additivity verified on N=1 datapoint.** Cross-stack confirmation pending.
+- **All ten calibration runs used Claude Opus.** Cross-model reproducibility (Sonnet, GPT, Gemini) is untested.
+- **No automated industry-config or substrate-config schema validation.** Configs are described narratively in this doc; YAML schemas are TBD.
 
 ## Implementation
 
@@ -394,9 +450,12 @@ The Prism Protocol's lens-set design draws from:
 
 The combination — Triangle's multi-agent structure + Soft Systems' multi-perspective + 4+1's structural-view discipline + DDD's stakeholder language + substrate-as-data parameterisation — appears to be novel as of 2026.
 
-## Open Items
+## Open Items (v1.x candidates)
 
-- [ ] Define the substrate config YAML schema (currently described only narratively). Suggested approach: schema follows usage; build the first 2–3 substrate configs informally, then formalise.
-- [ ] Define the industry config YAML schema. Same approach.
-- [ ] Write `salesforce-prism.md` companion (the Salesforce-substrate-flavoured version of this protocol, mirroring how `salesforce-triangle.md` extends `triangle-protocol.md`).
-- [ ] Land v0.3 candidates as they mature: substrate-conditional actor lenses (already N=3 across two domains), YAGNI-pass operator discipline for tool-shape requirements (currently N=1), and post-hoc industry-config formalisation for non-insurance domains. See `experiment-results.md` § Honest Caveats for current status.
+- [ ] **Substrate sanitisation tooling** — automated validator (schema check + customer-namespace lint) to catch sanitisation leaks before agents read the substrate. Currently operator-discipline; the cost of leaks is real (cross-customer contamination, biased model outputs).
+- [ ] **YAML schemas** for substrate config and industry config (currently described only narratively). Suggested approach: schema follows usage; build the first 2-3 substrate configs informally, then formalise.
+- [ ] **Phase 4 without the anti-anchoring guard** — empirical replication-without-guard to confirm the prompt-mitigation claim (currently N=1 with guard applied).
+- [ ] **Cross-model reproducibility** — replicate one Phase 1b run on Sonnet, one on a non-Anthropic model, see if the broad-rate band (62-65%) holds.
+- [ ] **`salesforce-prism.md` companion** — Salesforce-substrate-flavoured version of this protocol, mirroring how `salesforce-triangle.md` extends `triangle-protocol.md`.
+- [ ] **Substrate-conditional actor lenses** — empirical pattern observed across three runs (Actuary in rater contexts; Document Template Author in PDF Butler) where substrate-density elevates a substrate-relevant actor into the lens-set. v1.x candidate; not load-bearing for v1.0.
+- [ ] **YAGNI-pass operator discipline** for tool-shape (utility-tool) requirements — currently a single-datapoint observation; needs more runs before formalising.
