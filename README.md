@@ -2,9 +2,9 @@
 
 > Created by **Steven Loftus** (2026) — Licensed under [CC BY 4.0](LICENSE)
 
-Axis Engineering is a prompt methodology that changes *how* AI thinks, not just *what* it outputs.
+**Axis Engineering is the practice of refusing the first plausible answer until the alternatives have been seen.** It is a prompt methodology that changes *how* AI thinks, not just *what* it outputs.
 
-It does this by applying a small number of named "behavior handles" (e.g. Genba, Pre-mortem, MECE) that act as high-density tokens, activating existing reasoning patterns inside the model's training data. You are not teaching the AI — you are selecting which latent capabilities to emphasise.
+It does this by applying a small number of named "behavior handles" (e.g. Genba, Pre-mortem, MECE) that act as high-density tokens, activating existing reasoning patterns inside the model's training data. You are not teaching the AI — you are selecting which latent capabilities to emphasise. The protocols (Triangle, Prism, Two-Pass) and the cross-cutting Seesaw diagnostic are different ways of doing the one core thing: refusing premature commitment until the solution space has been surfaced.
 
 ## Protocol selector — which protocol fits this task?
 
@@ -279,6 +279,22 @@ Axis Engineering is a cognitive exoskeleton built by **Steven Loftus**, a 56-yea
 It was born from the intersection of 45 years of engineering "scrapes" and a neurodivergent (ADHD/Autism) cognitive profile. When you see the world as pure logic — where patterns, objects, and events move through interconnected systems — you realise that complex systems only break because of unverified assumptions and dropped context.
 
 LLMs default to plausible-sounding guesses under uncertainty, anchor on the first idea, and forget constraints, much like executive function drops out under stress. Axis Engineering treats AI the way a battle-scarred neurodivergent engineer treats themselves: assuming failure unless forced by a rigid, verifiable structure to read the source code, check the data shape, and think about failure modes. This framework externalises that verification discipline — a way to offload the mental burden of exhaustive validation into the environment.
+
+### Axis as externalised executive function
+
+Axis isn't *adapted to* neurodivergent cognition; it's a transcription of it. Every component compensates for a specific failure mode the author lives with daily:
+
+| Component | What it externalises |
+|-----------|----------------------|
+| **Behavior handles** | Mnemonic anchors. You don't remember the technique; you remember the word, and the word reactivates the pattern. |
+| **Axis Contract** | Forced re-anchoring at every prompt. Compensates for executive function dropping out under task load. |
+| **Two-Pass Strategy** | Recovery from context drift across sessions. |
+| **Seesaw Principle** | The interrupt that says "you're hammering, step back, you went down the wrong hole." |
+| **Prism's lens-sets** | Forced viewpoint completeness so a stakeholder isn't lost between Tuesday and Thursday. |
+| **Triangle's constraint pairings** | Forced divergence so the first plausible architecture doesn't anchor the rest. |
+| **Ticket discipline** | Outsourced long-term memory. Breadcrumbs for the future-self who has forgotten. |
+
+The methodology *is* the scaffolding. Users without working-memory or executive-function challenges still get value — verification discipline, completeness checks, divergence — but the primary design audience is anyone whose cognition needs the scaffold to work the way they want to work.
 
 ---
 
