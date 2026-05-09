@@ -490,7 +490,7 @@ These are not controlled experiments — they are production uses of the methodo
 **Date:** 2026-03-09
 **Handles:** Genba + MECE + Pre-mortem + Poka-yoke (with Axis Contract)
 **Target:** `docs/wildfire-integration/WILDFIRE_API_SOLUTION_DESIGN.md` — 687-line solution design doc for a ExampleCo-hosted wildfire API
-**Output:** `testing/review-wildfire-design.md`
+**Output:** `testing/corpus/review-wildfire-design.md`
 
 **Results:**
 
@@ -577,8 +577,8 @@ These are not controlled experiments — they are production uses of the methodo
 
 **Date:** 2026-03-09
 **Handles:** Cynefin + First Principles + MECE + Pre-mortem (with Axis Contract)
-**Target:** `testing/examplevision-requirements-only.md` — 247-line requirements-only document (all solution design stripped from 5 ExampleVision integration docs)
-**Output:** `testing/examplevision-design-from-requirements.md` (781 lines)
+**Target:** `testing/corpus/examplevision-requirements-only.md` — 247-line requirements-only document (all solution design stripped from 5 ExampleVision integration docs)
+**Output:** `testing/corpus/examplevision-design-from-requirements.md` (781 lines)
 **Comparison baseline:** Steve's actual solution design (`docs/examplevision-integration/EXAMPLEVISION_INTEGRATION_SOLUTION_DESIGN.md`, 760 lines)
 
 **Task:** Generate a complete Salesforce solution design from requirements alone — no access to any existing solution design, class names, data model, or implementation details. Then compare with the actual design that was built.
@@ -633,12 +633,12 @@ These are not controlled experiments — they are production uses of the methodo
 - CQ (Cost+Quality): Cynefin + MECE + Muda + Kent Beck's Four Rules
 - Synthesis: Cynefin + MECE + First Principles
 
-**Target:** `testing/examplevision-requirements-only.md` — same 271-line requirements document used in Application 4
+**Target:** `testing/corpus/examplevision-requirements-only.md` — same 271-line requirements document used in Application 4
 **Outputs:**
-- `testing/triangle-examplevision-agent-tq.md` — Time+Quality design
-- `testing/triangle-examplevision-agent-tc.md` — Time+Cost design
-- `testing/triangle-examplevision-agent-cq.md` — Cost+Quality design
-- `testing/triangle-examplevision-synthesis.md` — Comparison and synthesis
+- `testing/corpus/triangle-examplevision-agent-tq.md` — Time+Quality design
+- `testing/corpus/triangle-examplevision-agent-tc.md` — Time+Cost design
+- `testing/corpus/triangle-examplevision-agent-cq.md` — Cost+Quality design
+- `testing/corpus/triangle-examplevision-synthesis.md` — Comparison and synthesis
 
 **Comparison baseline:** Application 4's single-agent design (781 lines, ~90% match, 4 silent gaps)
 
@@ -700,10 +700,10 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Target:** Wildfire endorsement re-pricing + cancellation MEP calculation — extending the existing `APP_WildfireApiService` (new-business already implemented) to support endorsement and cancellation endpoints.
 **Outputs:**
-- `testing/triangle-wildfire-ec-agent-tq.md` — Time+Quality design
-- `testing/triangle-wildfire-ec-agent-tc.md` — Time+Cost design
-- `testing/triangle-wildfire-ec-agent-cq.md` — Cost+Quality design
-- `testing/triangle-wildfire-ec-synthesis.md` — Comparison and synthesis
+- `testing/corpus/triangle-wildfire-ec-agent-tq.md` — Time+Quality design
+- `testing/corpus/triangle-wildfire-ec-agent-tc.md` — Time+Cost design
+- `testing/corpus/triangle-wildfire-ec-agent-cq.md` — Cost+Quality design
+- `testing/corpus/triangle-wildfire-ec-synthesis.md` — Comparison and synthesis
 
 **Context:** This is the second Triangle Protocol experiment (N=2). Unlike Application 5 (greenfield integration from requirements), this tests the protocol on extending existing infrastructure — the wildfire new-business service, AOP rater V2 endorsement/cancellation, and PKG cancellation hook already exist. The agents must design around established patterns, transaction boundaries, and governor limit constraints.
 
@@ -749,10 +749,10 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Target:** Design a batch/bulk rating feature for ExampleRater, a serverless Azure Functions API that exposes Excel-based insurance raters as REST services. The system currently supports single-policy rating only; the design extends it to support batch operations (500–50,000 policies per batch).
 **Outputs:**
-- `testing/triangle-example-rating-batch-agent-tq.md` — Time+Quality design
-- `testing/triangle-example-rating-batch-agent-tc.md` — Time+Cost design
-- `testing/triangle-example-rating-batch-agent-cq.md` — Cost+Quality design
-- `testing/triangle-example-rating-batch-synthesis.md` — Comparison and synthesis
+- `testing/corpus/triangle-example-rating-batch-agent-tq.md` — Time+Quality design
+- `testing/corpus/triangle-example-rating-batch-agent-tc.md` — Time+Cost design
+- `testing/corpus/triangle-example-rating-batch-agent-cq.md` — Cost+Quality design
+- `testing/corpus/triangle-example-rating-batch-synthesis.md` — Comparison and synthesis
 - `testing/example-rating-batch-requirements.md` — Manufactured requirements document
 
 **Context:** This is the third Triangle Protocol experiment (N=3) and the first on a non-Salesforce platform. The purpose is to test cross-domain generalisability — whether the protocol produces genuine divergence and useful findings on Azure/Node.js without Salesforce-specific constraints (no governor limits, no DML-before-callout, no OmniStudio). Requirements were manufactured from the existing codebase context and real business need (insurance portfolio re-rating).
@@ -800,8 +800,8 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Target:** `example-modelling` — a TypeScript CLI that walks Salesforce repos and generates deterministic, AI-consumable models of every component (classes, objects, LWCs, OmniStudio, journeys, architecture views).
 **Outputs:**
-- `testing/review-example-modelling-pass1.md` — Analytical review
-- `testing/review-example-modelling-pass2.md` — Adversarial review
+- `testing/corpus/review-example-modelling-pass1.md` — Analytical review
+- `testing/corpus/review-example-modelling-pass2.md` — Adversarial review
 
 **Context:** This is the first Axis Engineering code review on a non-Salesforce codebase. The purpose is to validate that the handles and two-pass strategy transfer to TypeScript/Node.js — a fundamentally different language, runtime, and error model from Salesforce/Apex.
 
@@ -848,11 +848,11 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 **Pass 2 handles:** Chaos Engineering + Pre-mortem + Poka-yoke
 **Domain:** Python CLI (~4,000 LOC, 16 modules) — **first Axis review on Python and first review on someone else's code**
 
-**Target:** `pkg-connect-product-mover` — a Python CLI for migrating complex Salesforce Product2 data hierarchies between orgs (export to CSV, import with smart upsert, schema comparison, purge). Built by a different developer (Nigel), not the Axis reviewer.
+**Target:** `pkg-connect-product-mover` — a Python CLI for migrating complex Salesforce Product2 data hierarchies between orgs (export to CSV, import with smart upsert, schema comparison, purge). Built by a different developer, not the Axis reviewer.
 **Outputs:**
-- `testing/review-product-mover-pass1.md` — Analytical review
-- `testing/review-product-mover-pass2.md` — Adversarial review
-- `testing/review-product-mover-combined.md` — Combined deduplicated review
+- `testing/corpus/review-product-mover-pass1.md` — Analytical review
+- `testing/corpus/review-product-mover-pass2.md` — Adversarial review
+- `testing/corpus/review-product-mover-combined.md` — Combined deduplicated review
 
 **Context:** Third language (after Salesforce/Apex and TypeScript/Node.js). First time reviewing code the reviewer has no prior context on. Tests whether Axis works as a consulting tool — "review this colleague's tool."
 
@@ -902,9 +902,9 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Target:** `example-rating` — a serverless REST API that exposes Excel-based insurance raters as REST services. Pre-warmed worker pools in SharePoint, multi-tenant, Azure AD auth. **Incorrect values mean wrong premiums charged to policyholders.**
 **Outputs:**
-- `testing/review-example-rating-pass1.md` — Analytical review
-- `testing/review-example-rating-pass2.md` — Adversarial review
-- `testing/review-example-rating-combined.md` — Combined deduplicated review
+- `testing/corpus/review-example-rating-pass1.md` — Analytical review
+- `testing/corpus/review-example-rating-pass2.md` — Adversarial review
+- `testing/corpus/review-example-rating-combined.md` — Combined deduplicated review
 
 **Context:** This is the author's own code (unlike Application 9 which was someone else's). It tests Axis on a premium-critical system where calculation correctness is paramount — the highest-stakes review domain so far.
 
@@ -948,9 +948,9 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 
 **Target:** Complete deployment system for example-rating: 10 bash scripts (~2,100 LOC) for Azure infrastructure provisioning, Azure AD setup, managed identity with Graph API permissions, secret generation, deployment, and cleanup. Plus Node.js build tools and Bitbucket Pipelines CI/CD.
 **Outputs:**
-- `testing/review-example-rating-deployment-pass1.md` — Analytical review
-- `testing/review-example-rating-deployment-pass2.md` — Adversarial review
-- `testing/review-example-rating-deployment-combined.md` — Combined deduplicated review
+- `testing/corpus/review-example-rating-deployment-pass1.md` — Analytical review
+- `testing/corpus/review-example-rating-deployment-pass2.md` — Adversarial review
+- `testing/corpus/review-example-rating-deployment-combined.md` — Combined deduplicated review
 
 **Context:** This tests whether Axis handles work on infrastructure-as-code and CI/CD pipelines — a fundamentally different artifact type from application code. These scripts handle the most security-sensitive operations: Azure AD registrations, Graph API permissions, client secrets, and production deployments. A bug here is worse than a bug in the application.
 
@@ -1020,7 +1020,7 @@ The synthesis agent produced a 380-line structured comparison with all 8 require
 - Pass 1: Seven Factors + Genba + SOLID + Pre-mortem
 - Pass 2: Genba + Chaos Engineering + Poka-yoke
 **Target:** `temp-projects/example-modelling/src`
-**Output:** `testing/review-example-modelling-cascade-combined.md`
+**Output:** `testing/corpus/review-example-modelling-cascade-combined.md`
 
 **Results:**
 
@@ -1068,7 +1068,7 @@ Axis Engineering is **agent-agnostic**. Both agents exhibited the exact same cog
 ### Application 9: Agent Comparison on Design Generation (Cascade vs Claude Code)
 
 **Date:** 2026-03-28
-**Target:** `testing/examplevision-requirements-only.md`
+**Target:** `testing/corpus/examplevision-requirements-only.md`
 **Protocol:** Triangle Protocol (3 independent agents + synthesis)
 
 **Context:** Cascade ran the Triangle Protocol on the ExampleVision integration requirements. The goal was to see if Cascade (Gemini 3.1 Pro High Thinking) produces similar structured divergence and convergence compared to Claude Code (Claude 3.7 Sonnet) when constrained by the Iron Triangle (Time, Cost, Quality).
@@ -1102,7 +1102,7 @@ The Triangle Protocol works seamlessly on Cascade (Gemini 3.1 Pro High Thinking)
 **Target:** `temp-projects/example-rating`
 **Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial)
 **Model:** GPT-5.1-Codex Max High (Cascade) — ran noticeably faster and cheaper than Claude Code’s run
-**Outputs:** `testing/review-example-rating-cascade-pass1.md`, `testing/review-example-rating-cascade-pass2.md`, `testing/review-example-rating-cascade-combined.md`
+**Outputs:** `testing/corpus/review-example-rating-cascade-pass1.md`, `testing/corpus/review-example-rating-cascade-pass2.md`, `testing/corpus/review-example-rating-cascade-combined.md`
 
 | Metric | Claude Code | Cascade |
 |--------|-------------|---------|
@@ -1131,8 +1131,8 @@ The Triangle Protocol works seamlessly on Cascade (Gemini 3.1 Pro High Thinking)
 **Date:** 2026-03-28
 **Target:** `testing/example-rating-batch-requirements.md` / `temp-projects/example-rating`
 **Method:** Triangle Protocol (TQ, TC, CQ + synthesis)
-**Cascade outputs:** `testing/triangle-example-rating-batch-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
-**Claude outputs (kept untouched):** `testing/triangle-example-rating-batch-agent-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
+**Cascade outputs:** `testing/corpus/triangle-example-rating-batch-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
+**Claude outputs (kept untouched):** `testing/corpus/triangle-example-rating-batch-agent-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
 
 | Dimension | Claude Code | Cascade (GPT-5.1-Codex Max High) |
 |-----------|-------------|-----------------------------------| |
@@ -1177,7 +1177,7 @@ Starting from future experiments, all reviews and design tasks should append the
 **Date:** 2026-03-28
 **Target:** `temp-projects/pkg-connect/salesforce/src/main/default/classes/` (sampled 5 classes)
 **Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial) using the **v2 Two-Pass Checklist** and **Scoring Rubric**
-**Outputs:** `testing/review-pkg-connect-measured-pass1.md`, `testing/review-pkg-connect-measured-pass2.md`, `testing/review-pkg-connect-measured-combined.md`
+**Outputs:** `testing/corpus/review-pkg-connect-measured-pass1.md`, `testing/corpus/review-pkg-connect-measured-pass2.md`, `testing/corpus/review-pkg-connect-measured-combined.md`
 
 #### Results vs v1 Methodology
 This review strictly adhered to the newly implemented v2 checklist and evidence contract.
@@ -1196,7 +1196,7 @@ This review strictly adhered to the newly implemented v2 checklist and evidence 
 **Date:** 2026-03-28
 **Target:** Wildfire Endorsement & Cancellation Integration (re-run of Application 6)
 **Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using the **v2 Triangle Checklist**
-**Outputs:** `testing/triangle-wildfire-ec-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
+**Outputs:** `testing/corpus/triangle-wildfire-ec-cascade-tq.md`, `...-tc.md`, `...-cq.md`, `...-synthesis.md`
 
 #### Results vs v1 Methodology (Claude Code)
 This re-run aimed to measure if the v2 improvements (explicit checklists, assumption ledgers, scoring rubrics) forced tighter, more measurable design outputs from Gemini 3.1 Pro High Thinking compared to the original Claude Code run.
@@ -1218,7 +1218,7 @@ This re-run aimed to measure if the v2 improvements (explicit checklists, assump
 **Date:** 2026-03-29
 **Target:** `temp-projects/example-deployment` (redacted deployment automation repository)
 **Method:** Triangle Protocol (TQ, TC, CQ + synthesis) using v2 contracts, assumptions ledger, and rubric output
-**Outputs:** `testing/triangle-exampledeploy-agent-tq.md`, `testing/triangle-exampledeploy-agent-tc.md`, `testing/triangle-exampledeploy-agent-cq.md`, `testing/triangle-exampledeploy-synthesis.md`
+**Outputs:** `testing/corpus/triangle-exampledeploy-agent-tq.md`, `testing/corpus/triangle-exampledeploy-agent-tc.md`, `testing/corpus/triangle-exampledeploy-agent-cq.md`, `testing/corpus/triangle-exampledeploy-synthesis.md`
 
 #### Results
 
@@ -1254,7 +1254,7 @@ This run showed the protocol's practical value on CI/CD architecture decisions: 
 **Date:** 2026-03-29
 **Target:** `temp-projects/example-rag-app` (Full-Stack Next.js App Router with Gemini RAG integration)
 **Method:** Two-pass Axis Review (Pass 1 analytical, Pass 2 adversarial)
-**Outputs:** `testing/review-example-rag-app-pass1.md`, `testing/review-example-rag-app-pass2.md`, `testing/review-example-rag-app-combined.md`
+**Outputs:** `testing/corpus/review-example-rag-app-pass1.md`, `testing/corpus/review-example-rag-app-pass2.md`, `testing/corpus/review-example-rag-app-combined.md`
 
 #### Context & Significance
 This was the first Axis Engineering test run on a **Full-Stack React (Next.js) web application** heavily integrated with a native **LLM/RAG architecture**. It tests whether Axis handles can find domain-specific bugs like Prompt Injection, React Server/Client boundary issues, and custom GUID authentication flaws.
@@ -1291,7 +1291,7 @@ The Prism Protocol (modelling discipline; see `prism-protocol.md`) was validated
 **Target:** ExampleMGA insurance MGA's NIPR (National Insurance Producer Registry) sync requirement — outbound licensure synchronisation, structured-payload-in-structured-payload-out
 **Method:** Prism Protocol Phase 1b multi-agent (N=2 blind, full context isolation) + Phase 2 synthesis
 **Stack:** `salesforce + mga-overlay + nipr.api`
-**Outputs (gitignored):** `testing/prism-examplemga-nipr-sync-blind-a.md`, `testing/prism-examplemga-nipr-sync-blind-b.md`, `testing/prism-examplemga-nipr-sync-synthesis.md`
+**Outputs (gitignored):** `testing/corpus/prism-examplemga-nipr-sync-blind-a.md`, `testing/corpus/prism-examplemga-nipr-sync-blind-b.md`, `testing/corpus/prism-examplemga-nipr-sync-synthesis.md`
 
 #### Results
 
@@ -1309,7 +1309,7 @@ This was Prism's v0.1 validation run. The convergence:divergence ratio mirrored 
 **Date:** 2026-05-05
 **Target:** example-broker (Salesforce-app MGA) — SOV-extraction vendor ingestion lifecycle (inbound email → async file upload chain → external AI extraction → status events polling → outbound clearance push)
 **Method:** Paired Prism runs. **Run 1:** substrate-omitted (`salesforce + mga-overlay + (empty)`). **Run 2:** substrate-curated (`salesforce + mga-overlay + intake-vendor.api`). Same requirement, same FAM, same agent prompts; only difference is whether the `intake-vendor.api` substrate was supplied to agents.
-**Outputs (gitignored):** `testing/prism-example-broker-intake-vendor-{blind-a,blind-b,synthesis,calibration}.md`, `testing/prism-example-broker-intake-vendor-r2-{blind-a,blind-b,synthesis}.md`
+**Outputs (gitignored):** `testing/corpus/prism-example-broker-intake-vendor-{blind-a,blind-b,synthesis,calibration}.md`, `testing/corpus/prism-example-broker-intake-vendor-r2-{blind-a,blind-b,synthesis}.md`
 
 #### Results — paired runs
 
@@ -1332,7 +1332,7 @@ The convergence rate held flat at 68% across both runs. **Substrate is a quality
 **Date:** 2026-05-05
 **Target:** example-broker — synchronous rating integration via Excel-as-API service through Azure Functions middleware (push inputs, recalculate, read outputs, repeat)
 **Method:** Paired Prism runs testing v0.2's implicit closure claim: are the protocol-attributable gaps from Application 18 *closable* by overlay substrate, or fundamentally customer-extension? **Run 1:** `salesforce + (empty mga-overlay) + rater-api` substrate. **Run 2:** `salesforce + mga-overlay + rater-api` (mga-overlay now curated).
-**Outputs (gitignored):** `testing/prism-example-broker-rater-{blind-a,blind-b,synthesis,calibration}.md`, `testing/prism-example-broker-rater-r2-{blind-a,blind-b,synthesis,calibration}.md`
+**Outputs (gitignored):** `testing/corpus/prism-example-broker-rater-{blind-a,blind-b,synthesis,calibration}.md`, `testing/corpus/prism-example-broker-rater-r2-{blind-a,blind-b,synthesis,calibration}.md`
 
 #### Results — paired runs
 
@@ -1366,7 +1366,7 @@ The character-shift from *invention* to *wiring* is the strongest qualitative re
 **Date:** 2026-05-05
 **Target:** example-pdfbutler — PDF Butler config-migration CLI tool. First non-`insurance.mga`, non-Salesforce-as-target Prism run. Different industry (`dev-tools.salesforce-config-migration`), different scale (utility-tool, not multi-month system), different corpus (single synthesised requirement statement; no SOW, no transcripts, no requirements doc).
 **Method:** Prism Phase 1b multi-agent (N=2 blind) + Phase 2 synthesis. Stack: `python.cli + salesforce-cli + pdf-butler-cli-plugin` with only the third layer substrate-curated (the first two declared as background-knowledge).
-**Outputs (gitignored):** `testing/prism-example-pdfbutler-{blind-a,blind-b,synthesis,calibration}.md`
+**Outputs (gitignored):** `testing/corpus/prism-example-pdfbutler-{blind-a,blind-b,synthesis,calibration}.md`
 
 #### Results
 
@@ -1392,7 +1392,7 @@ First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-
 **Date:** 2026-05-06
 **Target:** example-broker — wildfire premium discretionary adjustment requirement (mid-stream amendment ticket against an existing Phase 3 sign-off model)
 **Method:** Prism Phase 4 (Maintenance Loop). Starting model: the Application 19 R2 synthesis treated as frozen Phase 3 sign-off. New requirement (one paragraph, deliberately under-specifying *where* the multiplication happens — vendor-side, AOP-rater-side, or Apex-side). Stack expanded from Application 19's three layers to four: `salesforce + mga-overlay + rater-api + wildfire-api` with all four substrated.
-**Outputs (gitignored):** `testing/prism-example-broker-rater-phase4-{blind-a,blind-b,synthesis,calibration}.md`. Calibration target: actual amendment-ticket implementation (5 field changes, AOP-rater-internal multiplication via cross-API value injection).
+**Outputs (gitignored):** `testing/corpus/prism-example-broker-rater-phase4-{blind-a,blind-b,synthesis,calibration}.md`. Calibration target: actual amendment-ticket implementation (5 field changes, AOP-rater-internal multiplication via cross-API value injection).
 
 #### Results
 
@@ -1413,6 +1413,144 @@ First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-
 A second finding has both Phase 4 *and* upstream Phase 3 implications: **R2-deferred decisions became Phase 4 amendment-blockers.** Both agents independently noticed that three R2 open questions / divergences (D1 wildfire temporal framing, D2 iteration audit destination, D3 pre-flight semantics) had to *close* inside this Phase 4 amendment. The downstream framing is "Phase 3 deferral isn't free; some deferrals propagate to Phase 4 sign-off as forced closures." The upstream framing matters more: **Phase 3 sign-off discipline now bears more weight than the protocol currently describes.** Deferring too many decisions at Phase 3 means Phase 4 inherits forced closures whenever a related ticket lands. The right mitigation isn't "do better Phase 4"; it's *ruthless Phase 3 discipline about which open questions are genuinely defer-able vs need-to-resolve-before-build*. Worth a Phase 3 operator-discipline note alongside the Phase 4 caveats.
 
 A small but broader operator-discipline note also emerged: **don't trust agent self-reports for any quantitative diagnostic the protocol depends on.** Specific case: both agents under-reported the wildfire substrate size by ~2× (reported ~5.5kB; actual ~13.1kB), which propagated into their citation-density math. General principle: agent self-reports of file sizes, citation counts, token estimates, or convergence rates may all be unreliable. Fix is operator-side instrumentation — pass quantitative anchors externally rather than asking agents to compute and self-report.
+
+---
+
+### Application 22: Prism Protocol — example-product-mover (first dev-tools v0.3 datapoint, Python+Salesforce stack)
+
+**Date:** 2026-05-09
+**Target:** example-product-mover — a Python CLI utility for migrating Salesforce `Product2` hierarchies (with Related / Shared / Junction objects) between Salesforce orgs. dev-tools industry; stack `python + salesforce.cli + salesforce.api`.
+**Method:** Prism Phase 1b. N=2 agents in parallel context isolation. **First run with v0.3 instrumentation:** synthesis prompt asked for citation-distribution metrics (substrate cites vs materials cites per agent) so the v0.3 hypothesis (citation-distribution skew → unique-catch character) could be tested.
+
+#### Results
+
+- **Strict convergence rate:** 15 / 37 = **40.5%** — well below the 67-71% v0.2 band measured on prior insurance runs.
+- **Convergence by content:** model-core convergence is strong — both agents independently produced the same Root/Related/Shared/Junction object trichotomy, the same four-phase Shared→Product2→Related→Junction import order, the same two-ID-map runtime, near-identical lens fire profiles, and two highest-confidence Seesaw imbalances reproduced.
+- **Citation density:** A 1.97/kB, B 1.68/kB — both inside 1-4/kB healthy band.
+- **Citation distribution:** A 22 substrate / 31 materials (~42% substrate share); B 10 substrate / 39 materials (~20% substrate share). **Large skew gap (~22 percentage points).**
+- **Unique-catch directional split:** of 13 unique catches, A's 7 uniques traced to substrate-shape gaps (API-version pinning, Bulk-vs-REST semantics, single-tenant enforcement); B's 6 uniques traced to materials-shape gaps (macOS-only install path, two credential pathways, partial-failure non-idempotency). **Skew direction predicted catch character.**
+- **Andon flags:** none. One STOP-flag from synthesis: a generic-tool-with-MGA-defaults vs MGA-specific-mislabelled-as-generic interpretive divergence.
+
+#### Significance
+
+**This run surfaced the v0.3 candidates that became load-bearing for the subsequent calibration relay:**
+
+1. **Unique-catch three-way subdivision needed.** Of the 13 unique catches, only 1 was hidden divergence (one agent implicitly took a position the other disagreed with); the other 12 were complementary coverage (real signal, no contradiction). Lumping all 13 into the strict-rate denominator deflated the rate without indicating model-shape disagreement. The v0.2 strict measure was conflating two phenomena. Recorded as a v0.3-candidate taxonomy refinement.
+
+2. **Citation-distribution asymmetry → unique-catch character.** The substrate-vs-materials skew between agents predicted which *kind* of unique catches each surfaced. Substrate-deep reading bought longevity-and-scaling catches; materials-deep reading bought operational-and-install catches. **The skew is the predictor; agent labels are irrelevant.** Recorded as a v0.3-candidate hypothesis, to be tested against more datapoints.
+
+3. **Materials-richness as a confound.** The materials carried explicit "follow-up questions" placeholders, which inflated complementary-uniques volume without indicating model-shape divergence. Strict rate is materials-richness-dependent.
+
+The model-core mechanism reproduced cleanly on a non-Salesforce-substrate dev-tools project — protocol's mechanism is stack-independent. Verdict: **Partially confirms** — protocol works; measurement rule needs sharpening.
+
+---
+
+### Application 23: Prism Protocol — example-deployment (second dev-tools v0.3 datapoint, Bash+Azure stack)
+
+**Date:** 2026-05-09
+**Target:** example-deployment — Azure infrastructure-deployment automation system (Bicep templates + Azure CLI + Bitbucket Pipelines orchestrating a function-app deployment with managed-identity auth). dev-tools industry; stack `bash + azure.cli + bicep + bitbucket-pipelines`. Same project shape as the Application 13/15 Triangle work, now refracted through Prism with v0.3 instrumentation.
+**Method:** Prism Phase 1b. N=2 agents in parallel context isolation. v0.3 three-way unique-catch subdivision applied for the first time (carrying the candidate from Application 22). Synthesis prompt also asked for citation-distribution and a per-agent verdict on whether the v0.3 hypothesis reproduced.
+
+#### Results
+
+- **Strict convergence rate:** 14 / 34 = **41.2%** — well below the 67-71% v0.2 band, but consistent with Application 22's strict rate (~40.5%) and PDF Butler's lower-edge 67.3%.
+- **Broad convergence rate:** 14 / (14+4) = **63.6%** (excludes 16 complementary uniques and zero fluke; counts 4 hidden divergences alongside 4 explicit divergences in the broad denominator).
+- **Convergence by content:** both agents converged on the same `{app-name}-{instance-guid}-{resource-type}` resource model, the same run-from-package mechanism, the same two-class identity story (service-principal-with-secret for the pipeline → Azure; system-assigned managed identity + Graph-via-curl for function → Graph), the same four lifecycle modes (full deploy / code-only upgrade / cleanup / generate-secret), and the same set-e-vs-set-euo-pipefail gap.
+- **Citation distribution:** A 32% substrate / 68% materials; B 40% substrate / 60% materials. **Smaller skew than Application 22 (~8pp gap vs ~22pp), yet a sharper directional split in unique catches** (A 8/9 materials-shape; B 5/7 substrate-shape).
+
+#### Significance
+
+**v0.3 three-way subdivision validated for the first time on an empirically applied basis:** complementary 12 / hidden divergence 4 / fluke 0 across the 16 unique catches. Hidden-divergence subtype caught real signal — four catches where one agent's framing presupposed the opposite of what the other committed to without saying so. Under v0.2 strict counting these would have been undifferentiated from complementary coverage.
+
+**Citation-distribution → unique-catch-character hypothesis:** direction reproduced (smaller substrate share → more materials-shape uniques and vice versa) but magnitudes did not match Application 22 cleanly — a smaller skew gap produced a sharper directional split, not a softer one. The relationship is non-linear, has additional drivers (substrate count? materials volume?), or contains statistical noise on N=2. Recorded with the caveat: direction is the empirical regularity, magnitude is not yet stable.
+
+**Cross-substrate generalisation:** the protocol's mechanism reproduced on `bash + azure.cli + bicep + bitbucket-pipelines` — a fundamentally different substrate composition from any prior insurance run. The convergence dynamics are stack-independent; the strict-rate band is materials-richness-dependent.
+
+Verdict: **Partially confirms** — protocol mechanism reproduced on a new substrate composition; v0.3 taxonomy works; magnitude relationship unresolved.
+
+---
+
+### Application 24: Prism Protocol — example-mgu mga-overlay implementation (load-bearing v0.3 insurance comparability run)
+
+**Date:** 2026-05-09
+**Target:** example-mgu — a Managing General Underwriter implementing an MGA-platform deployment for a Lloyd's-style London-market specialty insurance writer across multiple product lines (Commercial Property, Onshore Energy, Construction, Structured Credit). insurance.mga industry; stack `salesforce + mga-overlay`. Real customer materials sourced from the project's Confluence space (5 pages: company context, project overview, product lifecycle, one product's underwriting parameters, the Discovery Workshop requirements matrix).
+**Method:** Prism Phase 1b. N=2 agents. The mga-overlay substrate was reused **verbatim from the Application 18-19 example-broker corpus** — intentional apples-to-apples comparability with the original 68% broker-rater calibration. Only difference: the new requirement (a different customer's MGA engagement). v0.3 three-way subdivision applied; this was the load-bearing insurance datapoint to answer the question "does the v0.3 broad rate on insurance match the v0.2 strict band, confirming the dev-tools-wider hypothesis, or jump higher (suggesting the v0.2 band itself was missing signal)?"
+
+#### Results
+
+- **Strict convergence rate:** 20 / 43 = **46.5%** — fails the 67-71% v0.2 band on an *insurance* run (which prior calibrations had landed comfortably inside).
+- **Broad convergence rate:** 20 / 31 = **64.5%** — just below the v0.2 band, ~3pp gap.
+- **Convergence by content:** both agents converged on Account-record-typed party model, Submission→Quote→QuoteLineItem→InsurancePolicy spine, Day-1 manual-premium-entry framing, Binder/BDX/Sanctions/SOV as the dominant Day-1 customer-extension surface, and a UW-Operations sharing tension. Three STOP-flags surfaced (`MGA_RatingType__c` Day-1 Standard vs Custom; OWD direction Public-Read vs Private; BDX object grain Run-header vs Transaction-line — each agent modelled half).
+- **Unique-catch breakdown:** complementary 12 / hidden divergence 4 / fluke 0 of 16 uniques.
+- **Citation distribution:** **balanced** at A 45% substrate / B 45% substrate — first run in the v0.3 series where the substrate-vs-materials axis was symmetric.
+- **Within-materials skew:** A leaned discovery-document-heavy (23 cites vs 14); B leaned requirement-document-heavy (16 vs 8). **Unique catches still split along this finer axis** — A's catches traced to the discovery-document content, B's to the requirement-statement framing. The v0.3 hypothesis generalised to "deep reading predicts catch shape" *at any granularity*, not narrowly substrate-vs-materials.
+
+#### Significance
+
+**Three v0.3 calibrations now span 62-65% broad rate** — Applications 22 (62.5%), 23 (63.6%), 24 (64.5%) — across two industries (dev-tools, insurance.mga), three stack compositions (python+salesforce, bash+azure, salesforce+mga-overlay), and two requirement shapes. **The dev-tools-wider-band hypothesis is disconfirmed.** Both industries produce similar broad-rate convergence; the apparent v0.2 strict gap was a measurement artifact driven by materials-richness rather than fundamental industry difference.
+
+**The v0.3 broad rate is more invariant across domains than the v0.2 strict rate.** Strict rates ranged 40.5%-70.6% across the v0.2+v0.3 corpus; broad rates land in a 3-point band. This is methodologically significant: broad-rate is the model-shape convergence measure; strict-rate measures something closer to materials-richness × engagement-depth.
+
+**The "deep reading predicts catch shape" hypothesis generalises.** When both substrate-vs-materials axes are balanced (45/45 here), the asymmetry compresses into a finer-grained axis (within-materials in this case) and unique catches still split along it. Reading depth at any axis predicts catch character.
+
+Verdict: **Confirms** the v0.3 candidate (taxonomy refinement + dual-rate reporting) is ready to land in the protocol doc. **Disconfirms** the dev-tools-wider hypothesis (revised to a v0.2 measurement artifact).
+
+---
+
+### Application 25: Prism Protocol — example-mgu Phase 4 (anchoring-bias replication on insurance with anti-anchoring guard)
+
+**Date:** 2026-05-09
+**Target:** Same example-mgu mga-overlay implementation as Application 24, in Phase 4 (Maintenance Loop) mode. Existing model: the Application 24 synthesis (convergence + open divergences) treated as frozen Phase 3 sign-off. New requirement: a **fifth product line** with materially different shape (peril-based coverage, country-attached risk scoring, NAICS classification distinct from the SIC-based products). Substrates and base context reused verbatim from Application 24.
+**Method:** Prism Phase 4. **Critical change vs Application 21:** the agent prompt included an explicit anti-anchoring guard instructing agents to "treat the existing model's named primitives as candidates, not commitments — if the new requirement suggests a different shape, propose the different shape with rationale rather than forcing the new requirement into the existing names." This was the v0.3-candidate mitigation for the anchoring-bias failure mode discovered in Application 21.
+
+#### Results
+
+- **Strict convergence rate:** 7 / 23 = **30.4%** — well below any prior band.
+- **Broad convergence rate:** 7 / 15 = **46.7%** — also well below the Phase 1 v0.3 band of 62-65%.
+- **Anchoring-bias verdict:** **NOT-DETECTED on both agents.** Citation-distribution skewed *away* from the existing-model summary (A 0.45 ratio of existing-model cites to new-requirement cites; B 0.41) — the opposite of what anchoring would predict. Both agents introduced genuinely-new requirement primitives cleanly (per-peril selection at quote level, country-attached risk score, external risk-scoring API as distinct service class from rating) without forcing them into existing names.
+- **STOP-flag clarification on Application 24's open divergences:** STOP-1 (`MGA_RatingType__c` Day-1) deepened with a per-product framing refinement that the original Phase 3 sign-off lacked; STOP-2 (OWD direction) neutral (PV materials silent); STOP-3 (BDX grain) neutral on direct evidence but resolution-by-convergence indicates transaction-grain (both agents independently arrived at the same direction via different mechanisms).
+- **New Phase-4-level STOP candidate:** the synthesis surfaced a hidden divergence on a load-bearing schema decision (per-peril premium-dimension shape), recommended to be lifted to a Phase-4-level STOP-flag.
+- **Unique-catch breakdown:** complementary 8 / hidden divergence 3 / fluke 0 of 11 uniques.
+
+#### Significance
+
+**Phase 4 anchoring-bias is prompt-mitigable, not model-fundamental.** The verbatim anti-anchoring guard held the failure mode at bay across both agents — neither anchored on the existing model's named primitives despite those primitives being prominently named in the existing model summary. This contrasts directly with Application 21, where agents *did* anchor on `MGA_Rate_After` and missed an alternative. Best explanation: the prompt-level guard is doing real work; Application 21 ran without an explicit guard.
+
+**Phase 4 has its own convergence band, distinct from Phase 1.** Phase 4 outputs amendment-shape choices that have more granular ways to disagree than Phase 1 model-shape claims. The strict 30.4% / broad 46.7% rates are markedly lower than Phase 1's 62-65% broad band, and that's structural — Phase 4's denominator is finer-grained. Expect a Phase 4 broad band of ~40-50% (provisional, N=1 with the anti-anchoring guard applied). Don't compare Phase 4 to Phase 1.
+
+**Recommendation landed in protocol v1.0:** the anti-anchoring guard is now mandatory in Phase 4 agent prompts (verbatim) — not optional. Omitting it returns Phase 4 to the Application 21 anchoring failure mode.
+
+Verdict: **Confirms** the Phase 4 anti-anchoring guard works as a prompt-level mitigation. Recommends one more replication-without-guard datapoint to lift the prompt-mitigability claim from N=1 to N=2.
+
+---
+
+### Application 26: Prism Protocol — example-mgu mermaid (first mermaid-as-Phase-2-output datapoint, additivity verified)
+
+**Date:** 2026-05-09
+**Target:** Same example-mgu mga-overlay implementation as Application 24. Same materials, same substrates, same requirement. **Only difference:** the agent prompt asked for a fourth output artefact alongside model fragment / Seesaw log / open questions — a **mermaid diagram** of the model fragment, with risk markers placed at Seesaw imbalance points and visual distinction between substrate / overlay / customer-extension / external nodes. Methodological choice: apples-to-apples controlled comparison against Application 24 baseline; any metric shift attributable to the mermaid ask alone.
+**Method:** Prism Phase 1b with mermaid. N=2. Synthesis prompt updated to compare mermaid diagrams (structural overlap, connection overlap, risk-marker placement, diagram type/granularity, stakeholder-readability verdict, diagram-vs-text alignment per agent) and report an additivity verdict against the Application 24 baseline.
+
+#### Results
+
+- **Mermaid quality:** both agents produced ~25-28 node `flowchart TB` diagrams within discipline. One organised by lifecycle stage (Submission → Quote → Binder → Policy) with substrate-origin colour coding (more useful for non-technical customer sign-off); the other organised by structural concern (Parties / ProductConfig / Spine / BinderModel — better for internal architecture review). Both readable, both renderable, both stakeholder-presentable.
+- **Shape agreement:** ~18 entities shared between the two diagrams; spine-edge agreement high (parties → submission → quote → policy + binder + sanctions + BDX). When the textual model agrees, the diagrams agree on shape.
+- **Risk-marker placement:** common hot-zones (Carrier, Binder, BdxRun, BdxOverride, SOV-equivalent) marked in both diagrams. Per-agent variation tracks each agent's own seesaws — a feature, not a bug.
+- **Strict convergence rate:** 19 / 41 = **46.3%** vs Application 24's 46.5% — negligible shift (-0.2pp).
+- **Broad convergence rate (corrected math):** 19 / 30 = **63.3%** vs Application 24's 64.5% — negligible shift (-1.2pp).
+- **Citation distribution:** both agents shifted to ~33% substrate / ~67% materials — a 12pp drop in substrate share vs Application 24's balanced 45/45. The single material shift attributable to the mermaid ask.
+- **Hidden divergence count:** 5 (vs 4 in Application 24). The mermaid forced spatial commitment surfaced model-shape disagreements that text-only had left soft (e.g., A built a bespoke `<CustomerPrefix>_SOVRow__c` child of Submission while B extended the substrate-shipped `MGA_Location__c` — same requirement, different objects, both implicit in their respective texts). Diagram-as-disagreement-exposer.
+
+#### Significance
+
+**Mermaid is additive, not disruptive.** Strict and broad convergence rates held within noise of the Application 24 baseline. Both agents agreed on diagram shape when they agreed on text. Risk markers clustered at the same hot-zones. The ~12pp drop in substrate citation share is a real cost (the diagram pulls explanatory weight into customer-extension shape detail) but not a quality regression.
+
+**Diagrams expose model-shape commitments that text leaves soft.** The 5 hidden divergences in this run (vs 4 in Application 24) are evidence the diagram is doing its job — forcing spatial commitment surfaces silent disagreement that text-only would leave in the open-questions bucket. This is what mermaid is *for*.
+
+**Synthesis-level convention worth standardising:** when both agents place risk markers at the same nodes, the synthesis should explicitly call those out as **converged-risk hot-zones** for the human gate. The mermaid Application 26 synthesis did this informally; the v1.0 protocol doc proposes making it explicit.
+
+**Math-rule clarification surfaced.** The synthesis applied the v0.3 broad-rate formula in a way that double-counted hidden-divergence catches in both the divergence list and the broad-rate denominator. Reviewer correction: hidden divergences are a *subset* of divergences, not a separate category to add to the denominator. Cleaner formulation: `broad rate = convergence / (convergence + divergence)`, where "divergence" includes both explicit and hidden subtypes. This becomes the v1.0 formula.
+
+Verdict: **PROMOTE mermaid to v1.0 standard Phase 2 output.** Diagrams are coherent, useful for stakeholder sign-off, and additive — they don't disrupt the textual outputs or the convergence metrics, and they expose architectural commitments that the human gate would otherwise miss. v1.0 protocol-doc updates landed accordingly.
 
 ---
 

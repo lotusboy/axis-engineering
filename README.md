@@ -697,7 +697,7 @@ Beyond controlled experiments, Axis Engineering has been applied to multiple rea
 
 **Handles:** Genba + MECE + Pre-mortem + Poka-yoke
 **Target:** `docs/wildfire-integration/WILDFIRE_API_SOLUTION_DESIGN.md` (687-line solution design)
-**Output:** `testing/review-wildfire-design.md`
+**Output:** `testing/corpus/review-wildfire-design.md`
 
 **Results:** Grade B-. Found 1 P0, 5 P1, 6 P2, 3 P3 findings. The P0 was a Callable + @AuraEnabled static conflict that would prevent compilation as designed. The assumption ledger tracked 16 items (14 verified against source, 1 refuted, 1 partially verified). MECE completeness check identified 7 gaps.
 
@@ -728,8 +728,8 @@ Beyond controlled experiments, Axis Engineering has been applied to multiple rea
 ### Application 4: Solution Design Generation (ExampleVision Integration)
 
 **Handles:** Cynefin + First Principles + MECE + Pre-mortem
-**Target:** `testing/examplevision-requirements-only.md` — requirements stripped from 5 ExampleVision integration docs (no solution design, no class names, no data model)
-**Output:** `testing/examplevision-design-from-requirements.md` (781 lines)
+**Target:** `testing/corpus/examplevision-requirements-only.md` — requirements stripped from 5 ExampleVision integration docs (no solution design, no class names, no data model)
+**Output:** `testing/corpus/examplevision-design-from-requirements.md` (781 lines)
 **Comparison:** Steve's actual `EXAMPLEVISION_INTEGRATION_SOLUTION_DESIGN.md` (760 lines, implemented and tested)
 
 **Results:** ~90% architectural match. 9 of 10 Apex classes matched exactly (same names, same responsibilities, same execution patterns). Data model was identical. Configuration strategy (CMDT + Custom Setting split) was identical. 4 gaps: missing a dedicated output processor batch, missing Named Credential indirection, missing separate scheduler classes, missing Case-to-submission date sync trigger. All gaps are reasonable design choices, not architectural flaws.
@@ -742,7 +742,7 @@ Beyond controlled experiments, Axis Engineering has been applied to multiple rea
 
 **Handles:** TQ/TC/CQ + synthesis (Cynefin + MECE baselines)
 **Target:** Redacted deployment automation repository (`temp-projects/example-deployment`)
-**Outputs:** `testing/triangle-exampledeploy-agent-tq.md`, `testing/triangle-exampledeploy-agent-tc.md`, `testing/triangle-exampledeploy-agent-cq.md`, `testing/triangle-exampledeploy-synthesis.md`
+**Outputs:** `testing/corpus/triangle-exampledeploy-agent-tq.md`, `testing/corpus/triangle-exampledeploy-agent-tc.md`, `testing/corpus/triangle-exampledeploy-agent-cq.md`, `testing/corpus/triangle-exampledeploy-synthesis.md`
 
 **Results:** Convergence on preserving script-based pipeline architecture and rollback hash model. Divergence on topology (parallelized vs sequential vs orchestrated wrapper), validation depth, and observability level. Synthesis surfaced 1 P0 and 4 P1 risks, with idempotency and rollback atomicity as the highest-risk blind spots.
 
