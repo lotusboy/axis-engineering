@@ -6,7 +6,11 @@
 
 ## Core Idea
 
-When building software, there is a constant tension between three things:
+> If a puzzle is getting difficult and I'm having to make convoluted solutions, I'm down the wrong hole and need to rethink.
+
+That's the principle in one sentence. When effort starts compounding — workarounds layered on workarounds, tests rewritten three times, models bent to fit — it's a signal you're patching a flawed substrate, not solving the problem.
+
+When building software, the principle plays out as a constant tension between three things:
 
 ```
 TEST ←──────→ DESIGN ←──────→ IMPLEMENTATION
@@ -14,7 +18,7 @@ TEST ←──────→ DESIGN ←──────→ IMPLEMENTATION
 
 **Design sits in the middle.** It is the intended behaviour — the spec, the UX intent, the contract.
 
-When either side of the seesaw becomes hard to write, it is a signal that something is wrong — not with your effort, but with the balance.
+When either side of the seesaw becomes hard to write, it is a signal that something is wrong — not with your effort, but with the balance. You're down the wrong hole. Step back, find the heavy end, and fix upstream rather than adding more weight to the side that's already fighting.
 
 ## The Seesaw Subtypes
 
