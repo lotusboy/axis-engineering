@@ -409,7 +409,7 @@ The Triangle Protocol was tested against the ExampleVision integration requireme
 
 ### Setup
 
-- **Input:** `testing/examplevision-requirements-only.md` (271-line pure requirements document)
+- **Input:** `testing/corpus/examplevision-requirements-only.md` (271-line pure requirements document)
 - **Agents:** TQ, TC, CQ running in parallel as Claude Code subagents with full context isolation
 - **Synthesis:** Fourth agent comparing all three outputs
 - **Baseline comparison:** Original single-agent design (781 lines, ~90% architectural match with human-built solution, 4 silent gaps)
@@ -439,7 +439,7 @@ Beyond the original 4 gaps, the synthesis agent flagged a **requirements contrad
 
 ### Synthesis output
 
-7 convergence points, 6 divergence points, 4 hybrid opportunities, 8 blind spots (1 P0, 5 P1, 2 P2). Full outputs in `testing/triangle-examplevision-*.md`.
+7 convergence points, 6 divergence points, 4 hybrid opportunities, 8 blind spots (1 P0, 5 P1, 2 P2). Full outputs in `testing/corpus/triangle-examplevision-*.md`.
 
 ### Experiment 2: Wildfire Endorsement + Cancellation (N=2)
 
@@ -452,7 +452,7 @@ The Triangle Protocol was tested a second time against a different problem type 
 - **P0 architectural blocker:** Override parameter contract unverified — 2 of 3 designs depend on it; if it doesn't exist, only TQ's approach works
 - **Effort spread:** 3.25x (24h–78h), wider than Experiment 1's 1.9x
 
-Full outputs in `testing/triangle-wildfire-ec-*.md`. Full writeup in `experiment-results.md` Application 6.
+Full outputs in `testing/corpus/triangle-wildfire-ec-*.md`. Full writeup in `experiment-results.md` Application 6.
 
 ### Experiment 3: ExampleRater Batch Design (N=3, Cross-Domain)
 
@@ -466,7 +466,7 @@ The Triangle Protocol was tested on a non-Salesforce platform for the first time
 - **Infrastructure cost divergence:** TQ added ~£125-370/month; TC/CQ added ~£0 — a category of divergence unique to variable-cost platforms
 - **Effort spread:** 1.4x (80h–112h)
 
-Full outputs in `testing/triangle-example-rating-batch-*.md`. Full writeup in `experiment-results.md` Application 7.
+Full outputs in `testing/corpus/triangle-example-rating-batch-*.md`. Full writeup in `experiment-results.md` Application 7.
 
 ### Limitations
 
