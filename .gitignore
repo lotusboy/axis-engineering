@@ -15,4 +15,8 @@ temp-projects/
 temp-plans/
 
 # Local-only example outputs
+testing
 testing/
+
+# Local-only working directory
+private/
