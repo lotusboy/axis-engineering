@@ -1,7 +1,7 @@
 # Axis Engineering — Triangle Protocol
 
 > **Domain-specific companions:** [Salesforce](salesforce-triangle.md) — output skeleton, contracts, and divergence patterns for the platform.
-> See also: [main methodology](README.md) | [vocabulary](vocabulary-quick-ref.md) | [two-pass strategy](two-pass-strategy.md)
+> See also: [main methodology](README.md) | [vocabulary](vocabulary-quick-ref.md) | [prism protocol](prism-protocol.md) | [two-pass strategy](two-pass-strategy.md) | [seesaw principle](seesaw-principle.md)
 
 ## The Problem
 
@@ -266,22 +266,28 @@ This is the same principle as the two-pass strategy (fresh context beats continu
 
 ## Relationship to Existing Strategies
 
-The Triangle Protocol is a **meta-layer** that sits above the existing Axis Engineering toolkit:
+The Triangle Protocol is one of three multi-agent extensions in the Axis Engineering family — each addressing a different phase of the engineering lifecycle:
 
 ```
 ┌─────────────────────────────────────────────┐
-│              Triangle Protocol              │  ← NEW: explores the solution space
-│         (3 agents + synthesis)              │
+│  Prism Protocol — modelling phase           │  ← Multi-lens refraction;
+│  (Phase 1b: N agents + synthesis)           │     start of new projects
+├─────────────────────────────────────────────┤
+│  Triangle Protocol — decision phase         │  ← Multi-agent constraint
+│  (3 agents + synthesis)                     │     exploration; architecture choices
+├─────────────────────────────────────────────┤
+│  Two-Pass Strategy — review phase           │  ← Sequential constructive
+│  (Pass 1 + Pass 2 in fresh contexts)        │     then adversarial
 ├─────────────────────────────────────────────┤
 │           Axis Contracts + Handles          │  ← Each agent uses these internally
 ├─────────────────────────────────────────────┤
-│         Two-Pass Strategy (optional)        │  ← Can review each agent's output
-├─────────────────────────────────────────────┤
 │              Single-Pass Recipes            │  ← The building blocks
 └─────────────────────────────────────────────┘
+
+Seesaw Principle fires inside any of the above when a 3-pole tension surfaces an imbalance.
 ```
 
-Each triangle agent runs Axis Engineering internally — selecting handles, following contracts, producing evidence. The triangle doesn't replace the methodology; it orchestrates multiple instances of it under different constraints.
+Each triangle agent runs Axis Engineering internally — selecting handles, following contracts, producing evidence. The triangle doesn't replace the methodology; it orchestrates multiple instances of it under the Iron Triangle constraint pairings. Prism and Two-Pass orchestrate similarly under different mechanisms (lens-set refraction; constructive/adversarial sequencing). Use Triangle when the model is stable and the architecture has genuine tradeoffs; use Prism upstream of Triangle when the model itself isn't yet stable; use Two-Pass downstream when an artefact exists and needs review.
 
 ### Combining with Two-Pass
 

@@ -9,14 +9,14 @@ It does this by applying a small number of named "behavior handles" (e.g. Genba,
 ## Protocol selector — which protocol fits this task?
 
 ```
-Is the work routine (config change, small feature)?
-  → Single-pass with 2–3 handles
-Are you choosing between viable architectures with real tradeoffs?
-  → Triangle Protocol (TQ/TC/CQ multi-agent + synthesis)
-Are you producing a first-draft system shape from raw customer materials?
+Starting a new project — first-draft model from raw customer materials?
   → Prism Protocol (multi-lens refraction; substrate as data)
-Are you reviewing an existing artefact for issues?
+Have an agreed model — choosing between viable architectures with real tradeoffs?
+  → Triangle Protocol (TQ/TC/CQ multi-agent + synthesis)
+Reviewing an existing artefact for issues?
   → Two-Pass Strategy (constructive then adversarial in fresh contexts)
+Routine work (config change, small feature)?
+  → Single-pass with 2–3 handles
 
 Seesaw Principle fires inside any of the above when a 3-pole tension
 (Test↔Design↔Implementation, Actor↔Model↔Framework, User↔Design↔UI)
@@ -73,16 +73,82 @@ flowchart LR
 
 Most prompts only shape axis 2 ("give me a bulleted list"). Axis Engineering deliberately engages all five. Pick 2-3 handles from different axes and the AI's analysis changes in depth, focus, and structure — from a single prompt line.
 
-### Advanced: Multi-Agent Exploration (Triangle Protocol)
+### Advanced: Multi-Agent Protocols
+
+Three multi-agent extensions exist for problems that single-pass-with-handles can't fully resolve. Each addresses a different phase of the engineering lifecycle:
+
+```
+Customer materials → [Prism] → Agreed model → [Triangle] → Architecture → Build → [Two-Pass] → Reviewed artefact
+                                                                                                ↑
+                                                                Seesaw fires inside any of these ─┘
+```
+
+#### Prism Protocol — multi-lens refraction (start here for new projects)
 
 **Use this when:**
-- You're arguing about architecture in a PR
-- There are trade-offs no one agrees on
-- You want to surface hidden assumptions
+- A new project starts with raw customer materials (SOW, transcripts, samples)
+- You need a first-draft system shape the team can sign off on
+- The model itself isn't yet stable; alternative shapes haven't been seen
 
-For problems with genuine trade-offs (time vs cost vs quality), Axis Engineering extends beyond single-agent prompting into multi-agent orchestration.
+For projects where the system shape isn't yet stable, Prism refracts each requirement through three lens-sets and surfaces the solution space rather than committing to one point. Substrate (what the platform CAN do) and industry (the actor lens-set, vocabulary, pipeline shape) are first-class config inputs — the protocol generalises across stacks without code branches.
 
-The **Triangle Protocol** runs three independent agents with different Iron Triangle constraint pairings:
+The **three lens-sets**:
+- **Actor lenses** (industry-specific) — who sees this requirement? (e.g. Underwriter, Producer/Broker, Carrier, Regulator, Finance, Operations, Compliance for `insurance.mga`)
+- **Implementation lenses** (substrate-aware) — substrate stdlib (try first), overlay patterns (try second), customer extension (only if the first two don't fit)
+- **Lifecycle lenses** (always three) — Day-1 launch, Year-3 maintenance, Year-5 schema-shift
+
+A multi-agent run (Phase 1b) refracts in parallel under context isolation; a synthesis pass produces convergence (high-confidence model claims), divergence (architectural choices the human gate must resolve), unique catches (real signal — three-way subdivided into complementary coverage / hidden divergence / fluke). Phase 2 produces four artefacts: model fragment, seesaw log, open questions, and a mermaid diagram for stakeholder sign-off.
+
+**Example output:**
+> *Input: Discovery materials for an MGA implementation across four insurance product lines on `salesforce + mga-overlay`*
+> - **Model fragment:** Account-record-typed party model; Submission→Quote→QuoteLineItem→InsurancePolicy spine; binder/BDX/sanctions/SOV as Day-1 customer-extension surface
+> - **Seesaw log:** 4 imbalances (Year-5 schema-shift on hand-maintained YAML; destructive `update` mode vs additive imports; UW-Operations sharing tension; subscription-market participation primitive)
+> - **Open questions:** 14 awaiting customer input (broker list, currencies outside Lloyd's standard, BDX format, etc.)
+> - **Mermaid diagram:** spatial view with risk markers at imbalance points; stakeholder-presentable
+
+**Prism Protocol prompt template:**
+
+```text
+You are running the Prism Protocol on a customer requirement.
+
+INPUTS:
+- Prism Protocol document
+- Substrate file(s) — one per non-empty stack layer (sanitised)
+- Industry config (loads the actor lens-set + vocabulary + pipeline shape)
+- Customer materials (SOW, transcripts, samples)
+- Requirement statement (with v0.2+ operator framing — name load-bearing dimensions)
+
+CONFIGURATION:
+- industry: <industry, e.g. insurance.mga>
+- stack: <substrate composition, e.g. salesforce + mga-overlay>
+- agent_count: N (default 2)
+
+CONTRACT:
+- AXES: Genba + MECE + Cynefin + Pre-mortem
+- TARGET: requirement + materials + substrates
+- STRUCTURE: three lens-sets walked in order (Actor → Implementation → Lifecycle)
+- EVIDENCE: cite source material for each lens that fires; honest empty for those that don't
+- SEESAW: watch for actor↔model, model↔framework, lifecycle imbalances
+- ASSUMPTIONS: maintain Verified/Unknown ledger
+- STOP: Andon — halt on requirement contradiction across actor lenses
+
+OUTPUT (four artefacts):
+1) Model fragment — objects, fields, relationships, status state machines, sharing
+2) Seesaw log — imbalances surfaced during refraction
+3) Open questions — real ambiguities with an audience for resolution
+4) Mermaid diagram — spatial view of model with risk markers at imbalance points
+```
+
+See `prism-protocol.md` for full mechanics. Empirical basis: ten multi-agent calibration runs across two industries (`insurance.mga`, `dev-tools`) and four substrate compositions; broad-rate convergence consistently 62-65%.
+
+#### Triangle Protocol — Iron Triangle exploration (architecture decisions)
+
+**Use this when:**
+- The model is stable and you're choosing between architectures
+- You're arguing about tradeoffs in a PR
+- You want to surface hidden assumptions through agent disagreement
+
+For problems with genuine trade-offs (time vs cost vs quality), Triangle runs three independent agents with different Iron Triangle constraint pairings:
 - **TQ (Time–Quality):** "Build it fast and build it perfectly. Money is no object."
 - **TC (Time–Cost):** "Build it fast and build it cheaply. Hack it together if you must."
 - **CQ (Cost–Quality):** "Build it perfectly and build it cheaply. Take as long as you need."
@@ -101,9 +167,7 @@ A synthesis pass then identifies:
 > - **Synthesis Divergence:** Dedicated infrastructure vs reused workers
 > - **Synthesis Blind spot:** None of the agents handled Excel calculation failures correctly
 
-See `triangle-protocol.md` for full implementation details and cross-platform experimental results.
-
-### Triangle Protocol v2 Prompt Template
+**Triangle Protocol v2 prompt template:**
 
 ```text
 You are Agent [TQ|TC|CQ] in the Triangle Protocol.
@@ -131,6 +195,41 @@ EVIDENCE RULE:
 - Cite specific artifacts (`file:line`, requirement IDs, or explicit inputs) for every critical claim.
 ```
 
+See `triangle-protocol.md` for full implementation details and cross-platform experimental results.
+
+#### Two-Pass Strategy — sequential constructive then adversarial
+
+**Use this when:**
+- An artefact already exists and needs review
+- You want both constructive analysis and adversarial pressure-testing
+- Coverage matters more than depth on a single pass
+
+Two-Pass runs Pass 1 (analytical/constructive — Genba + SOLID + Pre-mortem) followed by Pass 2 (adversarial — Genba + Chaos Engineering + Poka-yoke) in a **fresh, isolated session**. The instruction "do not read Pass 1" works even within the same session; independent rediscovery is what confirms genuine signal.
+
+Empirical: ~30 deduplicated findings per two-pass run vs ~12 single-pass; ~75% overlap of critical findings across separate runs (highest reproducibility of any strategy).
+
+**Two-Pass prompt template (compact):**
+
+```text
+PASS 1 (analytical, fresh session):
+AXES: Genba + SOLID + Pre-mortem + Axis Contract
+TARGET: [artefacts to review]
+STRUCTURE: Pyramid (verdict → severity-ordered findings)
+EVIDENCE: every finding cites file:line; assumption ledger Verified/Unknown
+STOP: Andon on P0
+
+PASS 2 (adversarial, FRESH session, do NOT read Pass 1 output):
+AXES: Genba + Chaos Engineering + Poka-yoke + Axis Contract
+TARGET: [same artefacts]
+STRUCTURE: Pyramid (verdict → runtime-edge-case-ordered findings)
+EVIDENCE: every claim verified by grep/read; failure modes explicit
+STOP: Andon on P0
+
+SYNTHESIS (combine Pass 1 + Pass 2): deduplicate by (artefact, symptom, root-cause-class).
+```
+
+See `two-pass-strategy.md` for full mechanics.
+
 ### Genba Baseline: Standard Artifacts
 
 For deployment/release architecture tasks, each agent should read these artifacts before proposing designs:
@@ -150,18 +249,18 @@ Any **P0 or P1** finding is an automatic **Andon event**:
 
 ### The Methodology Family
 
-Triangle isn't the only multi-agent extension. Axis Engineering organises into a family of protocols, each addressing a different kind of problem, with Seesaw as a cross-cutting diagnostic that fires inside any of them.
+Axis Engineering organises into a family of protocols, each addressing a different phase of the engineering lifecycle, with Seesaw as a cross-cutting diagnostic that fires inside any of them.
 
 ```
 Axis Engineering
-├── Triangle Protocol      (decisions — multi-agent + synthesis)
-├── Prism Protocol         (modelling — multi-lens refraction)
+├── Prism Protocol         (modelling — multi-lens refraction; start of new projects)
+├── Triangle Protocol      (decisions — multi-agent + synthesis; architecture choices)
 ├── Two-Pass Strategy      (review — sequential constructive then adversarial)
 └── Seesaw Principle       (cross-cutting diagnostic — fires inside any of the above)
 ```
 
-- **[Triangle Protocol](triangle-protocol.md)** — multi-agent decision exploration (TQ/TC/CQ). Use when the architecture has genuine tradeoffs.
-- **[Prism Protocol](prism-protocol.md)** — multi-lens modelling (actor / implementation / lifecycle). Use when the system shape itself isn't yet stable. Substrate and industry are first-class config inputs (`salesforce + mga-overlay + fsc`, `insurance.mga`) so the protocol generalises across stacks without code branches.
+- **[Prism Protocol](prism-protocol.md)** — multi-lens modelling (actor / implementation / lifecycle). Use when the system shape itself isn't yet stable — typically the start of a new project. Substrate and industry are first-class config inputs (`salesforce + mga-overlay + fsc`, `insurance.mga`) so the protocol generalises across stacks without code branches.
+- **[Triangle Protocol](triangle-protocol.md)** — multi-agent decision exploration (TQ/TC/CQ). Use when the model is stable and the architecture has genuine tradeoffs.
 - **[Two-Pass Strategy](two-pass-strategy.md)** — sequential constructive-then-adversarial review in fresh contexts. Use when reviewing existing artefacts.
 - **[Seesaw Principle](seesaw-principle.md)** — diagnostic that fires when a 3-pole tension surfaces an imbalance (Test↔Design↔Implementation, Actor↔Model↔Framework, User↔Design↔UI). Always raises a ticket. Always fixes upstream, not downstream.
 
@@ -377,6 +476,13 @@ Tested across 9 controlled reviews, 5 experiments, and 20 real-world application
 **Decision tree:**
 
 ```
+Is this the start of a new project — first-draft model from customer materials?
+  → Prism Protocol (multi-lens refraction; substrate as data). See prism-protocol.md
+
+Is this a design task with genuine tradeoffs between time, cost, and quality
+(model is stable, architectures need choosing)?
+  → Triangle Protocol (3 agents × TQ/TC/CQ + synthesis). See triangle-protocol.md
+
 Is this a config change or field addition?
   → Single pass, no contract (Poka-yoke + YAGNI)
 
@@ -394,9 +500,6 @@ Is this an implementation retrospective (design vs actual)?
 
 Is this a solution design generation (requirements → architecture)?
   → Single pass with contract (Cynefin + First Principles + MECE + Pre-mortem)
-
-Is this a design task with genuine tradeoffs between time, cost, and quality?
-  → Triangle Protocol (3 agents × TQ/TC/CQ + synthesis). See triangle-protocol.md
 
 Is this a critical security review or pre-launch audit?
   → Four-pass (run two-pass twice), deduplicate findings
@@ -748,6 +851,28 @@ Beyond controlled experiments, Axis Engineering has been applied to multiple rea
 
 **Meaning:** The protocol provided a practical hybrid strategy (TC baseline + TQ canary checks + CQ rollback/idempotency guardrails), which balances delivery speed with production safety better than any single-corner design.
 
+### Application 22: Prism Protocol — first dev-tools v0.3 datapoint (Python+Salesforce stack)
+
+**Handles:** Three lens-sets (Actor / Implementation / Lifecycle) + Genba + MECE + Cynefin + Pre-mortem + v0.3 three-way unique-catch subdivision
+**Target:** `example-product-mover` — a Python CLI for migrating Salesforce `Product2` hierarchies between orgs. dev-tools industry; stack `python + salesforce.cli + salesforce.api`.
+**Method:** Phase 1b multi-agent (N=2, parallel context isolation, fresh sessions) + synthesis pass.
+
+**Results:** Strict convergence 40.5%; broad convergence 62.5%. Both agents independently produced the same Root/Related/Shared/Junction object trichotomy, the same four-phase Shared→Product2→Related→Junction import order, and near-identical lens fire profiles. Citation density healthy (~1.97/kB and ~1.68/kB — both within the 1-4/kB band). Of 13 unique catches, 12 were complementary coverage (real signal, no contradiction) and 1 was hidden divergence — surfacing the v0.3 candidate that lumping these into the strict-rate denominator deflates the rate without indicating model-shape disagreement.
+
+**Insight:** The largest finding from this run wasn't about the project — it was about the protocol's measurement rule. The substrate-vs-materials citation skew between agents (~22pp gap) predicted which kind of unique catches each surfaced (substrate-deep reading bought longevity-and-scaling catches; materials-deep reading bought operational catches). Recorded as the v0.3 candidate hypothesis ("where you read more, you catch more shape from there"); subsequently confirmed across multiple runs.
+
+### Application 24: Prism Protocol — load-bearing v0.3 insurance comparability run
+
+**Handles:** Three lens-sets + v0.3 three-way subdivision + citation distribution measurement
+**Target:** `example-mgu` — a Managing General Underwriter implementing an MGA-platform deployment for a Lloyd's-style London-market specialty insurance writer across multiple product lines. insurance.mga industry; stack `salesforce + mga-overlay`. Real customer materials sourced from the project's Confluence space.
+**Method:** Phase 1b multi-agent (N=2). The mga-overlay substrate was reused **verbatim** from the Application 18-19 corpus — intentional apples-to-apples comparability with the original 68% broker-rater calibration.
+
+**Results:** Strict convergence 46.5%; broad convergence 64.5%. Both agents converged on the same Account-record-typed party model, Submission→Quote→QLI→InsurancePolicy spine, Day-1 manual-premium-entry framing, and binder/BDX/sanctions/SOV as the dominant Day-1 customer-extension surface. **Citation distribution** was balanced at ~45% substrate / 55% materials for both agents — yet the within-materials axis showed a clear skew (one agent discovery-document-heavy, the other requirement-document-heavy), and unique catches still split along this finer axis.
+
+**Insight:** This is the load-bearing datapoint that **disconfirmed the dev-tools-wider-band hypothesis**. Three v0.3 calibrations (two dev-tools + this insurance run) all land in 62-65% broad rate — a 3-point spread across two industries and three stack compositions, tighter than the v0.2 strict band's 4-point spread. The apparent dev-tools-vs-insurance gap was a v0.2 strict measurement artefact; under v0.3 broad-rate measurement (excluding complementary-coverage uniques from the denominator), both industries produce similar convergence. The "deep reading predicts catch shape" hypothesis also generalised — when both substrate-vs-materials axes are balanced, the asymmetry compresses to a finer-grained axis and unique catches still split along it.
+
+See `experiment-results.md` Applications 17-26 for the complete Prism evidence base (ten multi-agent runs, two industries, four substrate compositions).
+
 ## Known Limitations
 
 1. **Model specificity.** All experiments used Claude Opus 4.6 (May 2025 training cutoff). Handle effectiveness on other models (Sonnet, Haiku, GPT-4o, Gemini) is untested. The co-occurrence cluster theory predicts cross-model transfer for handles with strong training signal (Genba, SOLID, Pre-mortem), but this is unverified. Handles with weaker training signal (Wu Wei, Wabi-sabi) may not activate reliably on smaller models. The hooks architecture is a Claude Code reference implementation — the concepts (pre-edit check, post-edit verify, session triage) are tool-agnostic but the JSON format is not.
@@ -834,6 +959,18 @@ To reduce stylistic drift and ensure consistency, use these standard checklists 
 - [ ] Agent CQ: Did it produce a high-quality, cost-sensitive design, sacrificing time?
 - [ ] Synthesis: Does it explicitly map Convergences, Divergences, and Blind Spots?
 - [ ] Rubric: Is the scoring rubric appended?
+
+**Prism Protocol Checklist:**
+- [ ] Three lens-sets exhaustively walked (Actor → Implementation → Lifecycle)?
+- [ ] Each lens fired with cited evidence (or honest empty with reason)?
+- [ ] Seesaw imbalances logged with signal + action forced?
+- [ ] Open questions named with audience for resolution?
+- [ ] Mermaid diagram produced for the human gate (v1.0+ standard fourth artefact)?
+- [ ] Convergence rate reported — both strict and broad (v1.0 dual-rate)?
+- [ ] Citation density per agent reported (1-4/kB band check)?
+- [ ] Citation distribution per agent reported (substrate vs materials)?
+- [ ] Unique catches subdivided three ways (complementary / hidden divergence / fluke)?
+- [ ] Rubric appended?
 
 ### 3. Model Calibration (Current Observations)
 These are current observations from recent runs. Continue logging in `experiment-results.md` (or a dedicated `model-calibration.md`) and treat this table as directional until sample sizes are larger.

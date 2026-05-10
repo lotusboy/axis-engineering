@@ -286,7 +286,7 @@ Lens-sets force completeness. Constraint pairings force divergence. Different pr
 
 ## Relationship to Other Strategies
 
-The Prism Protocol is part of the same family as the Triangle Protocol and the Seesaw Principle. Family hierarchy (with Seesaw as cross-cutting diagnostic):
+The Prism Protocol is part of the same family as the Triangle Protocol, the Two-Pass Strategy, and the Seesaw Principle. The protocols are ordered by lifecycle phase: **Prism for the start of new projects (modelling), Triangle for architecture choices (decisions), Two-Pass for review of existing artefacts.** Seesaw is cross-cutting — it fires inside any of them.
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -295,9 +295,9 @@ The Prism Protocol is part of the same family as the Triangle Protocol and the S
 ├────────────────────────────────────────────────────────────────┤
 │                                                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Triangle   │  │    Prism     │  │  Two-Pass    │          │
+│  │    Prism     │  │   Triangle   │  │  Two-Pass    │          │
 │  │   Protocol   │  │   Protocol   │  │   Strategy   │          │
-│  │ (decisions)  │  │ (modelling)  │  │  (review)    │          │
+│  │ (modelling)  │  │ (decisions)  │  │  (review)    │          │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘          │
 │         │                 │                 │                  │
 │         └─────────────────┼─────────────────┘                  │
@@ -314,12 +314,12 @@ The Prism Protocol is part of the same family as the Triangle Protocol and the S
 └────────────────────────────────────────────────────────────────┘
 ```
 
-- **Triangle Protocol** — multi-agent decision exploration. Use when the architecture has genuine tradeoffs.
-- **Prism Protocol** — multi-lens modelling. Use when the system shape itself isn't yet stable.
+- **Prism Protocol** — multi-lens modelling. Use when the system shape itself isn't yet stable — typically the start of a new project where customer materials exist but no agreed model.
+- **Triangle Protocol** — multi-agent decision exploration. Use when the model is stable and the architecture has genuine tradeoffs.
 - **Two-Pass Strategy** — sequential review (constructive then adversarial in fresh context). Use when reviewing existing artefacts.
 - **Seesaw Principle** — diagnostic that fires *inside* any of the above when a 3-pole tension surfaces an imbalance. Originally framed at Test↔Design↔Implementation; generalises to Actor↔Design↔Implementation, Actor↔Model↔Framework, User↔Design↔UI. Always raises a ticket; always fixes upstream, not downstream.
 
-The seesaw-principle.md document already self-identifies as cross-cutting. Promotion to high-level protocol formalises what's already implicit and gives Triangle and Prism a shared diagnostic vocabulary.
+The seesaw-principle.md document already self-identifies as cross-cutting. Promotion to high-level protocol formalises what's already implicit and gives Prism, Triangle, and Two-Pass a shared diagnostic vocabulary.
 
 ## When to Use
 
