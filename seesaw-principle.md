@@ -97,8 +97,8 @@ The Seesaw Principle is **cross-cutting** — it fires *inside* the other axis-e
 
 ```
 Axis Engineering
-├── Triangle Protocol      (decisions — multi-agent + synthesis)
-├── Prism Protocol         (modelling — multi-lens refraction)
+├── Prism Protocol         (modelling — multi-lens refraction; start of new projects)
+├── Triangle Protocol      (decisions — multi-agent + synthesis; architecture choices)
 ├── Two-Pass Strategy      (review — sequential constructive then adversarial)
 └── Seesaw Principle       (cross-cutting diagnostic — fires inside any of the above)
     ├── Test↔Design↔UI         (E2E / Maestro)
@@ -108,7 +108,7 @@ Axis Engineering
     └── Actor↔Design↔Implementation  (top-level / abstract)
 ```
 
-- **Triangle** is good for decision-time when there's a real tradeoff and you need three independent designs.
-- **Prism** is good for modelling-time when the system shape isn't yet stable and you need viewpoint-completeness.
+- **Prism** is good for modelling-time when the system shape isn't yet stable and you need viewpoint-completeness — typically the start of a new project.
+- **Triangle** is good for decision-time when the model is stable, the architecture has real tradeoffs, and you need three independent designs.
 - **Two-Pass** is good for review-time when an artefact exists and needs adversarial pressure-testing.
 - **Seesaw** is the diagnostic that fires *during* any of the above. When the balance is wrong, it tells you which end to fix.
