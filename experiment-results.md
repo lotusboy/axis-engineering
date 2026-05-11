@@ -1398,7 +1398,7 @@ First non-insurance datapoint, first non-Salesforce-app datapoint, first sparse-
 
 - **Convergence rate:** 24/35 (~68.2%) on the delta denominator — within the 67-71% Phase 1b band.
 - **Model-shape verdict:** Both agents independently reached **PARTIALLY ABSORBS** — convergent, matches the team's actual experience (the amendment was a clean addition, not a re-architecture).
-- **Calculation-locus prediction:** Both agents predicted Apex-side multiplication via `MGA_Rate_After`. **The team's actual choice was AOP-rater-internal cross-API value injection** — a third option neither agent surfaced because the starting model named `MGA_Rate_After` as the canonical extension surface.
+- **Calculation-locus prediction:** Both agents predicted Apex-side multiplication via `MGA_Rate_After` — the canonical extension surface for custom rater hooks. **The team initially chose this same path but was forced into AOP-rater-internal cross-API value injection as a workaround due to a DML-before-callout constraint in the platform.** The constraint is being fixed in the platform; once fixed, the team would have used the path Prism predicted. **Prism's architectural prediction was correct; the deviation was forced by a platform bug, not by Prism missing a better option.** The anchoring-bias finding still holds (agents did anchor on the named primitive) but the *outcome* — prediction accuracy — is positive once the platform-constraint context is included. See Application 27 for the consolidated output-accuracy picture.
 - **Field-level prediction:** 3 of 5 functional changes predicted with right shape (varying naming). Both missed the bundled wildfire-deductible field addition and the technical-wildfire-premium repurposing-as-intermediate that signals cross-API injection.
 - **Substrate-citation density** on the new wildfire substrate: ~0.65-0.92/kB combined — within healthy band, comparable to existing-substrate density.
 - **Andon flags:** None.
@@ -1551,6 +1551,69 @@ Verdict: **Confirms** the Phase 4 anti-anchoring guard works as a prompt-level m
 **Math-rule clarification surfaced.** The synthesis applied the v0.3 broad-rate formula in a way that double-counted hidden-divergence catches in both the divergence list and the broad-rate denominator. Reviewer correction: hidden divergences are a *subset* of divergences, not a separate category to add to the denominator. Cleaner formulation: `broad rate = convergence / (convergence + divergence)`, where "divergence" includes both explicit and hidden subtypes. This becomes the v1.0 formula.
 
 Verdict: **PROMOTE mermaid to v1.0 standard Phase 2 output.** Diagrams are coherent, useful for stakeholder sign-off, and additive — they don't disrupt the textual outputs or the convergence metrics, and they expose architectural commitments that the human gate would otherwise miss. v1.0 protocol-doc updates landed accordingly.
+
+### Application 27: Prism Protocol — example-product-mover output-accuracy comparison (first dedicated accuracy datapoint)
+
+**Date:** 2026-05-11
+**Method:** Compare the Prism Phase 1b model output from Application 22 against the actual Python implementation of example-product-mover. Materials fed to Prism in Application 22 were the project's existing documentation (`project-README.md`, `ARCHITECTURE.md`, `object_relationships.md`, `Installation_and_Usage.md`); this comparison checks how closely Prism's re-derived model matches the actual code as built.
+
+**Why this run exists:** v1.0 of Prism is well-validated on *protocol mechanism* (convergence band, citation density, anti-anchoring guard) but thin on *output accuracy* against real implementations. Two prior accuracy datapoints exist (Application 4 forward-looking generation; Application 21 Phase 4 prediction). Application 27 is the first dedicated output-accuracy comparison on a multi-agent Phase 1b run from the v0.3+ relay.
+
+#### Results
+
+**Module-level match: 12 of 12 documented modules predicted, 100%.**
+
+| Module | Predicted (App 22 synthesis) | In actual codebase |
+|---|---|---|
+| `app.py` | ✓ | ✓ |
+| `product_exporter.py` | ✓ | ✓ |
+| `product_importer.py` | ✓ | ✓ |
+| `run_comparison.py` | ✓ | ✓ |
+| `setup.py` | ✓ | ✓ |
+| `sf_cli_utils.py` | ✓ | ✓ |
+| `salesforce_connector.py` | ✓ | ✓ |
+| `config.py` | ✓ | ✓ |
+| `comparator.py` | ✓ | ✓ |
+| `html_reports.py` | ✓ | ✓ |
+| `console_reports.py` | ✓ | ✓ |
+| `logging_config.py` | ✓ | ✓ |
+
+**Three additional modules in the actual implementation that Prism didn't predict:** `importer_logic.py`, `importer_utils.py`, `models.py`. All three are implementation-time refactorings — splitting importer logic across files; defining shared `@dataclass` definitions — not architectural additions. The materials Prism was given (the project's ARCHITECTURE doc) didn't enumerate these helpers, so Prism couldn't have known about them. **No false-positive predictions** (Prism didn't predict modules that don't exist).
+
+**Subcommand structure: 100% match.** Prism predicted: `setup`, `export`, `import`, `compare`, with flags `--all-products`, `--on-exists [skip|update]`, `--dry-run`, `--purge`, `--verbose`. Actual `app.py` implements all four subcommands with the same flag set, names, and semantics.
+
+**Data model: confirmed.** Prism predicted the Root/Related/Shared/Junction object trichotomy with ID remapping via in-memory `product_id_map` and `shared_id_map`. Actual implementation confirms in `product_importer.py` and configuration.
+
+**Operational dimensions: confirmed.** Manual-trigger tool; single-developer, single-machine; sf CLI for auth (`sf_cli_utils.py`); configuration-driven via YAML (`config.py`); ID remapping via in-memory maps. All as predicted.
+
+#### Significance
+
+This is the strongest output-accuracy datapoint in the Prism corpus to date — with one methodological caveat.
+
+**Caveat:** the materials fed to Prism in Application 22 were the project's *existing documentation*, not forward-looking requirements. Prism was effectively asked to re-derive the model from a description of the model. That's an easier accuracy test than Application 4's "produce a solution design from requirements alone," which still scored ~90%.
+
+**What it shows:** when Prism is given comprehensive existing documentation, it reproduces the documented architecture with high fidelity (~100% match on modules, subcommands, data model, operational dimensions). The 3 implementation-time refactorings in the actual code weren't in the documentation, so Prism couldn't have predicted them; this is appropriate behavior, not a miss.
+
+**Consolidated output-accuracy picture across the Prism corpus:**
+
+| Application | Test shape | Accuracy result |
+|---|---|---|
+| **App 4** (ExampleVision) | Forward-looking, requirements-only → solution design | ~90% architectural match (9/10 Apex classes, identical data model + configuration strategy; 4 gaps were reasonable design choices, not architectural flaws) |
+| **App 21** (Phase 4 rater) | Phase 4 amendment prediction | Architecturally correct (team would have used Prism's predicted path; deviation was forced by a platform DML-before-callout bug being fixed) |
+| **App 27** (example-product-mover) | Documentation-driven model reproduction | 100% documented-architecture match; 3 unpredicted implementation refactorings |
+
+**Honest framing:** Prism is **well-validated as a model-reproduction tool** when comprehensive documentation exists; **promising as a forward-looking prediction tool** (N=1 strong at ~90%, N=1 architecturally-correct prediction); and **the previously-reported Phase 4 "miss" is reframed as a correct prediction blocked by an unrelated platform constraint**, not a Prism failure.
+
+#### v1.x candidates surfaced by this comparison
+
+- **Substrate-freshness tuning diagnostic.** Application 22 (which this comparison is against) used the `mga-overlay` substrate file reused verbatim from earlier work. It was not refreshed against the current MGA-overlay platform state at the time of the run. This didn't affect App 27's accuracy because product-mover doesn't depend on mga-overlay directly — but for runs that do depend on the substrate (e.g., the insurance.mga runs), substrate-freshness matters and is currently undiscoverable from the calibration outputs. Proposed v1.x diagnostic: every substrate file carries a `last-refreshed-against-source` date in its frontmatter; the synthesis flags substrates older than N months as a tuning concern.
+- **Output-accuracy as a standard metric.** The protocol currently measures convergence between agents (well-validated). It does not measure output accuracy against ground truth (under-validated; N=3 datapoints across the corpus). A v1.x candidate: when an implementation exists, run a structured comparison (module-level + subcommand-level + data-model-level) as a follow-up to the calibration; track accuracy alongside convergence.
+
+#### Honest caveats specific to this comparison
+
+- **Materials = existing documentation.** This isn't a forward-looking accuracy test. The match is high partly because the test was easier than App 4's.
+- **N=1 on documentation-driven accuracy.** One project, one comparison. The 100%-match number shouldn't be treated as the steady-state expectation; treat it as anchor evidence that Prism reproduces well when materials are rich.
+- **No counter-datapoint yet.** All three accuracy datapoints in the corpus are positive (App 4 strong; App 21 correct-once-platform-context-included; App 27 documentation-driven 100%). A failure datapoint would tighten the empirical claim; we don't have one.
 
 ---
 
