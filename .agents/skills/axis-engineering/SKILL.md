@@ -1,12 +1,12 @@
 ---
 name: axis-engineering
-description: AI Operating System with 33 behavior handles for critical thinking. Use when performing code review, architecture review, bug investigation, security review, or any task requiring structured reasoning.
+description: AI Operating System with 33 behavior handles for critical thinking, plus four protocols — Prism (modelling raw materials → system shape), Triangle (architecture tradeoffs), Seesaw (3-pole imbalance diagnostic), Two-Pass (review existing artefacts). Use when running any of those protocols, or when performing code review, architecture review, bug investigation, security review, domain modelling, or any task requiring structured reasoning.
 license: CC-BY-4.0
 compatibility: Designed for Claude Code, Cascade/Windsurf, Cursor, and similar agentic tools
 metadata:
   author: Steven Loftus
   version: "2.0.0"
-tags: [framework, thinking, methodology, genba, pre-mortem, stride]
+tags: [framework, thinking, methodology, prism, triangle, seesaw, two-pass, genba, pre-mortem, stride]
 ---
 
 # Axis Engineering
