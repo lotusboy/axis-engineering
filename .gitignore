@@ -18,5 +18,10 @@ temp-plans/
 testing
 testing/
 
+# Python
+.pytest_cache/
+__pycache__/
+*.pyc
+
 # Local-only working directory
 private/

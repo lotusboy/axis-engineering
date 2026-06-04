@@ -637,6 +637,19 @@ STOP:         Andon — halt and flag if you find a data-loss or security vulner
 
 The contract forces the agent to demonstrate application, not just mention handles.
 
+## Automated Contract Validation
+
+`axis-validate` is a deterministic linter that enforces the Axis Contract mechanically — turning a soft prompt discipline into a hard invariant with real exit codes.
+
+Seven checks: schema version, schema conformance, citation coverage, citation resolution, handle firing, ledger integrity, and the Andon rule. Exit 0 = conformant, exit 1 = hard failure, exit 2 = advisory.
+
+```bash
+pip install -r .agents/skills/axis-engineering/scripts/requirements.txt
+python .agents/skills/axis-engineering/scripts/axis-validate.py review.json --repo-path . --require-schema
+```
+
+See [`axis-validate.md`](axis-validate.md) for full usage, CI integration, the review document format, and regression test instructions.
+
 ## Combining Handles: The Cocktail
 
 The power is in combination. Pick 2-3 per context, matched to the task:
