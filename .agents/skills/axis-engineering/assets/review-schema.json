@@ -5,6 +5,19 @@
   "description": "Structured output format for Axis Engineering reviews enabling automated contract validation",
   "version": "1.0.0",
   "type": "object",
+  "$defs": {
+    "handleEnum": {
+      "type": "string",
+      "description": "Axis Engineering behavior handle (34 total)",
+      "enum": [
+        "Genba", "Seven Factors", "Kaizen", "Shoshin", "First Principles", "Wabi-sabi", "Wu Wei",
+        "MECE", "Pyramid Principle", "BLUF", "Five Whys", "Eisenhower Matrix",
+        "Gang of Four", "Fowler's Catalog", "SOLID", "DDD", "Feathers' Legacy Code", "Kent Beck's Four Rules", "Hexagonal Architecture", "12-Factor App",
+        "Red Team", "Pre-mortem", "STRIDE", "Chaos Engineering", "Muda", "Andon", "Devil's Advocate",
+        "Cynefin", "Poka-yoke", "Jidoka", "YAGNI", "Occam's Razor", "Theory of Constraints", "Chesterton's Fence"
+      ]
+    }
+  },
   "required": ["schema_version", "contract", "bluf", "findings", "assumptions"],
   "properties": {
     "schema_version": {
@@ -20,16 +33,7 @@
         "axes": {
           "type": "array",
           "description": "Active behavior handles (2-3 recommended)",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Genba", "Seven Factors", "Kaizen", "Shoshin", "First Principles", "Wabi-sabi", "Wu Wei",
-              "MECE", "Pyramid Principle", "BLUF", "Five Whys", "Eisenhower Matrix",
-              "Gang of Four", "Fowler's Catalog", "SOLID", "DDD", "Feathers' Legacy Code", "Kent Beck's Four Rules", "Hexagonal Architecture", "12-Factor App",
-              "Red Team", "Pre-mortem", "STRIDE", "Chaos Engineering", "Muda", "Andon", "Devil's Advocate",
-              "Cynefin", "Poka-yoke", "Jidoka", "YAGNI", "Occam's Razor", "Theory of Constraints", "Chesterton's Fence"
-            ]
-          },
+          "items": { "$ref": "#/$defs/handleEnum" },
           "minItems": 1,
           "maxItems": 4
         },
@@ -71,15 +75,8 @@
             "pattern": "^[A-Z]+[0-9]+$"
           },
           "handle": {
-            "type": "string",
-            "description": "The behavior handle that produced this finding",
-            "enum": [
-              "Genba", "Seven Factors", "Kaizen", "Shoshin", "First Principles", "Wabi-sabi", "Wu Wei",
-              "MECE", "Pyramid Principle", "BLUF", "Five Whys", "Eisenhower Matrix",
-              "Gang of Four", "Fowler's Catalog", "SOLID", "DDD", "Feathers' Legacy Code", "Kent Beck's Four Rules", "Hexagonal Architecture", "12-Factor App",
-              "Red Team", "Pre-mortem", "STRIDE", "Chaos Engineering", "Muda", "Andon", "Devil's Advocate",
-              "Cynefin", "Poka-yoke", "Jidoka", "YAGNI", "Occam's Razor", "Theory of Constraints", "Chesterton's Fence"
-            ]
+            "$ref": "#/$defs/handleEnum",
+            "description": "The behavior handle that produced this finding"
           },
           "severity": {
             "type": "string",

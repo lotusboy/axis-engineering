@@ -23,6 +23,16 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 
+def is_path_within_repo(full_path: Path, repo_root: Path) -> bool:
+    """Check if resolved path is within repo root (robust against traversal attacks)."""
+    try:
+        # Use relative_to which raises ValueError if not a subpath
+        full_path.relative_to(repo_root)
+        return True
+    except ValueError:
+        return False
+
+
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
@@ -132,8 +142,8 @@ def check_citation_resolution(findings: List[Dict[str, Any]], repo_path: str) ->
             # Normalize path and resolve relative to repo root
             try:
                 full_path = (repo_root / file_path).resolve()
-                # Ensure it's within repo root (security check)
-                if not str(full_path).startswith(str(repo_root)):
+                # Ensure it's within repo root (security check - robust against traversal)
+                if not is_path_within_repo(full_path, repo_root):
                     failures.append({
                         "finding_id": finding_id,
                         "citation": f"{file_path}:{line_num}",
@@ -342,9 +352,23 @@ def main():
     print(report)
     
     # Determine exit code
-    hard_failures = sum(1 for _, passed, _, _ in results if not passed)
+    # Exit 2 = advisory warnings only (e.g., schema version drift)
+    # Exit 1 = hard failures (citations, handles, andon violations)
+    # Exit 0 = all passed
+    hard_failures = 0
+    advisory_warnings = 0
+    
+    for check_name, passed, message, _ in results:
+        if not passed:
+            if check_name == "schema_version" and "mismatch" in message:
+                advisory_warnings += 1
+            else:
+                hard_failures += 1
+    
     if hard_failures > 0:
         sys.exit(1)
+    if advisory_warnings > 0:
+        sys.exit(2)
     sys.exit(0)
 
 
