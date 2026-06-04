@@ -304,8 +304,8 @@ python scripts/axis-validate.py <review.json> --repo-path .
 **CI Integration:**
 ```yaml
 - name: Validate Axis Review Output
-  run: python scripts/axis-validate.py review-output.json --repo-path ./src
+  run: python scripts/axis-validate.py review-output.json --repo-path .
   if: always()  # Run even if previous steps fail
 ```
 
-This is the path to achieving software score 9+ on the Axis methodology — the automated validator closes the loop that previously required manual verification.
+This enables the path toward software score 9+ on the Axis methodology — the automated validator provides deterministic output checking that previously required manual verification. Closed-loop regeneration (auto-fix on failure) is future work.

@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "contract": {
     "axes": ["SOLID", "STRIDE", "YAGNI"],
-    "target": "src/auth/login.ts",
+    "target": ".agents/skills/axis-engineering/assets/fixtures/login.ts",
     "structure": "Pyramid",
     "evidence_rule": "file:line for every finding",
     "stop": "Andon"
@@ -16,9 +16,9 @@
       "type": "defect",
       "claim": "authenticate() function mixes authentication, password hashing, and session creation - violates single-responsibility principle",
       "citations": [
-        {"file": "src/auth/login.ts", "line": 23},
-        {"file": "src/auth/login.ts", "line": 45},
-        {"file": "src/auth/login.ts", "line": 62}
+        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 23},
+        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 45},
+        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 62}
       ],
       "stop_triggered": true
     },
@@ -29,7 +29,7 @@
       "type": "defect",
       "claim": "Timing side-channel in password comparison: standard equality check allows timing attacks for user enumeration",
       "citations": [
-        {"file": "src/auth/login.ts", "line": 34}
+        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 34}
       ],
       "stop_triggered": true
     },
@@ -48,7 +48,7 @@
       "type": "absence",
       "claim": "Over-engineered: JWT claims include department and manager fields never used by current consumers",
       "citations": [
-        {"file": "src/auth/login.ts", "line": 78}
+        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 78}
       ],
       "notes": "Remove unused fields to reduce token size and attack surface"
     },
@@ -59,7 +59,7 @@
       "type": "fact",
       "claim": "Session store interface is correctly abstracted behind SessionStore interface (good DI practice)",
       "citations": [
-        {"file": "src/auth/login.ts", "line": 12}
+        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
       ]
     }
   ],
@@ -67,7 +67,7 @@
     {
       "statement": "Database connection is handled by separate connection pool module",
       "status": "verified",
-      "evidence": "Confirmed by reading src/db/pool.ts"
+      "evidence": "Confirmed by reading hypothetical pool.ts"
     },
     {
       "statement": "Session tokens are validated by middleware before reaching this handler",

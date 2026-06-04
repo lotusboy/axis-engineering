@@ -157,7 +157,7 @@ Run `python scripts/axis-validate.py <review.json>` to check:
 
 1. **Citation coverage:** Every `defect` and `fact` finding must have ≥1 citation (`file:line`)
 2. **Citation resolution:** Cited files must exist; line numbers must be in range
-3. **Handle firing:** Every handle named in `contract.axes` must own ≥1 finding (guards against cargo-culting)
+3. **Handle firing:** Every handle named in `contract.axes` must own ≥1 finding (structural check; does not detect a handle name-dropped without genuine application)
 4. **Ledger integrity:** Assumptions array must be present (warnings for drift tracking in multi-pass)
 5. **Andon rule:** Critical/high severity defects must have `stop_triggered: true`
 
@@ -170,7 +170,7 @@ Use `assets/review-schema.json` for structured output format. Example:
   "schema_version": "1.0.0",
   "contract": {
     "axes": ["SOLID", "STRIDE", "YAGNI"],
-    "target": "src/auth/login.ts",
+    "target": "assets/fixtures/login.ts",
     "structure": "Pyramid",
     "evidence_rule": "file:line for every finding",
     "stop": "Andon"
@@ -183,9 +183,9 @@ Use `assets/review-schema.json` for structured output format. Example:
 
 See `assets/review-example.json` for a complete worked example.
 
-### Loop Closure
+### Automated Validation
 
-`axis-validate` closes the methodology loop: output → validator → pass/fail. This is the path to achieving software score 9+ on the Axis methodology.
+`axis-validate` provides deterministic, automated validation: output → validator → pass/fail. This enables the path toward software score 9+ on the Axis methodology. The closed-loop regeneration (validate → on fail, feed failures back → regenerate) is future work.
 
 ## Provenance & Legal
 

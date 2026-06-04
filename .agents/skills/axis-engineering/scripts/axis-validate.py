@@ -243,14 +243,18 @@ def check_ledger_integrity(assumptions: List[Dict[str, Any]]) -> Tuple[bool, str
     return True, f"Ledger integrity: {unknown_count} unknown, {verified_count} verified, {refuted_count} refuted", []
 
 
-def check_andon_rule(findings: List[Dict[str, Any]]) -> Tuple[bool, str, List[Dict]]:
+def check_andon_rule(findings: List[Dict[str, Any]], contract: Dict[str, Any]) -> Tuple[bool, str, List[Dict]]:
     """
     Check 5: Andon rule.
-    If any finding has severity "critical" or "high" AND type "defect",
-    then stop_triggered must be true on that finding.
+    If contract.stop == "Andon" and any finding has severity "critical" or "high"
+    AND type "defect", then stop_triggered must be true on that finding.
     """
+    # Short-circuit if Andon is not enabled
+    if contract.get("stop") != "Andon":
+        return True, "Andon rule: not enabled (stop != Andon)", []
+
     violations = []
-    
+
     for finding in findings:
         severity = finding.get("severity", "")
         finding_type = finding.get("type", "")
@@ -278,16 +282,16 @@ def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]]) 
         ""
     ]
     
-    passed = sum(1 for _, p, _, _ in results if p)
+    passed_count = sum(1 for _, p, _, _ in results if p)
     total = len(results)
-    
-    lines.append(f"Overall: {passed}/{total} checks passed")
+
+    lines.append(f"Overall: {passed_count}/{total} checks passed")
     lines.append("")
-    
+
     for check_name, passed, message, failures in results:
         status = "✓" if passed else "✗"
         lines.append(f"  {check_name}: {message} {status}")
-        
+
         if failures:
             for failure in failures:
                 finding_id = failure.get("finding_id", failure.get("handle", ""))
@@ -296,12 +300,12 @@ def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]]) 
                     lines.append(f"      {finding_id}: {issue}")
                 else:
                     lines.append(f"      {issue}")
-    
+
     lines.append("")
-    
-    if passed == total:
+
+    if passed_count == total:
         lines.append("All checks passed. Contract is conformant.")
-    elif passed >= total - 1:
+    elif passed_count >= total - 1:
         lines.append("Minor issues detected. Review recommended.")
     else:
         lines.append("Failures must be resolved before review is accepted.")
@@ -344,7 +348,7 @@ def main():
     results.append(("ledger", passed, message, failures))
     
     # Check 5: Andon rule
-    passed, message, failures = check_andon_rule(findings)
+    passed, message, failures = check_andon_rule(findings, contract)
     results.append(("andon", passed, message, failures))
     
     # Output report
