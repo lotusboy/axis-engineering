@@ -15,7 +15,7 @@ from pathlib import Path
 # Path to the validator script
 SCRIPT_DIR = Path(__file__).parent
 VALIDATOR = SCRIPT_DIR / "axis-validate.py"
-REPO_ROOT = SCRIPT_DIR.parent.parent.parent.parent  # Up to repo root
+REPO_ROOT = SCRIPT_DIR.parent  # Skill root (scripts/ and assets/ are siblings)
 
 # Detect jsonschema availability (determines which tests can run)
 try:
@@ -96,7 +96,7 @@ def test_all_pass_review():
                 "type": "fact",
                 "claim": "This is a test finding.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                    {"file": "assets/fixtures/login.ts", "line": 12}
                 ]
             }
         ],
@@ -128,7 +128,7 @@ def test_stop_none_allows_unflagged_high():
                 "type": "defect",
                 "claim": "High severity defect without stop_triggered.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 23}
+                    {"file": "assets/fixtures/login.ts", "line": 23}
                 ],
                 "stop_triggered": False  # Should be allowed when stop:None
             }
@@ -220,7 +220,7 @@ def test_schema_rejects_misspelled_handle():
                 "type": "fact",
                 "claim": "Test finding.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                    {"file": "assets/fixtures/login.ts", "line": 12}
                 ]
             }
         ],
@@ -255,7 +255,7 @@ def test_andon_by_category_maintainability():
                 "category": "maintainability",  # NOT security/data-loss
                 "claim": "Code style issue.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                    {"file": "assets/fixtures/login.ts", "line": 12}
                 ],
                 "stop_triggered": False  # Should be allowed for maintainability
             }
@@ -289,7 +289,7 @@ def test_andon_security_still_fires():
                 "category": "security",  # IS security - Andon relevant
                 "claim": "Security vulnerability without stop_triggered.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 34}
+                    {"file": "assets/fixtures/login.ts", "line": 34}
                 ],
                 "stop_triggered": False  # Should FAIL for security
             }
@@ -326,7 +326,7 @@ def test_schema_absent_advisory():
                 "type": "fact",
                 "claim": "This is a test finding.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                    {"file": "assets/fixtures/login.ts", "line": 12}
                 ]
             }
         ],
@@ -359,7 +359,7 @@ def test_require_schema_hard_fail():
                 "type": "fact",
                 "claim": "This is a test finding.",
                 "citations": [
-                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                    {"file": "assets/fixtures/login.ts", "line": 12}
                 ]
             }
         ],
