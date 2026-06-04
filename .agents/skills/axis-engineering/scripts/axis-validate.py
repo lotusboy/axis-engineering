@@ -319,7 +319,7 @@ def check_schema_conformance(data: Dict[str, Any], script_dir: Path, require_sch
     return True, "Schema conformance: valid", [], False
 
 
-def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]], advisory_flags: Dict[str, bool] = None) -> str:
+def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]], schema_advisory: bool = False) -> str:
     """Format the conformance report for output."""
     lines = [
         "axis-validate: Contract Conformance Report",
@@ -334,7 +334,7 @@ def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]], 
     lines.append("")
 
     for check_name, passed, message, failures in results:
-        is_advisory = advisory_flags.get(check_name, False) if advisory_flags else False
+        is_advisory = (check_name == "schema_conformance" and schema_advisory)
         if passed:
             status = "✓"
         elif is_advisory:
@@ -377,7 +377,7 @@ def main():
     
     # Run all checks
     results = []
-    advisory_flags = {}  # track which checks are advisory (for warning marker)
+    schema_conformance_advisory = False  # track if schema check is advisory
     script_dir = Path(__file__).parent
 
     # Check 0: Schema version
@@ -387,7 +387,7 @@ def main():
     # Check 0b: Schema conformance (shape validation)
     passed, message, failures, advisory = check_schema_conformance(data, script_dir, args.require_schema)
     results.append(("schema_conformance", passed, message, failures))
-    advisory_flags["schema_conformance"] = advisory
+    schema_conformance_advisory = advisory  # store advisory status
 
     # Check 1: Citation coverage
     passed, message, failures = check_citation_coverage(findings)
@@ -410,7 +410,7 @@ def main():
     results.append(("andon", passed, message, failures))
 
     # Output report
-    report = format_conformance_report(results, advisory_flags)
+    report = format_conformance_report(results, schema_conformance_advisory)
     print(report)
 
     # Determine exit code
@@ -422,11 +422,12 @@ def main():
 
     for check_name, passed, message, _ in results:
         if not passed:
-            if advisory_flags.get(check_name, False):
+            # Check if this specific check was advisory
+            if check_name == "schema_conformance" and schema_conformance_advisory:
                 advisory_warnings += 1
             else:
                 hard_failures += 1
-    
+
     if hard_failures > 0:
         sys.exit(1)
     if advisory_warnings > 0:
