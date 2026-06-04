@@ -47,6 +47,11 @@ def parse_args() -> argparse.Namespace:
         default=".",
         help="Path to repository root for citation resolution (default: current directory)"
     )
+    parser.add_argument(
+        "--require-schema",
+        action="store_true",
+        help="Fail hard (exit 1) if jsonschema is not installed; default is advisory only"
+    )
     return parser.parse_args()
 
 
@@ -287,7 +292,7 @@ def check_andon_rule(findings: List[Dict[str, Any]], contract: Dict[str, Any]) -
     return True, "Andon rule: All critical/high security/data-loss defects have stop_triggered", []
 
 
-def check_schema_conformance(data: Dict[str, Any], script_dir: Path) -> Tuple[bool, str, List[Dict], bool]:
+def check_schema_conformance(data: Dict[str, Any], script_dir: Path, require_schema: bool = False) -> Tuple[bool, str, List[Dict], bool]:
     """
     Check 0b: Document shape conforms to review-schema.json.
     Uses jsonschema if available (hard check); degrades to advisory if not installed.
@@ -295,14 +300,15 @@ def check_schema_conformance(data: Dict[str, Any], script_dir: Path) -> Tuple[bo
     """
     schema_path = script_dir.parent / "assets" / "review-schema.json"
     if not schema_path.exists():
-        return True, "Schema conformance: schema file not found (skipped)", [], True  # advisory
+        msg = "Schema conformance: schema file not found (skipped)"
+        return False, msg, [], True  # not passed, advisory
     try:
         import jsonschema
     except ImportError:
-        return (True,
-                "Schema conformance: jsonschema not installed - shape NOT enforced "
-                "(pip install jsonschema for full enforcement)",
-                [], True)  # advisory
+        if require_schema:
+            return False, "Schema conformance: jsonschema required but not installed", [], False
+        msg = "Schema conformance: jsonschema not installed - shape NOT enforced"
+        return False, msg, [], True  # not passed, advisory
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(schema)
     errors = sorted(validator.iter_errors(data), key=lambda e: list(e.path))
@@ -313,14 +319,14 @@ def check_schema_conformance(data: Dict[str, Any], script_dir: Path) -> Tuple[bo
     return True, "Schema conformance: valid", [], False
 
 
-def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]]) -> str:
+def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]], advisory_flags: Dict[str, bool] = None) -> str:
     """Format the conformance report for output."""
     lines = [
         "axis-validate: Contract Conformance Report",
         "==========================================",
         ""
     ]
-    
+
     passed_count = sum(1 for _, p, _, _ in results if p)
     total = len(results)
 
@@ -328,7 +334,13 @@ def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]]) 
     lines.append("")
 
     for check_name, passed, message, failures in results:
-        status = "✓" if passed else "✗"
+        is_advisory = advisory_flags.get(check_name, False) if advisory_flags else False
+        if passed:
+            status = "✓"
+        elif is_advisory:
+            status = "⚠"  # warning for advisory (skipped/absent)
+        else:
+            status = "✗"
         lines.append(f"  {check_name}: {message} {status}")
 
         if failures:
@@ -365,6 +377,7 @@ def main():
     
     # Run all checks
     results = []
+    advisory_flags = {}  # track which checks are advisory (for warning marker)
     script_dir = Path(__file__).parent
 
     # Check 0: Schema version
@@ -372,46 +385,44 @@ def main():
     results.append(("schema_version", passed, message, []))
 
     # Check 0b: Schema conformance (shape validation)
-    passed, message, failures, advisory = check_schema_conformance(data, script_dir)
+    passed, message, failures, advisory = check_schema_conformance(data, script_dir, args.require_schema)
     results.append(("schema_conformance", passed, message, failures))
-    schema_conformance_advisory = advisory  # track for exit code logic
+    advisory_flags["schema_conformance"] = advisory
 
     # Check 1: Citation coverage
     passed, message, failures = check_citation_coverage(findings)
     results.append(("citations", passed, message, failures))
-    
+
     # Check 2: Citation resolution
     passed, message, failures = check_citation_resolution(findings, args.repo_path)
     results.append(("resolution", passed, message, failures))
-    
+
     # Check 3: Handle firing
     passed, message, failures = check_handle_firing(contract, findings)
     results.append(("handles", passed, message, failures))
-    
+
     # Check 4: Ledger integrity
     passed, message, failures = check_ledger_integrity(assumptions)
     results.append(("ledger", passed, message, failures))
-    
+
     # Check 5: Andon rule
     passed, message, failures = check_andon_rule(findings, contract)
     results.append(("andon", passed, message, failures))
-    
+
     # Output report
-    report = format_conformance_report(results)
+    report = format_conformance_report(results, advisory_flags)
     print(report)
-    
+
     # Determine exit code
     # Exit 2 = advisory warnings only (e.g., schema version drift)
     # Exit 1 = hard failures (citations, handles, andon violations)
     # Exit 0 = all passed
     hard_failures = 0
     advisory_warnings = 0
-    
+
     for check_name, passed, message, _ in results:
         if not passed:
-            if check_name == "schema_version" and "mismatch" in message:
-                advisory_warnings += 1
-            elif check_name == "schema_conformance" and schema_conformance_advisory:
+            if advisory_flags.get(check_name, False):
                 advisory_warnings += 1
             else:
                 hard_failures += 1

@@ -18,7 +18,7 @@ VALIDATOR = SCRIPT_DIR / "axis-validate.py"
 REPO_ROOT = SCRIPT_DIR.parent.parent.parent.parent  # Up to repo root
 
 
-def run_validator(review_data, repo_path=None):
+def run_validator(review_data, repo_path=None, require_schema=False):
     """Run validator with given review data, return (exit_code, stdout, stderr)."""
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
         json.dump(review_data, f)
@@ -28,6 +28,8 @@ def run_validator(review_data, repo_path=None):
         cmd = [sys.executable, str(VALIDATOR), temp_path]
         if repo_path:
             cmd.extend(['--repo-path', repo_path])
+        if require_schema:
+            cmd.append('--require-schema')
 
         result = subprocess.run(cmd, capture_output=True, text=True)
         return result.returncode, result.stdout, result.stderr
@@ -263,6 +265,101 @@ def test_andon_security_still_fires():
     print("✓ Test 7 passed: high security defect triggers Andon violation")
 
 
+def test_schema_absent_advisory():
+    """Test 8: Without jsonschema, invalid doc exits 2 (advisory) not 0."""
+    try:
+        import jsonschema
+        # Temporarily hide jsonschema by running in a subprocess with modified env
+        import os
+        env = os.environ.copy()
+        # Remove any python paths that might have jsonschema
+        env['PYTHONPATH'] = ''
+    except ImportError:
+        pass  # jsonschema not installed, test can proceed normally
+
+    # Invalid document (misspelled handle)
+    review = {
+        "schema_version": "1.0.0",
+        "contract": {
+            "axes": ["Gemba"],  # Misspelled
+            "structure": "Pyramid",
+            "stop": "None"
+        },
+        "bluf": "Invalid doc with misspelled handle.",
+        "findings": [],
+        "assumptions": []
+    }
+
+    # Use subprocess with PYTHONPATH stripped to simulate absent jsonschema
+    import subprocess
+    import sys
+    import os
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(review, f)
+        temp_path = f.name
+
+    try:
+        # Run with clean environment to simulate no jsonschema
+        env = os.environ.copy()
+        env['PYTHONPATH'] = '/nonexistent'  # Force import failure
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR), temp_path, '--repo-path', str(REPO_ROOT)],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+
+        # Should be advisory (exit 2), not success (exit 0)
+        assert result.returncode == 2, f"Expected exit 2 for advisory, got {result.returncode}. stderr: {result.stderr}"
+        assert "⚠" in result.stdout or "not installed" in result.stdout.lower(), (
+            f"Expected warning marker or 'not installed' message. Got: {result.stdout}"
+        )
+        print("✓ Test 8 passed: absent jsonschema → exit 2 (advisory)")
+    finally:
+        os.unlink(temp_path)
+
+
+def test_require_schema_hard_fail():
+    """Test 9: --require-schema fails hard (exit 1) when jsonschema absent."""
+    import subprocess
+    import sys
+    import os
+    import tempfile
+    import json
+
+    review = {
+        "schema_version": "1.0.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Valid doc.",
+        "findings": [],
+        "assumptions": []
+    }
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(review, f)
+        temp_path = f.name
+
+    try:
+        env = os.environ.copy()
+        env['PYTHONPATH'] = '/nonexistent'  # Force import failure
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR), temp_path, '--repo-path', str(REPO_ROOT), '--require-schema'],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+
+        # Should fail hard (exit 1) with --require-schema
+        assert result.returncode == 1, f"Expected exit 1 with --require-schema, got {result.returncode}"
+        assert "required" in result.stdout.lower() or "not installed" in result.stdout.lower(), (
+            f"Expected 'required' or 'not installed' message. Got: {result.stdout}"
+        )
+        print("✓ Test 9 passed: --require-schema → exit 1 (hard fail) when jsonschema absent")
+    finally:
+        os.unlink(temp_path)
+
+
 def main():
     """Run all regression tests."""
     print("Running axis-validate regression tests...")
@@ -276,6 +373,8 @@ def main():
         test_schema_rejects_misspelled_handle()
         test_andon_by_category_maintainability()
         test_andon_security_still_fires()
+        test_schema_absent_advisory()
+        test_require_schema_hard_fail()
         print()
         print("All tests passed!")
         return 0
