@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "contract": {
+    "axes": ["SOLID", "STRIDE", "YAGNI"],
+    "target": "src/auth/login.ts",
+    "structure": "Pyramid",
+    "evidence_rule": "file:line for every finding",
+    "stop": "Andon"
+  },
+  "bluf": "Authentication service violates single-responsibility and exposes timing side-channel; patch required before merge.",
+  "findings": [
+    {
+      "id": "F1",
+      "handle": "SOLID",
+      "severity": "critical",
+      "type": "defect",
+      "claim": "authenticate() function mixes authentication, password hashing, and session creation - violates single-responsibility principle",
+      "citations": [
+        {"file": "src/auth/login.ts", "line": 23},
+        {"file": "src/auth/login.ts", "line": 45},
+        {"file": "src/auth/login.ts", "line": 62}
+      ],
+      "stop_triggered": true
+    },
+    {
+      "id": "F2",
+      "handle": "STRIDE",
+      "severity": "high",
+      "type": "defect",
+      "claim": "Timing side-channel in password comparison: standard equality check allows timing attacks for user enumeration",
+      "citations": [
+        {"file": "src/auth/login.ts", "line": 34}
+      ],
+      "stop_triggered": true
+    },
+    {
+      "id": "F3",
+      "handle": "STRIDE",
+      "severity": "medium",
+      "type": "recommendation",
+      "claim": "Add rate limiting per IP address to prevent credential stuffing attacks",
+      "notes": "Not a current defect but recommended defense-in-depth"
+    },
+    {
+      "id": "F4",
+      "handle": "YAGNI",
+      "severity": "low",
+      "type": "absence",
+      "claim": "Over-engineered: JWT claims include department and manager fields never used by current consumers",
+      "citations": [
+        {"file": "src/auth/login.ts", "line": 78}
+      ],
+      "notes": "Remove unused fields to reduce token size and attack surface"
+    },
+    {
+      "id": "F5",
+      "handle": "SOLID",
+      "severity": "info",
+      "type": "fact",
+      "claim": "Session store interface is correctly abstracted behind SessionStore interface (good DI practice)",
+      "citations": [
+        {"file": "src/auth/login.ts", "line": 12}
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "statement": "Database connection is handled by separate connection pool module",
+      "status": "verified",
+      "evidence": "Confirmed by reading src/db/pool.ts"
+    },
+    {
+      "statement": "Session tokens are validated by middleware before reaching this handler",
+      "status": "unknown",
+      "evidence": "Not verified - would require tracing middleware chain"
+    },
+    {
+      "statement": "Password hashing uses bcrypt with cost factor 12",
+      "status": "verified",
+      "evidence": "Line 41 confirms bcrypt.compareSync usage"
+    }
+  ]
+}
