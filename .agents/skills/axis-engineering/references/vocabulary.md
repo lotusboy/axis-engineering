@@ -67,6 +67,7 @@ Terms that help calibrate response to problem complexity.
 | **YAGNI** | Kent Beck | You Aren't Gonna Need It. Don't build hypotheticals. | Explicit scope exclusion with justification | any |
 | **Occam's Razor** | William of Ockham | Simplest explanation/solution is usually correct. | Simpler alternative proposed and selected | any |
 | **Theory of Constraints** | Goldratt | Find the bottleneck. Optimize the constraint. | Identified bottleneck + targeted optimization | ops |
+| **Chesterton's Fence** | G.K. Chesterton | Do not remove or change a rule, process, or boundary until you understand the purpose it serves. Discover why the fence was built before deciding to demolish it. | Explicit explanation of historical context/intent and the risk of removal | any |
 
 ## Defining a Behavior Handle
 

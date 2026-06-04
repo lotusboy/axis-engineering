@@ -239,6 +239,35 @@ The Seesaw Principle is a **diagnostic that fires inside other protocols**, not 
 
 **Don't paper over.** Seesaw's discipline is that the visible struggle is *signal* about the upstream artefact, not a problem to suppress with a workaround.
 
+## Non-Code Artefacts
+
+Use these recipes when reviewing non-code artefacts (strategy docs, mentoring plans, policy/process documents).
+
+*Note: The Pattern-oriented axis is software-first. SOLID, DDD, Fowler's, STRIDE have no purchase on strategy docs, plans, or people/mentoring artefacts. On non-code work, skip this axis entirely or substitute a domain-appropriate pattern set.*
+
+**Strategy / planning doc review:**
+```
+AXES: Genba + MECE + Pre-mortem
+NOTE: Pattern-oriented axis does not apply. Scale findings to artefact size (10-15 for a <300-line doc).
+EVIDENCE: file:line for every factual claim. Forward-looking intentions are exempt from citation but must be flagged as unverified.
+STOP: Pre-mortem findings about people should target the plan, not the person.
+```
+
+**People / mentoring / 1:1 review:**
+```
+AXES: Genba + Pre-mortem + Seesaw
+CAUTION: Adversarial-curdle risk. Pre-mortem fires on the plan, not on character.
+Every finding should complete: "The plan fails here because..." not "Person X is..."
+If the artefact has a people-rules layer, cite it as a counterweight to adversarial findings.
+```
+
+**Policy / process doc review:**
+```
+AXES: First Principles + MECE + Poka-yoke
+Poka-yoke here = "Is this action dated and actionable, or just an intention?"
+Flag every soft action ("may", "consider", "might") as an undated commitment risk.
+```
+
 ## Selection Algorithm
 
 If unsure which handles to pick:
