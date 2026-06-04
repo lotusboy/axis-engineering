@@ -88,6 +88,11 @@
             "description": "Finding type determines citation requirements",
             "enum": ["defect", "fact", "recommendation", "absence"]
           },
+          "category": {
+            "type": "string",
+            "description": "Nature of the finding; determines Andon eligibility",
+            "enum": ["data-loss", "security", "correctness", "maintainability", "performance", "style"]
+          },
           "claim": {
             "type": "string",
             "description": "The specific finding claim/description"

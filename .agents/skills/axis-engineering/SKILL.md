@@ -155,11 +155,12 @@ The `axis-validate` linter converts the Axis Contract from a prompt instruction 
 
 Run `python scripts/axis-validate.py <review.json>` to check:
 
-1. **Citation coverage:** Every `defect` and `fact` finding must have ≥1 citation (`file:line`)
-2. **Citation resolution:** Cited files must exist; line numbers must be in range
-3. **Handle firing:** Every handle named in `contract.axes` must own ≥1 finding (structural check; does not detect a handle name-dropped without genuine application)
-4. **Ledger integrity:** Assumptions array must be present (warnings for drift tracking in multi-pass)
-5. **Andon rule:** Critical/high severity defects must have `stop_triggered: true`
+1. **Schema conformance:** Document shape validated against `review-schema.json` (requires `pip install jsonschema`; without it, shape checks run as advisory only)
+2. **Citation coverage:** Every `defect` and `fact` finding must have ≥1 citation (`file:line`)
+3. **Citation resolution:** Cited files must exist; line numbers must be in range
+4. **Handle firing:** Every handle named in `contract.axes` must own ≥1 finding (structural check; does not detect a handle name-dropped without genuine application)
+5. **Ledger integrity:** Assumptions array must be present (warnings for drift tracking in multi-pass)
+6. **Andon rule:** Critical/high `data-loss`/`security` defects must have `stop_triggered: true`
 
 ### Output Schema
 

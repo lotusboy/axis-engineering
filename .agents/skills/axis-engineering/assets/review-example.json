@@ -14,6 +14,7 @@
       "handle": "SOLID",
       "severity": "critical",
       "type": "defect",
+      "category": "correctness",
       "claim": "authenticate() function mixes authentication, password hashing, and session creation - violates single-responsibility principle",
       "citations": [
         {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 23},
@@ -27,6 +28,7 @@
       "handle": "STRIDE",
       "severity": "high",
       "type": "defect",
+      "category": "security",
       "claim": "Timing side-channel in password comparison: standard equality check allows timing attacks for user enumeration",
       "citations": [
         {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 34}

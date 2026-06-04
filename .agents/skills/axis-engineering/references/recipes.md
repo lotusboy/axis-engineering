@@ -303,6 +303,8 @@ python scripts/axis-validate.py <review.json> --repo-path .
 
 **CI Integration:**
 ```yaml
+- name: Install validator dependencies
+  run: pip install jsonschema
 - name: Validate Axis Review Output
   run: python scripts/axis-validate.py review-output.json --repo-path .
   if: always()  # Run even if previous steps fail

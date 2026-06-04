@@ -153,6 +153,116 @@ def test_shipped_example_passes():
     print("✓ Test 4 passed: shipped review-example.json validates successfully")
 
 
+def test_schema_rejects_misspelled_handle():
+    """Test 5: Schema rejects misspelled handle when jsonschema installed."""
+    try:
+        import jsonschema
+    except ImportError:
+        print("⊘ Test 5 skipped: jsonschema not installed")
+        return
+
+    review = {
+        "schema_version": "1.0.0",
+        "contract": {
+            "axes": ["Gemba"],  # Misspelled - should be "Genba"
+            "structure": "Pyramid",
+            "stop": "None"
+        },
+        "bluf": "Test with misspelled handle.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Gemba",  # Also misspelled here
+                "severity": "info",
+                "type": "fact",
+                "claim": "Test finding.",
+                "citations": [
+                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                ]
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 1, f"Expected exit 1 for misspelled handle, got {exit_code}"
+    assert "Schema conformance" in stdout and "violation" in stdout.lower(), (
+        f"Expected schema conformance violation. Got: {stdout}"
+    )
+    print("✓ Test 5 passed: schema rejects misspelled handle")
+
+
+def test_andon_by_category_maintainability():
+    """Test 6: High maintainability defect does NOT trigger Andon (category narrows)."""
+    review = {
+        "schema_version": "1.0.0",
+        "contract": {
+            "axes": ["SOLID"],
+            "structure": "Pyramid",
+            "stop": "Andon"  # Andon enabled
+        },
+        "bluf": "Test with high maintainability defect - should pass Andon.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "SOLID",
+                "severity": "high",
+                "type": "defect",
+                "category": "maintainability",  # NOT security/data-loss
+                "claim": "Code style issue.",
+                "citations": [
+                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+                ],
+                "stop_triggered": False  # Should be allowed for maintainability
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 0, f"Expected exit 0 for high maintainability defect, got {exit_code}"
+    assert "Andon" in stdout, f"Expected Andon check in output. Got: {stdout}"
+    print("✓ Test 6 passed: high maintainability defect does not trigger Andon")
+
+
+def test_andon_security_still_fires():
+    """Test 7: High security defect DOES trigger Andon (category matches)."""
+    review = {
+        "schema_version": "1.0.0",
+        "contract": {
+            "axes": ["STRIDE"],
+            "structure": "Pyramid",
+            "stop": "Andon"  # Andon enabled
+        },
+        "bluf": "Test with high security defect - should fail Andon.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "STRIDE",
+                "severity": "high",
+                "type": "defect",
+                "category": "security",  # IS security - Andon relevant
+                "claim": "Security vulnerability without stop_triggered.",
+                "citations": [
+                    {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 34}
+                ],
+                "stop_triggered": False  # Should FAIL for security
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 1, f"Expected exit 1 for high security defect without stop, got {exit_code}"
+    assert "Andon" in stdout and "violation" in stdout.lower(), (
+        f"Expected Andon violation. Got: {stdout}"
+    )
+    print("✓ Test 7 passed: high security defect triggers Andon violation")
+
+
 def main():
     """Run all regression tests."""
     print("Running axis-validate regression tests...")
@@ -163,6 +273,9 @@ def main():
         test_stop_none_allows_unflagged_high()
         test_dead_citation_fails()
         test_shipped_example_passes()
+        test_schema_rejects_misspelled_handle()
+        test_andon_by_category_maintainability()
+        test_andon_security_still_fires()
         print()
         print("All tests passed!")
         return 0

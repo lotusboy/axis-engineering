@@ -129,6 +129,7 @@ def check_citation_resolution(findings: List[Dict[str, Any]], repo_path: str) ->
     total_citations = 0
     resolved_citations = 0
     repo_root = Path(repo_path).resolve()
+    line_count_cache: Dict[Path, int] = {}
     
     for finding in findings:
         citations = finding.get("citations", [])
@@ -176,9 +177,13 @@ def check_citation_resolution(findings: List[Dict[str, Any]], repo_path: str) ->
                 })
                 continue
             
-            # Check line number is valid
+            # Check line number is valid (with caching)
             try:
-                line_count = sum(1 for _ in full_path.open(encoding="utf-8", errors="ignore"))
+                if full_path in line_count_cache:
+                    line_count = line_count_cache[full_path]
+                else:
+                    line_count = sum(1 for _ in full_path.open(encoding="utf-8", errors="ignore"))
+                    line_count_cache[full_path] = line_count
                 if line_num < 1 or line_num > line_count:
                     failures.append({
                         "finding_id": finding_id,
@@ -243,11 +248,15 @@ def check_ledger_integrity(assumptions: List[Dict[str, Any]]) -> Tuple[bool, str
     return True, f"Ledger integrity: {unknown_count} unknown, {verified_count} verified, {refuted_count} refuted", []
 
 
+ANDON_CATEGORIES = {"data-loss", "security"}
+
+
 def check_andon_rule(findings: List[Dict[str, Any]], contract: Dict[str, Any]) -> Tuple[bool, str, List[Dict]]:
     """
     Check 5: Andon rule.
     If contract.stop == "Andon" and any finding has severity "critical" or "high"
-    AND type "defect", then stop_triggered must be true on that finding.
+    AND type "defect" AND category is "data-loss" or "security", then stop_triggered must be true.
+    If category is omitted, falls back to conservative (triggers Andon).
     """
     # Short-circuit if Andon is not enabled
     if contract.get("stop") != "Andon":
@@ -260,18 +269,48 @@ def check_andon_rule(findings: List[Dict[str, Any]], contract: Dict[str, Any]) -
         finding_type = finding.get("type", "")
         stop_triggered = finding.get("stop_triggered", False)
         finding_id = finding.get("id", "unknown")
-        
-        if severity in ("critical", "high") and finding_type == "defect" and not stop_triggered:
+        category = finding.get("category")
+
+        # Category narrows Andon eligibility; None = conservative fallback
+        andon_relevant = (category in ANDON_CATEGORIES) if category is not None else True
+
+        if severity in ("critical", "high") and finding_type == "defect" and andon_relevant and not stop_triggered:
             violations.append({
                 "finding_id": finding_id,
                 "severity": severity,
-                "issue": f"{severity} severity defect but stop_triggered=false (Andon rule violation)"
+                "issue": f"{severity} severity {category or 'defect'} but stop_triggered=false (Andon rule violation)"
             })
-    
+
     if violations:
         return False, f"Andon rule: {len(violations)} violations", violations
-    
-    return True, "Andon rule: All critical/high defects have stop_triggered", []
+
+    return True, "Andon rule: All critical/high security/data-loss defects have stop_triggered", []
+
+
+def check_schema_conformance(data: Dict[str, Any], script_dir: Path) -> Tuple[bool, str, List[Dict], bool]:
+    """
+    Check 0b: Document shape conforms to review-schema.json.
+    Uses jsonschema if available (hard check); degrades to advisory if not installed.
+    Returns 4-tuple: (passed, message, failures, advisory)
+    """
+    schema_path = script_dir.parent / "assets" / "review-schema.json"
+    if not schema_path.exists():
+        return True, "Schema conformance: schema file not found (skipped)", [], True  # advisory
+    try:
+        import jsonschema
+    except ImportError:
+        return (True,
+                "Schema conformance: jsonschema not installed - shape NOT enforced "
+                "(pip install jsonschema for full enforcement)",
+                [], True)  # advisory
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    validator = jsonschema.Draft202012Validator(schema)
+    errors = sorted(validator.iter_errors(data), key=lambda e: list(e.path))
+    if errors:
+        failures = [{"issue": f"{'/'.join(str(p) for p in e.path) or '<root>'}: {e.message}"}
+                    for e in errors]
+        return False, f"Schema conformance: {len(errors)} violation(s)", failures, False
+    return True, "Schema conformance: valid", [], False
 
 
 def format_conformance_report(results: List[Tuple[str, bool, str, List[Dict]]]) -> str:
@@ -326,11 +365,17 @@ def main():
     
     # Run all checks
     results = []
-    
+    script_dir = Path(__file__).parent
+
     # Check 0: Schema version
     passed, message, _ = validate_schema_version(data)
     results.append(("schema_version", passed, message, []))
-    
+
+    # Check 0b: Schema conformance (shape validation)
+    passed, message, failures, advisory = check_schema_conformance(data, script_dir)
+    results.append(("schema_conformance", passed, message, failures))
+    schema_conformance_advisory = advisory  # track for exit code logic
+
     # Check 1: Citation coverage
     passed, message, failures = check_citation_coverage(findings)
     results.append(("citations", passed, message, failures))
@@ -365,6 +410,8 @@ def main():
     for check_name, passed, message, _ in results:
         if not passed:
             if check_name == "schema_version" and "mismatch" in message:
+                advisory_warnings += 1
+            elif check_name == "schema_conformance" and schema_conformance_advisory:
                 advisory_warnings += 1
             else:
                 hard_failures += 1
