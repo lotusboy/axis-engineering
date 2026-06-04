@@ -11,7 +11,7 @@ tags: [framework, thinking, methodology, prism, triangle, seesaw, two-pass, genb
 
 # Axis Engineering
 
-> Created by **Steven Loftus** (2026) — Licensed under [CC BY 4.0](LICENSE)
+> Created by **Steven Loftus** (2026) — Licensed under [CC BY 4.0](LICENSE) · [GitHub](https://github.com/lotusboy/axis-engineering)
 
 Axis Engineering is a prompt methodology that changes *how* AI thinks, not just *what* it outputs.
 
@@ -27,7 +27,7 @@ Before approving, run a Pre-mortem.
 
 **Rule of thumb:** Pick 2–3 handles across different axes.
 
-**For non-routine work, pick a protocol first:** Triangle (architecture tradeoffs) · Prism (modelling from raw materials) · Two-Pass (review existing artefacts) · Single-pass with handles (routine). Seesaw is a cross-cutting diagnostic that fires inside any of them. See README.md "Protocol selector" or `references/recipes.md` for full mechanics.
+**For non-routine work, pick a protocol first:** Triangle (architecture tradeoffs) · Prism (modelling from raw materials) · Two-Pass (review existing artefacts) · Single-pass with handles (routine). Seesaw is a cross-cutting diagnostic that fires inside any of them. See [README.md](https://github.com/lotusboy/axis-engineering/blob/main/README.md) "Protocol selector" or `references/recipes.md` for full mechanics.
 
 ## The Five Axes
 
@@ -82,7 +82,7 @@ STOP:         [Andon — halt on data-loss or security vuln]
 
 **Key finding:** The Axis Contract increases evidence density by 70%. Always use it for anything above routine.
 
-See `references/experiments.md` for full data from 9 controlled reviews and 20 real-world applications.
+See [experiment-results.md](https://github.com/lotusboy/axis-engineering/blob/main/experiment-results.md) for full data from 9 controlled reviews and 20 real-world applications.
 
 ## Why This Works
 
@@ -151,16 +151,26 @@ git submodule add https://github.com/lotusboy/axis-engineering.git .agents/skill
 
 The `axis-validate` linter converts the Axis Contract from a prompt instruction (soft) into an enforced invariant (hard).
 
+### Setup
+
+```bash
+pip install -r scripts/requirements.txt  # installs jsonschema for full enforcement
+```
+
+Without `jsonschema`, schema shape checks degrade to advisory (exit 2). Install it to enforce structure.
+
 ### What It Validates
 
-Run `python scripts/axis-validate.py <review.json>` to check:
+Run from the skill directory: `python scripts/axis-validate.py <review.json> --repo-path .`
+
+Checks:
 
 1. **Schema conformance:** Document shape validated against `review-schema.json` (requires `pip install jsonschema`; without it, shape checks run as advisory only)
 2. **Citation coverage:** Every `defect` and `fact` finding must have ≥1 citation (`file:line`)
 3. **Citation resolution:** Cited files must exist; line numbers must be in range
 4. **Handle firing:** Every handle named in `contract.axes` must own ≥1 finding (structural check; does not detect a handle name-dropped without genuine application)
 5. **Ledger integrity:** Assumptions array must be present (warnings for drift tracking in multi-pass)
-6. **Andon rule:** Critical/high `data-loss`/`security` defects must have `stop_triggered: true`
+6. **Andon rule:** Critical/high `data-loss`/`security` defects must have `stop_triggered: true` (always set `category` on findings — omitting it triggers conservative Andon treatment)
 
 ### Output Schema
 
@@ -182,7 +192,11 @@ Use `assets/review-schema.json` for structured output format. Example:
 }
 ```
 
-See `assets/review-example.json` for a complete worked example.
+See `assets/review-example.json` for a complete worked example. Validate it with:
+
+```bash
+python scripts/axis-validate.py assets/review-example.json --repo-path . --require-schema
+```
 
 ### Automated Validation
 

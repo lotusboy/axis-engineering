@@ -11,6 +11,12 @@ jobs:
         with: { python-version: '3.12' }
       - run: pip install -r .agents/skills/axis-engineering/scripts/requirements.txt
       - run: python .agents/skills/axis-engineering/scripts/test_axis_validate.py
+      - name: Validate shipped example (strict)
+        run: |
+          python .agents/skills/axis-engineering/scripts/axis-validate.py \
+            .agents/skills/axis-engineering/assets/review-example.json \
+            --repo-path .agents/skills/axis-engineering \
+            --require-schema
 
   without-jsonschema:
     runs-on: ubuntu-latest

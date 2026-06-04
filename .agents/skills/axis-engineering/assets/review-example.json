@@ -17,9 +17,9 @@
       "category": "correctness",
       "claim": "authenticate() function mixes authentication, password hashing, and session creation - violates single-responsibility principle",
       "citations": [
-        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 23},
-        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 45},
-        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 62}
+        {"file": "assets/fixtures/login.ts", "line": 23},
+        {"file": "assets/fixtures/login.ts", "line": 45},
+        {"file": "assets/fixtures/login.ts", "line": 62}
       ],
       "stop_triggered": true
     },
@@ -31,7 +31,7 @@
       "category": "security",
       "claim": "Timing side-channel in password comparison: standard equality check allows timing attacks for user enumeration",
       "citations": [
-        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 34}
+        {"file": "assets/fixtures/login.ts", "line": 34}
       ],
       "stop_triggered": true
     },
@@ -50,7 +50,7 @@
       "type": "absence",
       "claim": "Over-engineered: JWT claims include department and manager fields never used by current consumers",
       "citations": [
-        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 78}
+        {"file": "assets/fixtures/login.ts", "line": 78}
       ],
       "notes": "Remove unused fields to reduce token size and attack surface"
     },
@@ -61,7 +61,7 @@
       "type": "fact",
       "claim": "Session store interface is correctly abstracted behind SessionStore interface (good DI practice)",
       "citations": [
-        {"file": ".agents/skills/axis-engineering/assets/fixtures/login.ts", "line": 12}
+        {"file": "assets/fixtures/login.ts", "line": 12}
       ]
     }
   ],
