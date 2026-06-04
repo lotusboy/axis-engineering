@@ -26,7 +26,7 @@ surfaces an imbalance — log a ticket, fix upstream, don't paper over.
 See protocol docs for full mechanics: [Triangle](triangle-protocol.md) · [Prism](prism-protocol.md) · [Two-Pass](two-pass-strategy.md) · [Seesaw](seesaw-principle.md).
 
 ## The Full Vocabulary
-Axis Engineering is a vocabulary of 33 terms — drawn from Toyota, McKinsey, Netflix, the Gang of Four, and other well-known frameworks — that activate deep knowledge the AI already has. Each term is a **behavior handle**: a single word or phrase that shifts how the AI approaches a task, what it looks for, and how it reports findings.
+Axis Engineering is a vocabulary of 34 terms — drawn from Toyota, McKinsey, Netflix, the Gang of Four, and other well-known frameworks — that activate deep knowledge the AI already has. Each term is a **behavior handle**: a single word or phrase that shifts how the AI approaches a task, what it looks for, and how it reports findings.
 
 ### Before and After
 
@@ -56,9 +56,11 @@ Each handle belongs to one of five independent dimensions of AI behavior:
 |------|----------|-------------------|-----------------|
 | **Dispositional** | How should it think? | The agent's mindset | Genba, Shoshin, First Principles |
 | **Structural** | How should it report? | The output format | MECE, Pyramid Principle, Five Whys |
-| **Pattern-oriented** | What should it recognise? | The pattern library | SOLID, Fowler's Catalog, DDD |
+| **Pattern-oriented** | What should it recognise? | The pattern library | SOLID, Fowler's Catalog, DDD (software-first) |
 | **Adversarial** | What should it try to break? | The failure-finding instinct | Chaos Engineering, Pre-mortem, STRIDE |
-| **Contextual** | How big is this problem? | The calibration | Cynefin, YAGNI, Poka-yoke |
+| **Contextual** | How big is this problem? | The calibration | Cynefin, YAGNI, Poka-yoke, Chesterton's Fence |
+
+*Note: The Pattern-oriented axis is software-specific. SOLID, DDD, Fowler's, STRIDE have no purchase on strategy docs, plans, or people/mentoring artefacts. On non-code work, skip this axis entirely or substitute a domain-appropriate pattern set.*
 
 **Rule of thumb:** Pick 2–3 handles across different axes (e.g. 1 dispositional + 1 pattern + 1 adversarial) to prevent overthinking.
 
@@ -367,7 +369,7 @@ That's it. From here, every new session picks up the handles automatically. Your
 
 ### Go deeper
 
-Browse the [full vocabulary](#vocabulary-reference) of 33 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 20 real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+Browse the [full vocabulary](#vocabulary-reference) of 34 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 20 real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
 
 ---
 
@@ -457,7 +459,7 @@ Tested across 9 controlled reviews, 5 experiments, and 20 real-world application
 | **Four-pass (2x two-pass)** | Critical security review, pre-launch | 4 | Yes | Fresh sessions | ~35 (highest coverage) |
 | **Triangle Protocol** | Architecture with genuine tradeoffs (N=3, cross-platform) | 3+1 | Yes (per agent) | Fresh, isolated contexts | 3 designs + synthesis |
 
-*\*Approximate deduplicated finding counts from experiments on a ~7-class Apex subsystem with design docs.*
+*\*Findings counts are calibrated against a ~7-class Apex subsystem (~2,000 lines of code + docs). Scale down proportionally for smaller or non-code artefacts (e.g., a 200-line plan → 8–12 findings of signal). Forcing a high count on small files manufactures noise.*
 
 **Key findings from experiments:**
 
@@ -791,6 +793,15 @@ On long tasks, the model drifts back to its default "helpful assistant" persona.
 When adversarial handles (Chaos Engineering, Pre-mortem, Red Team) are applied too aggressively, the model may fabricate plausible-sounding failure modes that cannot actually occur in the system under review.
 
 **Mitigation:** Pair adversarial handles with Genba (verify against source). The contract's EVIDENCE field forces the model to cite real code paths — fabricated risks fail the evidence check.
+
+### Adversarial-curdle on people/process docs
+```
+# BAD — agent produces a cold character verdict instead of a plan critique
+"Pre-mortem: This mentoring plan will fail because James is lazy/disengaged."
+```
+Pointing Pre-mortem or Chaos Engineering at a mentoring plan or people/process document without a safety rail can produce findings that read as cold character verdicts ("Person X is disengaged") rather than process/plan critiques ("the check-in cadence has no date and will slip").
+
+**Mitigation:** Every Pre-mortem finding on human systems or soft docs must evaluate the *plan*, never the *person*. Every finding must complete the sentence: "The plan fails here because..." If a finding names a person's behavior/character as the root failure, reframe it to target the structural or process issue instead.
 
 ## Real-World Applications
 

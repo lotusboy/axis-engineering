@@ -1,6 +1,6 @@
 ---
 name: axis-engineering
-description: AI Operating System with 33 behavior handles for critical thinking, plus four protocols — Prism (modelling raw materials → system shape), Triangle (architecture tradeoffs), Seesaw (3-pole imbalance diagnostic), Two-Pass (review existing artefacts). Use when running any of those protocols, or when performing code review, architecture review, bug investigation, security review, domain modelling, or any task requiring structured reasoning.
+description: AI Operating System with 34 behavior handles for critical thinking, plus four protocols — Prism (modelling raw materials → system shape), Triangle (architecture tradeoffs), Seesaw (3-pole imbalance diagnostic), Two-Pass (review existing artefacts). Use when running any of those protocols, or when performing code review, architecture review, bug investigation, security review, domain modelling, or any task requiring structured reasoning.
 license: CC-BY-4.0
 compatibility: Designed for Claude Code, Cascade/Windsurf, Cursor, and similar agentic tools
 metadata:
@@ -35,11 +35,13 @@ Before approving, run a Pre-mortem.
 |------|----------|-----------------|
 | **Dispositional** | How should it think? | Genba, Shoshin, First Principles |
 | **Structural** | How should it report? | MECE, Pyramid Principle, Five Whys |
-| **Pattern-oriented** | What should it recognise? | SOLID, Fowler's Catalog, DDD |
+| **Pattern-oriented** | What should it recognise? | SOLID, Fowler's Catalog, DDD (software-first) |
 | **Adversarial** | What should it try to break? | Chaos Engineering, Pre-mortem, STRIDE |
-| **Contextual** | How big is this problem? | Cynefin, YAGNI, Poka-yoke |
+| **Contextual** | How big is this problem? | Cynefin, YAGNI, Poka-yoke, Chesterton's Fence |
 
-See `references/vocabulary.md` for the full 33-handle reference.
+*Note: The Pattern-oriented axis is software-specific. SOLID, DDD, Fowler's, STRIDE have no purchase on strategy docs, plans, or people/mentoring artefacts. On non-code work, skip this axis entirely or substitute a domain-appropriate pattern set.*
+
+See `references/vocabulary.md` for the full 34-handle reference.
 
 ## Recipes (Handle Combinations)
 
@@ -66,13 +68,15 @@ STOP:         [Andon — halt on data-loss or security vuln]
 
 ## Execution Strategies
 
-| Strategy | When to use | Findings |
+| Strategy | When to use | Findings* |
 |----------|-------------|----------|
 | Single pass, no contract | Routine code review | ~12 |
 | Single pass, with contract | Feature review | ~14-19 |
 | Two-pass, fresh sessions | Pre-production audit | **~30** |
 | Triangle Protocol | Architecture tradeoffs | 3 designs + synthesis |
 | Prism Protocol | Modelling: raw materials → system shape | 3 lens-sets (+ optional N=2 synthesis) |
+
+*\*Findings counts are calibrated against a ~7-class Apex subsystem (~2,000 lines of code + docs). Scale down proportionally for smaller or non-code artefacts (e.g., a 200-line plan → 8–12 findings of signal). Forcing a high count on small files manufactures noise.*
 
 **Cross-cutting diagnostic:** the **Seesaw Principle** fires *inside* any of the strategies above when a 3-pole tension (e.g. Test↔Design↔Implementation, Actor↔Model↔Framework) surfaces an imbalance. Log a ticket and fix upstream — don't paper over downstream.
 
@@ -92,6 +96,7 @@ You're leveraging the model's latent structure, not teaching it something new. T
 - **Wrong hammer:** Using DDD for a checkbox field (use Cynefin to size first)
 - **Keyword cargo-culting:** Name-dropping handles without evidence
 - **Verification theatre:** Saying "I checked" without citing file:line
+- **Adversarial-curdle on people/process docs:** Pointing Pre-mortem at mentoring plans or people docs without a safety rail, producing character verdicts ("Person X is disengaged") instead of plan critiques ("cadence will slip"). Every Pre-mortem finding on human systems must complete "The plan fails because...", never "Person X is..."
 
 See `references/anti-patterns.md` for full details.
 
@@ -120,7 +125,7 @@ This keeps Axis pure (cognitive framework) while domain skills handle technology
 | File | Purpose |
 |------|---------|
 | `SKILL.md` | Core skill — quick start, recipes, contract (this file) |
-| `references/vocabulary.md` | Full 33-handle reference with Evidence/Domain fields |
+| `references/vocabulary.md` | Full 34-handle reference with Evidence/Domain fields |
 | `references/recipes.md` | Extended recipe catalog |
 | `references/anti-patterns.md` | Detailed anti-patterns and mitigations |
 | `assets/contract-template.md` | Copy-paste contract template |
