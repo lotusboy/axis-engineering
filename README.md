@@ -331,11 +331,12 @@ curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents
 **Claude Code users:** Anthropic has signed up to the open standard but Claude Code currently only scans `.claude/skills/`. Add the `--claude` flag:
 
 ```bash
-# Install for Claude Code (also installs to .claude/skills/)
+# Install for Claude Code (installs directly to .claude/skills/)
 curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash -s -- --claude
 
 # Or manually for Claude Code:
-cp -r .agents/skills/axis-engineering .claude/skills/axis-engineering
+mkdir -p .claude/skills/axis-engineering
+curl -L https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering/SKILL.md > .claude/skills/axis-engineering/SKILL.md
 ```
 
 #### Option B: Manual embedding (works with any AI assistant)

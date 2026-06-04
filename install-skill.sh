@@ -6,8 +6,6 @@
 set -e
 
 REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering"
-INSTALL_DIR=".agents/skills/axis-engineering"
-CLAUDE_DIR=".claude/skills/axis-engineering"
 
 # Detect Claude Code: --claude flag or CLAUDE_CODE_VERSION env var
 INSTALL_FOR_CLAUDE=false
@@ -15,47 +13,41 @@ if [ "$1" = "--claude" ] || [ -n "$CLAUDE_CODE_VERSION" ]; then
   INSTALL_FOR_CLAUDE=true
 fi
 
-echo "Installing Axis Engineering Agent Skill..."
+if [ "$INSTALL_FOR_CLAUDE" = true ]; then
+  TARGET_DIR=".claude/skills/axis-engineering"
+  echo "Installing Axis Engineering Agent Skill for Claude Code..."
+else
+  TARGET_DIR=".agents/skills/axis-engineering"
+  echo "Installing Axis Engineering Agent Skill..."
+fi
 
 # Create directory structure
-mkdir -p "$INSTALL_DIR"/{references,assets}
+mkdir -p "$TARGET_DIR"/{references,assets}
 
 # Download core skill file
 echo "Downloading SKILL.md..."
-curl -fsSL "$REPO_URL/SKILL.md" > "$INSTALL_DIR/SKILL.md"
+curl -fsSL "$REPO_URL/SKILL.md" > "$TARGET_DIR/SKILL.md"
 
 # Download reference files
 echo "Downloading reference files..."
-curl -fsSL "$REPO_URL/references/vocabulary.md" > "$INSTALL_DIR/references/vocabulary.md"
-curl -fsSL "$REPO_URL/references/recipes.md" > "$INSTALL_DIR/references/recipes.md"
-curl -fsSL "$REPO_URL/references/anti-patterns.md" > "$INSTALL_DIR/references/anti-patterns.md"
+curl -fsSL "$REPO_URL/references/vocabulary.md" > "$TARGET_DIR/references/vocabulary.md"
+curl -fsSL "$REPO_URL/references/recipes.md" > "$TARGET_DIR/references/recipes.md"
+curl -fsSL "$REPO_URL/references/anti-patterns.md" > "$TARGET_DIR/references/anti-patterns.md"
 
 # Download assets
 echo "Downloading assets..."
-curl -fsSL "$REPO_URL/assets/contract-template.md" > "$INSTALL_DIR/assets/contract-template.md"
-
-# Claude Code currently only scans .claude/skills/, not .agents/skills/
-# Copy there if requested (other agents like Cursor/Windsurf already scan .agents/)
-if [ "$INSTALL_FOR_CLAUDE" = true ]; then
-  echo "Copying to .claude/skills/ for Claude Code..."
-  mkdir -p "$CLAUDE_DIR"/{references,assets}
-  cp "$INSTALL_DIR/SKILL.md" "$CLAUDE_DIR/SKILL.md"
-  cp "$INSTALL_DIR/references/vocabulary.md" "$CLAUDE_DIR/references/vocabulary.md"
-  cp "$INSTALL_DIR/references/recipes.md" "$CLAUDE_DIR/references/recipes.md"
-  cp "$INSTALL_DIR/references/anti-patterns.md" "$CLAUDE_DIR/references/anti-patterns.md"
-  cp "$INSTALL_DIR/assets/contract-template.md" "$CLAUDE_DIR/assets/contract-template.md"
-fi
+curl -fsSL "$REPO_URL/assets/contract-template.md" > "$TARGET_DIR/assets/contract-template.md"
 
 echo ""
-echo "✅ Axis Engineering skill installed to $INSTALL_DIR/"
+echo "✅ Axis Engineering skill installed to $TARGET_DIR/"
 echo ""
-echo "Detected by: Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot"
 
 if [ "$INSTALL_FOR_CLAUDE" = true ]; then
-  echo "Also copied to: $CLAUDE_DIR/ (Claude Code)"
+  echo "Detected by: Claude Code"
 else
+  echo "Detected by: Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot"
   echo ""
-  echo "⚠️  Claude Code users: run with --claude flag to also install to .claude/skills/"
+  echo "⚠️  Claude Code users: run with --claude flag to install to .claude/skills/"
   echo "   curl -sL .../install-skill.sh | bash -s -- --claude"
 fi
 
