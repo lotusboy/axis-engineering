@@ -277,3 +277,37 @@ If unsure which handles to pick:
 3. **Pick one lens** — what should it look for? (Fowler for smells, SOLID for structure, STRIDE for threats, Chaos Engineering for runtime failures)
 4. **Pick one structure** — how should it report? (Pyramid for decisions, MECE for completeness, Five Whys for root cause)
 5. **Add adversarial only if risk warrants it** — Pre-mortem for production risk, Red Team for security, Andon for stop-the-line urgency
+
+## Loop Closure: Automated Contract Validation
+
+**Use `axis-validate` to enforce the contract deterministically.**
+
+This closes the methodology loop: AI produces output → linter validates → pass/fail. The output schema (`assets/review-schema.json`) and linter (`scripts/axis-validate.py`) convert the Axis Contract from a prompt instruction (soft) into an enforced invariant (hard).
+
+**Invocation:**
+```bash
+python scripts/axis-validate.py <review.json> --repo-path .
+```
+
+**Checks performed:**
+1. **Citation coverage:** Every `defect` and `fact` finding must have ≥1 citation
+2. **Citation resolution:** Cited files exist; line numbers in range
+3. **Handle firing:** Every handle in `contract.axes` owns ≥1 finding (guards against cargo-culting)
+4. **Ledger integrity:** Assumptions array present; tracks unknown vs verified
+5. **Andon rule:** Critical/high defects must have `stop_triggered: true`
+
+**Exit codes:**
+- `0` — All checks passed (conformant)
+- `1` — Hard failures (must fix citations, handles, or Andon)
+- `2` — Advisory warnings only (schema version drift)
+
+**CI Integration:**
+```yaml
+- name: Install validator dependencies
+  run: pip install jsonschema
+- name: Validate Axis Review Output
+  run: python scripts/axis-validate.py review-output.json --repo-path .
+  if: always()  # Run even if previous steps fail
+```
+
+This enables the path toward software score 9+ on the Axis methodology — the automated validator provides deterministic output checking that previously required manual verification. Closed-loop regeneration (auto-fix on failure) is future work.

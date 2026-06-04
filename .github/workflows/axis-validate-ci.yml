@@ -1,0 +1,22 @@
+name: axis-validate tests
+
+on: [push, pull_request]
+
+jobs:
+  with-jsonschema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -r .agents/skills/axis-engineering/scripts/requirements.txt
+      - run: python .agents/skills/axis-engineering/scripts/test_axis_validate.py
+
+  without-jsonschema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      # deliberately do NOT install jsonschema — suite must stay green by skipping, not failing
+      - run: python .agents/skills/axis-engineering/scripts/test_axis_validate.py

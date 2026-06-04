@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axis-engineering/review-output-schema",
+  "title": "Axis Engineering Review Output Schema",
+  "description": "Structured output format for Axis Engineering reviews enabling automated contract validation",
+  "version": "1.0.0",
+  "type": "object",
+  "$defs": {
+    "handleEnum": {
+      "type": "string",
+      "description": "Axis Engineering behavior handle (34 total)",
+      "enum": [
+        "Genba", "Seven Factors", "Kaizen", "Shoshin", "First Principles", "Wabi-sabi", "Wu Wei",
+        "MECE", "Pyramid Principle", "BLUF", "Five Whys", "Eisenhower Matrix",
+        "Gang of Four", "Fowler's Catalog", "SOLID", "DDD", "Feathers' Legacy Code", "Kent Beck's Four Rules", "Hexagonal Architecture", "12-Factor App",
+        "Red Team", "Pre-mortem", "STRIDE", "Chaos Engineering", "Muda", "Andon", "Devil's Advocate",
+        "Cynefin", "Poka-yoke", "Jidoka", "YAGNI", "Occam's Razor", "Theory of Constraints", "Chesterton's Fence"
+      ]
+    }
+  },
+  "required": ["schema_version", "contract", "bluf", "findings", "assumptions"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version for evolution tracking",
+      "const": "1.0.0"
+    },
+    "contract": {
+      "type": "object",
+      "description": "The Axis Contract that governed this review",
+      "required": ["axes", "structure", "stop"],
+      "properties": {
+        "axes": {
+          "type": "array",
+          "description": "Active behavior handles (2-3 recommended)",
+          "items": { "$ref": "#/$defs/handleEnum" },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "target": {
+          "type": "string",
+          "description": "Specific artifacts reviewed (files, endpoints, docs)"
+        },
+        "structure": {
+          "type": "string",
+          "description": "Output format structure",
+          "enum": ["Pyramid", "MECE", "BLUF", "Five Whys", "Eisenhower Matrix"]
+        },
+        "evidence_rule": {
+          "type": "string",
+          "description": "Evidence requirement (typically file:line)",
+          "default": "file:line for every finding"
+        },
+        "stop": {
+          "type": "string",
+          "description": "Stop condition (Andon rule)",
+          "enum": ["Andon", "None"]
+        }
+      }
+    },
+    "bluf": {
+      "type": "string",
+      "description": "Bottom Line Up Front - single sentence verdict before details"
+    },
+    "findings": {
+      "type": "array",
+      "description": "Individual findings from the review",
+      "items": {
+        "type": "object",
+        "required": ["id", "handle", "severity", "type", "claim"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique finding identifier (e.g., F1, F2)",
+            "pattern": "^[A-Z]+[0-9]+$"
+          },
+          "handle": {
+            "$ref": "#/$defs/handleEnum",
+            "description": "The behavior handle that produced this finding"
+          },
+          "severity": {
+            "type": "string",
+            "description": "Finding severity level",
+            "enum": ["critical", "high", "medium", "low", "info"]
+          },
+          "type": {
+            "type": "string",
+            "description": "Finding type determines citation requirements",
+            "enum": ["defect", "fact", "recommendation", "absence"]
+          },
+          "category": {
+            "type": "string",
+            "description": "Nature of the finding; determines Andon eligibility",
+            "enum": ["data-loss", "security", "correctness", "maintainability", "performance", "style"]
+          },
+          "claim": {
+            "type": "string",
+            "description": "The specific finding claim/description"
+          },
+          "citations": {
+            "type": "array",
+            "description": "Required for defect and fact types; optional for recommendation and absence",
+            "items": {
+              "type": "object",
+              "required": ["file", "line"],
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "description": "Relative path to file from repo root"
+                },
+                "line": {
+                  "type": "integer",
+                  "description": "Line number in file (1-indexed)",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "stop_triggered": {
+            "type": "boolean",
+            "description": "Whether this finding triggered the Andon stop (must be true for critical/high defects)",
+            "default": false
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional free-form notes for context"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Assumption ledger (Verified/Unknown)",
+      "items": {
+        "type": "object",
+        "required": ["statement", "status"],
+        "properties": {
+          "statement": {
+            "type": "string",
+            "description": "The assumption made during the review"
+          },
+          "status": {
+            "type": "string",
+            "description": "Verification status",
+            "enum": ["verified", "unknown", "refuted"]
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Evidence for verified assumptions, or reason for unknown"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "finding_type_rules": {
+      "description": "Citation requirements by finding type",
+      "defect": "Requires ≥1 citation (file:line)",
+      "fact": "Requires ≥1 citation (file:line)",
+      "recommendation": "Citation optional (architectural suggestions may lack single line)",
+      "absence": "Citation optional (missing thing has no line to cite)"
+    }
+  }
+}

@@ -117,7 +117,7 @@ This keeps Axis pure (cognitive framework) while domain skills handle technology
 
 1. **Model specificity:** Tested primarily on Claude. Cross-model transfer predicted but unverified.
 2. **Context window decay:** Handle effects weaken over long conversations. Re-anchor periodically.
-3. **No automated contract validation:** Manual verification currently required.
+3. **Automated contract validation available:** Use `scripts/axis-validate.py` to check conformance. See Automated Contract Validation below.
 4. **English-centric:** Handle effectiveness depends on English training data density.
 
 ## Files in This Skill
@@ -129,6 +129,9 @@ This keeps Axis pure (cognitive framework) while domain skills handle technology
 | `references/recipes.md` | Extended recipe catalog |
 | `references/anti-patterns.md` | Detailed anti-patterns and mitigations |
 | `assets/contract-template.md` | Copy-paste contract template |
+| `assets/review-schema.json` | Structured output schema for automated validation |
+| `assets/review-example.json` | Worked example of valid review output |
+| `scripts/axis-validate.py` | Deterministic linter for contract conformance |
 
 ## Installation
 
@@ -143,6 +146,47 @@ Or use as a git submodule:
 ```bash
 git submodule add https://github.com/lotusboy/axis-engineering.git .agents/skills/axis-engineering
 ```
+
+## Automated Contract Validation
+
+The `axis-validate` linter converts the Axis Contract from a prompt instruction (soft) into an enforced invariant (hard).
+
+### What It Validates
+
+Run `python scripts/axis-validate.py <review.json>` to check:
+
+1. **Schema conformance:** Document shape validated against `review-schema.json` (requires `pip install jsonschema`; without it, shape checks run as advisory only)
+2. **Citation coverage:** Every `defect` and `fact` finding must have ≥1 citation (`file:line`)
+3. **Citation resolution:** Cited files must exist; line numbers must be in range
+4. **Handle firing:** Every handle named in `contract.axes` must own ≥1 finding (structural check; does not detect a handle name-dropped without genuine application)
+5. **Ledger integrity:** Assumptions array must be present (warnings for drift tracking in multi-pass)
+6. **Andon rule:** Critical/high `data-loss`/`security` defects must have `stop_triggered: true`
+
+### Output Schema
+
+Use `assets/review-schema.json` for structured output format. Example:
+
+```json
+{
+  "schema_version": "1.0.0",
+  "contract": {
+    "axes": ["SOLID", "STRIDE", "YAGNI"],
+    "target": "assets/fixtures/login.ts",
+    "structure": "Pyramid",
+    "evidence_rule": "file:line for every finding",
+    "stop": "Andon"
+  },
+  "bluf": "Authentication service violates SRP and exposes timing side-channel.",
+  "findings": [...],
+  "assumptions": [...]
+}
+```
+
+See `assets/review-example.json` for a complete worked example.
+
+### Automated Validation
+
+`axis-validate` provides deterministic, automated validation: output → validator → pass/fail. This enables the path toward software score 9+ on the Axis methodology. The closed-loop regeneration (validate → on fail, feed failures back → regenerate) is future work.
 
 ## Provenance & Legal
 
