@@ -2,9 +2,9 @@
 
 > What the Triangle Protocol produces — and what divergence looks like — on the Salesforce platform.
 
-The [Triangle Protocol](triangle-protocol.md) is domain-general. This companion provides the Salesforce-specific output skeleton, handle tuning, example contracts, and patterns observed when running the protocol against Salesforce integration requirements.
+The [Triangle Protocol](../../triangle-protocol.md) is domain-general. This companion provides the Salesforce-specific output skeleton, handle tuning, example contracts, and patterns observed when running the protocol against Salesforce integration requirements.
 
-This is a companion to the [Salesforce handles guide](salesforce-handles.md) and [main methodology](README.md).
+This is a companion to the [Salesforce handles guide](salesforce-handles.md) and [main methodology](../../README.md).
 
 ---
 
@@ -257,7 +257,7 @@ STOP:         Flag any case where an agent's output contradicts the requirements
 
 ## Salesforce-Specific Failure Modes
 
-In addition to the failure modes listed in the [main protocol](triangle-protocol.md):
+In addition to the failure modes listed in the [main protocol](../../triangle-protocol.md):
 
 ### Governor limit blind spot
 
@@ -279,7 +279,7 @@ When the integration touches OmniStudio Integration Procedures (IPs), all three 
 
 ## Experiment Evidence
 
-The Triangle Protocol was validated on the ExampleVision integration (a Salesforce + external API integration). Full results are in the [main protocol](triangle-protocol.md#experiment-results). Design outputs are in the `testing/` tree (gitignored — not included in the public repo).
+The Triangle Protocol was validated on the ExampleVision integration (a Salesforce + external API integration). Full results are in the [main protocol](../../triangle-protocol.md#experiment-results). Design outputs are in the `testing/` tree (gitignored — not included in the public repo).
 
 Key Salesforce-specific observations from the experiment:
 

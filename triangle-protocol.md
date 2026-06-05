@@ -1,6 +1,6 @@
 # Axis Engineering — Triangle Protocol
 
-> **Domain-specific companions:** [Salesforce](salesforce-triangle.md) — output skeleton, contracts, and divergence patterns for the platform.
+> **Domain-specific companions:** [Salesforce](examples/salesforce/salesforce-triangle.md) — output skeleton, contracts, and divergence patterns for the platform.
 > See also: [main methodology](README.md) | [vocabulary](vocabulary-quick-ref.md) | [prism protocol](prism-protocol.md) | [two-pass strategy](two-pass-strategy.md) | [seesaw principle](seesaw-principle.md)
 
 ## The Problem
@@ -59,7 +59,7 @@ OUTPUT SKELETON:
   10. Assumption Ledger
 ```
 
-**Adapt sections 3-5 for your domain.** The skeleton above is intentionally generic. A Salesforce project might have "Custom Objects / CMDT / Apex Classes" — see `salesforce-triangle.md` for the full Salesforce-specific skeleton and ready-to-use contracts. A React frontend might have "State Management / API Contracts / Component Tree." A data pipeline might have "Schema / DAG / Storage Layer." What matters is that all three agents use the **same** skeleton — the synthesis agent depends on structural alignment for MECE comparison. Define the skeleton before running agents.
+**Adapt sections 3-5 for your domain.** The skeleton above is intentionally generic. A Salesforce project might have "Custom Objects / CMDT / Apex Classes" — see `examples/salesforce/salesforce-triangle.md` for the full Salesforce-specific skeleton and ready-to-use contracts. A React frontend might have "State Management / API Contracts / Component Tree." A data pipeline might have "Schema / DAG / Storage Layer." What matters is that all three agents use the **same** skeleton — the synthesis agent depends on structural alignment for MECE comparison. Define the skeleton before running agents.
 
 Section 7 is critical — forcing each agent to explicitly name its sacrifice gives the synthesis agent a direct comparison point and prevents agents from quietly minimising their tradeoff. Section 8 is valuable when present — CQ's Muda handle naturally produces it, but requiring it from all agents gives the synthesis richer comparison material.
 
