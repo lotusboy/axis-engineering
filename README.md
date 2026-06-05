@@ -382,6 +382,19 @@ It was born from the intersection of 45 years of engineering "scrapes" and a neu
 
 LLMs default to plausible-sounding guesses under uncertainty, anchor on the first idea, and forget constraints, much like executive function drops out under stress. Axis Engineering treats AI the way a battle-scarred neurodivergent engineer treats themselves: assuming failure unless forced by a rigid, verifiable structure to read the source code, check the data shape, and think about failure modes. This framework externalises that verification discipline — a way to offload the mental burden of exhaustive validation into the environment.
 
+### How Axis Engineering was discovered
+
+Originally developed under the name **Sutra Engineering**, inspired by the Sanskrit concept of *sūtra* (सूत्र, "thread") — a compressed aphorism designed to be expanded by someone who already holds the knowledge. The methodology was renamed to reflect its core innovation: **independent behavioral control axes**.
+
+Discovered through A/B testing two Claude Code subagents reviewing the same documentation:
+
+- **Agent A** was primed with Gandharan Seven Factors of Awakening + Toyota Genba mindset
+- **Agent B** received no philosophical framing — just the task
+
+Both found similar issues. But Agent A produced a more **verification-oriented** review (built a verification matrix, caught an API logging gap, identified a trigger chain risk). Agent B was more **action-oriented** (severity tiers with line numbers, concrete fix proposals).
+
+The insight: dispositions shape *how* the agent investigates. Structure shapes *how* it reports. Pattern recognition shapes *what* it sees. These are independent axes that can be combined.
+
 ### Axis as externalised executive function
 
 Axis isn't *adapted to* neurodivergent cognition; it's a transcription of it. Every component compensates for a specific failure mode the author lives with daily:
@@ -507,33 +520,6 @@ Is this a solution design generation (requirements → architecture)?
 Is this a critical security review or pre-launch audit?
   → Four-pass (run two-pass twice), deduplicate findings
 ```
-
-## Origin
-
-Originally developed under the name **Sutra Engineering**, inspired by the Sanskrit concept of *sūtra* (सूत्र, "thread") — a compressed aphorism designed to be expanded by someone who already holds the knowledge. The methodology was renamed to reflect its core innovation: **independent behavioral control axes**.
-
-Discovered through A/B testing two Claude Code subagents reviewing the same documentation:
-
-- **Agent A** was primed with Gandharan Seven Factors of Awakening + Toyota Genba mindset
-- **Agent B** received no philosophical framing — just the task
-
-Both found similar issues. But Agent A produced a more **verification-oriented** review (built a verification matrix, caught an API logging gap, identified a trigger chain risk). Agent B was more **action-oriented** (severity tiers with line numbers, concrete fix proposals).
-
-The insight: dispositions shape *how* the agent investigates. Structure shapes *how* it reports. Pattern recognition shapes *what* it sees. These are independent axes that can be combined.
-
-## The Five Axes
-
-Axis Engineering identifies five independent axes of agent behavior, each addressable through compressed terms (behavior handles):
-
-| # | Axis | Controls | Question it answers |
-|---|------|----------|-------------------|
-| 1 | **Dispositional** | How the agent thinks | "With what mindset?" |
-| 2 | **Structural** | How the agent outputs | "In what format?" |
-| 3 | **Pattern-oriented** | What the agent recognises | "Through what lens?" |
-| 4 | **Adversarial** | What the agent tries to break | "What could go wrong?" |
-| 5 | **Contextual** | How the agent sizes the problem | "How big is this?" |
-
-Most prompts only use axis 2 (structural — "give me a bulleted list"). Axis Engineering deliberately engages all five.
 
 ## Vocabulary Reference
 
