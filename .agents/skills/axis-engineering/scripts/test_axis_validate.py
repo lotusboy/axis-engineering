@@ -382,6 +382,134 @@ def test_require_schema_hard_fail():
     print("✓ Test 9 passed: --require-schema → exit 1 (hard fail) when jsonschema absent")
 
 
+def test_unsupported_schema_version():
+    """Test 10: Unsupported schema_version string → exit 1.
+
+    The schema_version check itself is advisory, but jsonschema also rejects
+    the value against the enum in review-schema.json, producing a hard
+    schema_conformance failure. Net result: exit 1.
+    """
+    review = {
+        "schema_version": "99.0.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Test with unknown schema version.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "Test finding.",
+                "citations": [
+                    {"file": "assets/fixtures/login.ts", "line": 12}
+                ]
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 1, f"Expected exit 1 for unknown schema version (schema_conformance hard-fails), got {exit_code}"
+    assert "mismatch" in stdout.lower() or "not one of" in stdout.lower(), (
+        f"Expected version mismatch or schema violation. Got: {stdout}"
+    )
+    print("✓ Test 10 passed: unsupported schema_version → exit 1 (schema_conformance hard-fails)")
+
+
+def test_handle_declared_but_no_findings():
+    """Test 11: Handle in contract.axes with zero findings → exit 1 (hard fail)."""
+    review = {
+        "schema_version": "1.1.0",
+        "contract": {"axes": ["Genba", "STRIDE"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Test with declared handle that has no findings.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "Test finding for Genba only.",
+                "citations": [
+                    {"file": "assets/fixtures/login.ts", "line": 12}
+                ]
+            }
+            # STRIDE declared in axes but no STRIDE finding
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 1, f"Expected exit 1 for unfired handle, got {exit_code}"
+    assert "STRIDE" in stdout, f"Expected STRIDE mentioned in failure. Got: {stdout}"
+    print("✓ Test 11 passed: declared handle with no findings → exit 1")
+
+
+def test_missing_assumptions_array():
+    """Test 12: Missing assumptions array → exit 1 (hard fail on ledger check)."""
+    review = {
+        "schema_version": "1.1.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Test with missing assumptions.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "Test finding.",
+                "citations": [
+                    {"file": "assets/fixtures/login.ts", "line": 12}
+                ]
+            }
+        ]
+        # No "assumptions" key at all
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 1, f"Expected exit 1 for missing assumptions, got {exit_code}"
+    assert "assumption" in stdout.lower() or "ledger" in stdout.lower(), (
+        f"Expected ledger/assumption failure. Got: {stdout}"
+    )
+    print("✓ Test 12 passed: missing assumptions array → exit 1")
+
+
+def test_path_traversal_blocked():
+    """Test 13: Citation with path traversal (../../etc/passwd) → exit 1."""
+    review = {
+        "schema_version": "1.1.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Test path traversal guard.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "Test finding with traversal citation.",
+                "citations": [
+                    {"file": "../../etc/passwd", "line": 1}
+                ]
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert exit_code == 1, f"Expected exit 1 for path traversal, got {exit_code}"
+    assert "escapes" in stdout.lower() or "outside" in stdout.lower() or "traversal" in stdout.lower(), (
+        f"Expected path-escapes-repo failure. Got: {stdout}"
+    )
+    print("✓ Test 13 passed: path traversal citation → exit 1")
+
+
 def main():
     """Run all regression tests."""
     print("Running axis-validate regression tests...")
@@ -399,8 +527,12 @@ def main():
             test_schema_rejects_misspelled_handle()
             test_andon_by_category_maintainability()
             test_andon_security_still_fires()
+            test_unsupported_schema_version()
+            test_handle_declared_but_no_findings()
+            test_missing_assumptions_array()
+            test_path_traversal_blocked()
         else:
-            print("⊘ Tests 1-7 skipped: requires jsonschema")
+            print("⊘ Tests 1-7, 10-13 skipped: requires jsonschema")
 
         # These tests simulate jsonschema absence and always run
         test_schema_absent_advisory()
