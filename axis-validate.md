@@ -16,7 +16,7 @@ The Axis Contract is a powerful prompt discipline, but it relies on the AI self-
 
 ## What It Validates
 
-Six checks run against every review document:
+Seven checks run against every review document:
 
 | # | Check | What it enforces |
 |---|-------|-----------------|
@@ -74,7 +74,7 @@ axis-validate: Contract Conformance Report
 
 Overall: 7/7 checks passed
 
-  schema_version:    Schema version: 1.0.0 ✓
+  schema_version:    Schema version: 1.1.0 ✓
   schema_conformance: Schema conformance: valid ✓
   citations:         Citation coverage: 3/3 ✓
   resolution:        Citation resolution: 6/6 ✓
@@ -95,7 +95,7 @@ Reviews must be valid JSON conforming to `assets/review-schema.json`. The requir
 
 ```json
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "contract": {
     "axes": ["SOLID", "STRIDE"],
     "structure": "Pyramid",

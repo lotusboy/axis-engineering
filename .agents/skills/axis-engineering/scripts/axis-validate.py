@@ -87,8 +87,8 @@ def validate_schema_version(data: Dict[str, Any]) -> Tuple[bool, str, List[Dict]
     version = data.get("schema_version")
     if not version:
         return False, "Missing schema_version field", [{"issue": "schema_version is required"}]
-    if version != "1.0.0":
-        return True, f"Schema version mismatch: expected 1.0.0, got {version} (advisory)", []
+    if version not in ("1.0.0", "1.1.0"):
+        return True, f"Schema version mismatch: expected 1.0.0 or 1.1.0, got {version} (advisory)", []
     return True, f"Schema version: {version}", []
 
 

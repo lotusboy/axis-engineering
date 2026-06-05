@@ -7,7 +7,7 @@
 **Codebase:** ExampleCo Commercial Property (Salesforce/Apex)
 **Model:** Claude Opus 4.6 (all experiments)
 
-Nine controlled reviews were conducted across five experiments, followed by eleven real-world applications on production artifacts (including three Triangle Protocol experiments and four two-pass reviews spanning Salesforce/Apex, TypeScript/Node.js, JavaScript/Azure, Python, and Bash/DevOps).
+Nine controlled reviews were conducted across five experiments, followed by two dozen-plus real-world applications on production artifacts spanning Salesforce/Apex, TypeScript/Node.js, JavaScript/Azure, Python, and Bash/DevOps — including Triangle Protocol experiments, two-pass reviews, and Prism Protocol calibration runs across two industries and four substrate compositions. (Application numbering in this file contains duplicates from sequential additions; entries are genuine distinct runs.)
 
 ### Method
 

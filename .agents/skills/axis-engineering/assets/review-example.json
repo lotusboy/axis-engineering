@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "contract": {
     "axes": ["SOLID", "STRIDE", "YAGNI"],
     "target": ".agents/skills/axis-engineering/assets/fixtures/login.ts",
@@ -40,6 +40,7 @@
       "handle": "STRIDE",
       "severity": "medium",
       "type": "recommendation",
+      "category": "security",
       "claim": "Add rate limiting per IP address to prevent credential stuffing attacks",
       "notes": "Not a current defect but recommended defense-in-depth"
     },
@@ -48,6 +49,7 @@
       "handle": "YAGNI",
       "severity": "low",
       "type": "absence",
+      "category": "maintainability",
       "claim": "Over-engineered: JWT claims include department and manager fields never used by current consumers",
       "citations": [
         {"file": "assets/fixtures/login.ts", "line": 78}
@@ -59,6 +61,7 @@
       "handle": "SOLID",
       "severity": "info",
       "type": "fact",
+      "category": "correctness",
       "claim": "Session store interface is correctly abstracted behind SessionStore interface (good DI practice)",
       "citations": [
         {"file": "assets/fixtures/login.ts", "line": 12}

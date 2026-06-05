@@ -279,7 +279,7 @@ When the integration touches OmniStudio Integration Procedures (IPs), all three 
 
 ## Experiment Evidence
 
-The Triangle Protocol was validated on the ExampleVision integration (a Salesforce + external API integration). Full results are in the [main protocol](triangle-protocol.md#experiment-results), with design outputs in `testing/corpus/triangle-examplevision-*.md`.
+The Triangle Protocol was validated on the ExampleVision integration (a Salesforce + external API integration). Full results are in the [main protocol](triangle-protocol.md#experiment-results). Design outputs are in the `testing/` tree (gitignored — not included in the public repo).
 
 Key Salesforce-specific observations from the experiment:
 
