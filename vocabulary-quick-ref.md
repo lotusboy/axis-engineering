@@ -59,6 +59,7 @@
 | YAGNI | Don't build what's not needed | Scope limited to what's asked, speculative features rejected | code, planning | Architecture reviews (sometimes you DO need it) |
 | Occam's Razor | Simplest solution wins | Simpler alternative chosen over more complex one with justification | any | Genuinely complex domains (dismisses real complexity as "must be simpler") |
 | Theory of Constraints | Find the bottleneck first | Bottleneck identified before optimising elsewhere | ops, architecture | Code reviews (no system-level bottleneck to find) |
+| Chesterton's Fence | Don't remove what you don't understand | Explicit explanation of why the rule/boundary exists and the risk of removing it | any | Greenfield work (no fences yet to understand) |
 
 ## Recipes
 

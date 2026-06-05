@@ -67,7 +67,7 @@
       "description": "Individual findings from the review",
       "items": {
         "type": "object",
-        "required": ["id", "handle", "severity", "type", "claim"],
+        "required": ["id", "handle", "severity", "type", "category", "claim"],
         "properties": {
           "id": {
             "type": "string",
@@ -150,15 +150,6 @@
           }
         }
       }
-    }
-  },
-  "definitions": {
-    "finding_type_rules": {
-      "description": "Citation requirements by finding type",
-      "defect": "Requires ≥1 citation (file:line)",
-      "fact": "Requires ≥1 citation (file:line)",
-      "recommendation": "Citation optional (architectural suggestions may lack single line)",
-      "absence": "Citation optional (missing thing has no line to cite)"
     }
   }
 }

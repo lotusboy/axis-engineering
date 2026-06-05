@@ -370,7 +370,7 @@ That's it. From here, every new session picks up the handles automatically. Your
 
 ### Go deeper
 
-Browse the [full vocabulary](#vocabulary-reference) of 34 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and 20 real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+Browse the [full vocabulary](#vocabulary-reference) of 34 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and two dozen-plus real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
 
 ---
 
@@ -449,7 +449,7 @@ This gives the AI everything it needs per-session. The full vocabulary and exper
 
 ## Execution Strategies
 
-Tested across 9 controlled reviews, 5 experiments, and 20 real-world applications across six languages and three artifact types (see `experiment-results.md`). Results are empirical, not theoretical.
+Tested across 9 controlled reviews, 5 experiments, and two dozen-plus real-world applications across six languages and three artifact types (see `experiment-results.md`). Results are suggestive and internally reproducible on one primary corpus — not externally validated.
 
 | Strategy | When to use | Passes | Contract? | Session | Findings* |
 |----------|-------------|--------|-----------|---------|-----------|
@@ -900,13 +900,11 @@ See `experiment-results.md` Applications 17-26 for the complete Prism evidence b
 
 ## Known Limitations
 
-1. **Model specificity.** All experiments used Claude Opus 4.6 (May 2025 training cutoff). Handle effectiveness on other models (Sonnet, Haiku, GPT-4o, Gemini) is untested. The co-occurrence cluster theory predicts cross-model transfer for handles with strong training signal (Genba, SOLID, Pre-mortem), but this is unverified. Handles with weaker training signal (Wu Wei, Wabi-sabi) may not activate reliably on smaller models. The hooks architecture is a Claude Code reference implementation — the concepts (pre-edit check, post-edit verify, session triage) are tool-agnostic but the JSON format is not.
+1. **Model specificity.** Controlled experiments used Claude 3.7; the model calibration table also covers GPT-5.1 and Gemini 3.1 Pro. Handle effectiveness on other models (Sonnet, Haiku, GPT-4o) is untested. The co-occurrence cluster theory predicts cross-model transfer for handles with strong training signal (Genba, SOLID, Pre-mortem), but this is unverified. Handles with weaker training signal (Wu Wei, Wabi-sabi) may not activate reliably on smaller models. The hooks architecture is a Claude Code reference implementation — the concepts (pre-edit check, post-edit verify, session triage) are tool-agnostic but the JSON format is not.
 
 2. **Context window decay.** Handle effects weaken over long conversations. The two-pass strategy mitigates this by using fresh contexts, but single-pass reviews on very large codebases may see reduced handle adherence in later portions.
 
-3. **No automated contract validation.** There is no tooling to verify that an agent's output actually satisfies the contract's EVIDENCE and ASSUMPTIONS requirements. Validation is currently manual.
-
-4. **English-centric.** Handle effectiveness depends on English-language training data density. Handles from non-English traditions (Genba, Kaizen, Shoshin) work because they appear extensively in English-language engineering literature, not because the model understands Japanese.
+3. **English-centric.** Handle effectiveness depends on English-language training data density. Handles from non-English traditions (Genba, Kaizen, Shoshin) work because they appear extensively in English-language engineering literature, not because the model understands Japanese.
 
 ## Why This Works
 
@@ -949,7 +947,7 @@ The Evidence field is the key addition that prevents cargo-culting. Without it, 
 | `salesforce-triangle.md` | Salesforce-specific Triangle Protocol — output skeleton, contracts, and divergence patterns for the platform |
 | `hooks-architecture.md` | How to wire behavior handles into Claude Code hooks |
 | `vocabulary-quick-ref.md` | One-page cheat sheet with Evidence and Domain fields |
-| `experiment-results.md` | Full nine-review comparison across five experiments + twenty real-world applications |
+| `experiment-results.md` | Full nine-review comparison across five experiments + two dozen-plus real-world applications |
 | `two-pass-strategy.md` | Two-pass review strategy (structured + adversarial) |
 | `testing/` | Experiment output files — all 9 review outputs + PKG Framework reviews + wildfire design review + Triangle Protocol outputs |
 ## Scoring Rubric & Model Calibration

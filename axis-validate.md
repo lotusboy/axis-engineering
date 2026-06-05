@@ -16,7 +16,7 @@ The Axis Contract is a powerful prompt discipline, but it relies on the AI self-
 
 ## What It Validates
 
-Six checks run against every review document:
+Seven checks run against every review document:
 
 | # | Check | What it enforces |
 |---|-------|-----------------|

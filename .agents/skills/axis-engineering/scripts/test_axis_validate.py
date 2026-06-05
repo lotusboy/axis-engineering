@@ -94,6 +94,7 @@ def test_all_pass_review():
                 "handle": "Genba",
                 "severity": "info",
                 "type": "fact",
+                "category": "correctness",
                 "claim": "This is a test finding.",
                 "citations": [
                     {"file": "assets/fixtures/login.ts", "line": 12}
@@ -126,6 +127,7 @@ def test_stop_none_allows_unflagged_high():
                 "handle": "STRIDE",
                 "severity": "high",
                 "type": "defect",
+                "category": "maintainability",
                 "claim": "High severity defect without stop_triggered.",
                 "citations": [
                     {"file": "assets/fixtures/login.ts", "line": 23}
@@ -159,6 +161,7 @@ def test_dead_citation_fails():
                 "handle": "Genba",
                 "severity": "info",
                 "type": "fact",
+                "category": "correctness",
                 "claim": "This finding cites a nonexistent file.",
                 "citations": [
                     {"file": "nonexistent/file/that/does/not/exist.ts", "line": 1}
@@ -218,6 +221,7 @@ def test_schema_rejects_misspelled_handle():
                 "handle": "Gemba",  # Also misspelled here
                 "severity": "info",
                 "type": "fact",
+                "category": "correctness",
                 "claim": "Test finding.",
                 "citations": [
                     {"file": "assets/fixtures/login.ts", "line": 12}
@@ -324,6 +328,7 @@ def test_schema_absent_advisory():
                 "handle": "Genba",
                 "severity": "info",
                 "type": "fact",
+                "category": "correctness",
                 "claim": "This is a test finding.",
                 "citations": [
                     {"file": "assets/fixtures/login.ts", "line": 12}
@@ -357,6 +362,7 @@ def test_require_schema_hard_fail():
                 "handle": "Genba",
                 "severity": "info",
                 "type": "fact",
+                "category": "correctness",
                 "claim": "This is a test finding.",
                 "citations": [
                     {"file": "assets/fixtures/login.ts", "line": 12}

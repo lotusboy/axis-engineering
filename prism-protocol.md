@@ -4,7 +4,7 @@
 >
 > **What v1.0 adds over v0.2:** dual-rate convergence reporting (strict + broad), three-way unique-catch subdivision (complementary / hidden divergence / fluke), mermaid diagram as standard Phase 2 output, Phase 4 anti-anchoring guard, materials-richness as a tuning diagnostic, and the dev-tools-wider-band hypothesis revised to a measurement artifact. Empirical basis: ten multi-agent calibration runs across two industries and four substrate compositions.
 >
-> **Domain-specific companions:** `salesforce-prism.md` (TBD — substrate config for `salesforce + mga-overlay` and `salesforce + (no MGA frame)` stacks).
+> **Domain-specific companions:** A Salesforce-specific companion (`salesforce-prism.md`) covering substrate config for `salesforce + mga-overlay` stacks is planned but not yet written.
 >
 > **See also:** [main methodology](README.md) | [vocabulary](vocabulary-quick-ref.md) | [triangle protocol](triangle-protocol.md) | [seesaw principle](seesaw-principle.md) | [two-pass strategy](two-pass-strategy.md)
 
@@ -291,7 +291,7 @@ The Prism Protocol is part of the same family as the Triangle Protocol, the Two-
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │                     Axis Engineering                           │
-│           (vocabulary of 33 named handles)                     │
+│           (vocabulary of 34 named handles)                     │
 ├────────────────────────────────────────────────────────────────┤
 │                                                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
@@ -456,6 +456,6 @@ The combination — Triangle's multi-agent structure + Soft Systems' multi-persp
 - [ ] **YAML schemas** for substrate config and industry config (currently described only narratively). Suggested approach: schema follows usage; build the first 2-3 substrate configs informally, then formalise.
 - [ ] **Phase 4 without the anti-anchoring guard** — empirical replication-without-guard to confirm the prompt-mitigation claim (currently N=1 with guard applied).
 - [ ] **Cross-model reproducibility** — replicate one Phase 1b run on Sonnet, one on a non-Anthropic model, see if the broad-rate band (62-65%) holds.
-- [ ] **`salesforce-prism.md` companion** — Salesforce-substrate-flavoured version of this protocol, mirroring how `salesforce-triangle.md` extends `triangle-protocol.md`.
+- [ ] **`salesforce-prism.md` companion** — Salesforce-substrate-flavoured version of this protocol (not yet written).
 - [ ] **Substrate-conditional actor lenses** — empirical pattern observed across three runs (Actuary in rater contexts; Document Template Author in PDF Butler) where substrate-density elevates a substrate-relevant actor into the lens-set. v1.x candidate; not load-bearing for v1.0.
 - [ ] **YAGNI-pass operator discipline** for tool-shape (utility-tool) requirements — currently a single-datapoint observation; needs more runs before formalising.
