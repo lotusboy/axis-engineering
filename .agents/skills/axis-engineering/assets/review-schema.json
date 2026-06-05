@@ -3,7 +3,7 @@
   "$id": "axis-engineering/review-output-schema",
   "title": "Axis Engineering Review Output Schema",
   "description": "Structured output format for Axis Engineering reviews enabling automated contract validation",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
   "$defs": {
     "handleEnum": {
@@ -23,7 +23,7 @@
     "schema_version": {
       "type": "string",
       "description": "Schema version for evolution tracking",
-      "const": "1.0.0"
+      "enum": ["1.0.0", "1.1.0"]
     },
     "contract": {
       "type": "object",
