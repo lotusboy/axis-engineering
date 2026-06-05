@@ -178,7 +178,7 @@ Use `assets/review-schema.json` for structured output format. Example:
 
 ```json
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "contract": {
     "axes": ["SOLID", "STRIDE", "YAGNI"],
     "target": "assets/fixtures/login.ts",
