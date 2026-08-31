@@ -12,3 +12,12 @@ Under the following terms:
     license, and indicate if changes were made.
 
 Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+---
+
+This CC BY 4.0 license covers the written methodology and documentation
+(README.md, the protocol docs, etc.). It does not apply to software code —
+Creative Commons licenses aren't designed for that. Code files (currently
+.agents/skills/axis-engineering/scripts/*.py and install-skill.sh) are
+separately licensed under the GNU General Public License v3.0 — see
+LICENSE-CODE.
