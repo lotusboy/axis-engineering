@@ -510,6 +510,130 @@ def test_path_traversal_blocked():
     print("✓ Test 13 passed: path traversal citation → exit 1")
 
 
+def test_null_citations_no_crash():
+    """Test 14: A finding with citations: null must not crash the validator (F-01)."""
+    review = {
+        "schema_version": "1.1.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Test finding with citations explicitly set to null.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "This finding has citations: null instead of an array.",
+                "citations": None
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator(review, str(REPO_ROOT))
+
+    assert "Traceback" not in stdout and "Traceback" not in stderr, (
+        f"Validator crashed on citations: null. stdout: {stdout} stderr: {stderr}"
+    )
+    assert exit_code == 1, f"Expected exit 1 (no citations), got {exit_code}"
+    assert "no citations" in stdout.lower(), f"Expected 'no citations' failure. Got: {stdout}"
+    print("✓ Test 14 passed: citations: null does not crash the validator")
+
+
+def test_multi_json_block_picks_review():
+    """Test 15: A Markdown doc with a decoy JSON block before the real review
+    output must validate the review, not the decoy (F-05)."""
+    review = {
+        "schema_version": "1.1.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Real review buried after a decoy JSON block.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "This is the real finding.",
+                "citations": [
+                    {"file": "assets/fixtures/login.ts", "line": 12}
+                ]
+            }
+        ],
+        "assumptions": []
+    }
+
+    md_content = (
+        "# Example\n\n"
+        "Here is the schema shape:\n\n"
+        "```json\n"
+        '{"example": true, "not": "a review"}\n'
+        "```\n\n"
+        "Actual review output:\n\n"
+        "```json\n"
+        f"{json.dumps(review)}\n"
+        "```\n"
+    )
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
+        f.write(md_content)
+        temp_path = f.name
+
+    try:
+        cmd = [sys.executable, str(VALIDATOR), temp_path, "--repo-path", str(REPO_ROOT)]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+    finally:
+        os.unlink(temp_path)
+
+    # Without jsonschema, schema_conformance is always advisory (exit 2 even for
+    # a fully valid doc - see Test 8), so the expected exit code depends on
+    # whether jsonschema is available, not on the block-selection fix itself.
+    expected_exit = 0 if JSONSCHEMA_AVAILABLE else 2
+    assert result.returncode == expected_exit, (
+        f"Expected exit {expected_exit}, got {result.returncode}. "
+        f"stdout: {result.stdout} stderr: {result.stderr}"
+    )
+    # The real signal that the decoy block was skipped: the real finding's
+    # citation resolved, proving the second block (not {"example": true}) was parsed.
+    assert "Citation coverage: 1/1" in result.stdout and "Citation resolution: 1/1" in result.stdout, (
+        f"Expected the real review's citation to resolve. Got: {result.stdout}"
+    )
+    print("✓ Test 15 passed: decoy JSON block before the real review is skipped")
+
+
+def test_bad_schema_version_hard_fails_without_jsonschema():
+    """Test 16: An unsupported schema_version must hard-fail (exit 1) even
+    when jsonschema is absent, not silently pass (F-06)."""
+    review = {
+        "schema_version": "99.0.0",
+        "contract": {"axes": ["Genba"], "structure": "Pyramid", "stop": "None"},
+        "bluf": "Test with unknown schema version and jsonschema absent.",
+        "findings": [
+            {
+                "id": "F1",
+                "handle": "Genba",
+                "severity": "info",
+                "type": "fact",
+                "category": "correctness",
+                "claim": "Test finding.",
+                "citations": [
+                    {"file": "assets/fixtures/login.ts", "line": 12}
+                ]
+            }
+        ],
+        "assumptions": []
+    }
+
+    exit_code, stdout, stderr = run_validator_jsonschema_absent(review, str(REPO_ROOT))
+
+    assert exit_code == 1, (
+        f"Expected exit 1 for unsupported schema_version without jsonschema, got {exit_code}. "
+        f"stdout: {stdout}"
+    )
+    assert "unsupported" in stdout.lower(), f"Expected 'unsupported' in output. Got: {stdout}"
+    print("✓ Test 16 passed: unsupported schema_version hard-fails even without jsonschema")
+
+
 def main():
     """Run all regression tests."""
     print("Running axis-validate regression tests...")
@@ -534,9 +658,14 @@ def main():
         else:
             print("⊘ Tests 1-7, 10-13 skipped: requires jsonschema")
 
+        # These tests don't depend on jsonschema and always run
+        test_null_citations_no_crash()
+        test_multi_json_block_picks_review()
+
         # These tests simulate jsonschema absence and always run
         test_schema_absent_advisory()
         test_require_schema_hard_fail()
+        test_bad_schema_version_hard_fails_without_jsonschema()
         print()
         print("All tests passed!")
         return 0

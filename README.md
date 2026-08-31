@@ -311,16 +311,16 @@ That alone gives ~70% of the benefit.
 
 This is the recommended path for teams. Once embedded, the AI selects and applies handles automatically on every task — nobody needs to memorise the vocabulary.
 
-#### Option A: Agent Skills format (Cursor, Windsurf/Cascade, OpenAI Codex, GitHub Copilot)
+#### Option A: Agent Skills format (Cursor, Devin Desktop (formerly Windsurf/Cascade), OpenAI Codex, GitHub Copilot)
 
 Install as a skill that agents can load automatically:
 
 ```bash
-# One-line install (open standard path — detected by Cursor, Windsurf, Codex, Copilot)
+# One-line install (open standard path — detected by Cursor, Devin Desktop, Codex, Copilot)
 curl -sL https://raw.githubusercontent.com/lotusboy/axis-engineering/main/install-skill.sh | bash
 ```
 
-The installer writes to `.agents/skills/` — the [open standard](https://agentskills.io) cross-vendor path. Most agents (Cursor, Windsurf, OpenAI Codex, GitHub Copilot) scan this path automatically.
+The installer writes to `.agents/skills/` — the [open standard](https://agentskills.io) cross-vendor path. Most agents (Cursor, Devin Desktop — formerly Windsurf/Cascade — OpenAI Codex, GitHub Copilot) scan this path automatically.
 
 ```bash
 # Or manually (open standard path):
@@ -370,7 +370,7 @@ That's it. From here, every new session picks up the handles automatically. Your
 
 ### Go deeper
 
-Browse the [full vocabulary](#vocabulary-reference) of 34 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and two dozen-plus real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
+Browse the [full vocabulary](#vocabulary-reference) of 36 handles. Read the [experiment results](experiment-results.md) — 9 controlled reviews, 5 experiments, and two dozen-plus real-world applications across 6 languages. Experiment with the [recipes](#combining-handles-the-cocktail) and the [Axis Contract](#the-axis-contract).
 
 ---
 
@@ -563,6 +563,8 @@ Terms that activate specific pattern libraries in the model.
 | **Kent Beck's Four Rules** | Kent Beck / XP | 1. Passes tests. 2. Reveals intention. 3. No duplication. 4. Fewest elements. In that priority order. |
 | **Hexagonal Architecture** | Alistair Cockburn | Ports and adapters. Business logic at the center, infrastructure at the edges. Depend inward, never outward. |
 | **12-Factor App** | Heroku / Adam Wiggins | Config in environment, stateless processes, disposable instances, dev/prod parity, logs as streams. |
+| **Cognitive Load Theory** | John Sweller | Minimize working-memory burden. Chunk information, reduce extraneous complexity, and prefer recognition over recall (Miller's Rule, Hick's Law). |
+| **Google SRE** | Google SRE (Beyer et al.) | Instrument for SLIs/SLOs and error budgets. Add distributed tracing. Alert on symptoms, not root causes. |
 
 ### Axis 4: Adversarial — What to Break
 
@@ -701,6 +703,18 @@ Cynefin + First Principles + MECE + Pre-mortem.
 Categorise complexity domains. Decompose to fundamental components.
 Ensure no gaps in the design. Anticipate failure modes.
 Include an assumption ledger — every design assumption marked Verified or Unknown.
+```
+
+### API / interface design
+```
+Cognitive Load Theory + Occam's Razor.
+Flag high-parameter-count functions and deep nesting. Propose the simpler surface.
+```
+
+### Observability / reliability review
+```
+Google SRE + Genba.
+Verify SLIs/SLOs are defined and alerts fire on symptoms, not internal causes.
 ```
 
 ### Selection Algorithm

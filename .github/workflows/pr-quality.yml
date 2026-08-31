@@ -65,3 +65,64 @@ jobs:
           fi
 
           echo "Redaction scan passed"
+
+  install-matrix:
+    name: Install Script Verification
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Serve this PR's skill content locally (tests the PR, not main)
+        shell: bash
+        run: |
+          set -e
+          command -v python3 >/dev/null 2>&1 && PY=python3 || PY=python
+          "$PY" -m http.server 8791 --directory .agents/skills/axis-engineering \
+            > "${RUNNER_TEMP}/http_server.log" 2>&1 &
+          echo $! > "${RUNNER_TEMP}/http_server.pid"
+          for i in $(seq 1 20); do
+            curl -sf http://127.0.0.1:8791/SKILL.md > /dev/null && break
+            sleep 0.5
+          done
+          curl -sf http://127.0.0.1:8791/SKILL.md > /dev/null
+
+      - name: Install to the open-standard path (.agents/skills/)
+        shell: bash
+        run: |
+          set -e
+          SCRATCH="${RUNNER_TEMP}/install-open"
+          mkdir -p "$SCRATCH" && cd "$SCRATCH"
+          REPO_URL="http://127.0.0.1:8791" bash "${GITHUB_WORKSPACE}/install-skill.sh"
+          test -s .agents/skills/axis-engineering/SKILL.md
+          test -s .agents/skills/axis-engineering/scripts/axis-validate.py
+          test -s .agents/skills/axis-engineering/scripts/requirements.txt
+          test -s .agents/skills/axis-engineering/assets/review-schema.json
+          test -s .agents/skills/axis-engineering/assets/fixtures/login.ts
+
+      - name: Install to the Claude Code path via --claude flag
+        shell: bash
+        run: |
+          set -e
+          SCRATCH="${RUNNER_TEMP}/install-claude-flag"
+          mkdir -p "$SCRATCH" && cd "$SCRATCH"
+          REPO_URL="http://127.0.0.1:8791" bash "${GITHUB_WORKSPACE}/install-skill.sh" --claude
+          test -s .claude/skills/axis-engineering/SKILL.md
+
+      - name: Install to the Claude Code path via CLAUDECODE auto-detect
+        shell: bash
+        run: |
+          set -e
+          SCRATCH="${RUNNER_TEMP}/install-claude-auto"
+          mkdir -p "$SCRATCH" && cd "$SCRATCH"
+          CLAUDECODE=1 REPO_URL="http://127.0.0.1:8791" bash "${GITHUB_WORKSPACE}/install-skill.sh"
+          test -s .claude/skills/axis-engineering/SKILL.md
+
+      - name: Stop local server
+        if: always()
+        shell: bash
+        run: kill "$(cat "${RUNNER_TEMP}/http_server.pid")" 2>/dev/null || true

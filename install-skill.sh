@@ -5,11 +5,13 @@
 
 set -e
 
-REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering"
+# Overridable for testing against a local checkout instead of the published branch
+REPO_URL="${REPO_URL:-https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering}"
 
-# Detect Claude Code: --claude flag or CLAUDE_CODE_VERSION env var
+# Detect Claude Code: --claude flag, or the CLAUDECODE env var it actually sets
+# (CLAUDE_CODE_VERSION was never a real Claude Code env var - auto-detect was dead code)
 INSTALL_FOR_CLAUDE=false
-if [ "$1" = "--claude" ] || [ -n "$CLAUDE_CODE_VERSION" ]; then
+if [ "$1" = "--claude" ] || [ -n "$CLAUDECODE" ] || [ -n "$CLAUDE_CODE_VERSION" ]; then
   INSTALL_FOR_CLAUDE=true
 fi
 
@@ -39,10 +41,14 @@ echo "Downloading assets..."
 curl -fsSL "$REPO_URL/assets/contract-template.md" > "$TARGET_DIR/assets/contract-template.md"
 curl -fsSL "$REPO_URL/assets/review-schema.json" > "$TARGET_DIR/assets/review-schema.json"
 curl -fsSL "$REPO_URL/assets/review-example.json" > "$TARGET_DIR/assets/review-example.json"
+mkdir -p "$TARGET_DIR/assets/fixtures"
+curl -fsSL "$REPO_URL/assets/fixtures/login.ts" > "$TARGET_DIR/assets/fixtures/login.ts"
 
 # Download scripts
 echo "Downloading scripts..."
 curl -fsSL "$REPO_URL/scripts/axis-validate.py" > "$TARGET_DIR/scripts/axis-validate.py"
+curl -fsSL "$REPO_URL/scripts/test_axis_validate.py" > "$TARGET_DIR/scripts/test_axis_validate.py"
+curl -fsSL "$REPO_URL/scripts/requirements.txt" > "$TARGET_DIR/scripts/requirements.txt"
 
 echo ""
 echo "✅ Axis Engineering skill installed to $TARGET_DIR/"

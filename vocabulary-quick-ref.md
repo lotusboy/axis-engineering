@@ -36,6 +36,8 @@
 | Kent Beck's Four Rules | Tests, intention, no duplication, minimal | Four rules applied in priority order | code | Prototype/spike code (rules suppress necessary experimentation) |
 | Hexagonal | Ports and adapters, depend inward | Dependency direction analysed, infrastructure vs domain boundaries | architecture | Small utilities, single-class changes |
 | 12-Factor | Config/env/stateless/disposable | Factor-by-factor assessment where relevant | ops, architecture | Pure business logic reviews |
+| Cognitive Load Theory | Minimise working-memory burden per unit of code | Named cognitive-load violation with location and simplification proposed | code, architecture | Trivial code (overkill for a one-line change) |
+| Google SRE | Instrument for SLOs and error budgets, not just uptime | SLI/SLO definitions cited, error-budget calculation, symptom-based alerting check | ops | Non-production code paths (no reliability target to measure against) |
 
 ## Axis 4: Adversarial (What to Break)
 
@@ -75,6 +77,8 @@ Doc chain review:    First Principles + Genba + MECE
 Retrospective:       Genba + Pre-mortem + Five Whys
 Design generation:   Cynefin + First Principles + MECE + Pre-mortem
 Performance:         Theory of Constraints + Genba + Muda
+API/interface design: Cognitive Load Theory + Occam's Razor
+Observability review: Google SRE + Genba
 ```
 
 ## Axis Contract Template
