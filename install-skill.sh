@@ -7,9 +7,10 @@ set -e
 
 REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering"
 
-# Detect Claude Code: --claude flag or CLAUDE_CODE_VERSION env var
+# Detect Claude Code: --claude flag, or the CLAUDECODE env var it actually sets
+# (CLAUDE_CODE_VERSION was never a real Claude Code env var - auto-detect was dead code)
 INSTALL_FOR_CLAUDE=false
-if [ "$1" = "--claude" ] || [ -n "$CLAUDE_CODE_VERSION" ]; then
+if [ "$1" = "--claude" ] || [ -n "$CLAUDECODE" ] || [ -n "$CLAUDE_CODE_VERSION" ]; then
   INSTALL_FOR_CLAUDE=true
 fi
 
