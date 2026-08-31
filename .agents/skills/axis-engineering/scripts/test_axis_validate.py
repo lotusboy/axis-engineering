@@ -585,11 +585,19 @@ def test_multi_json_block_picks_review():
     finally:
         os.unlink(temp_path)
 
-    assert result.returncode == 0, (
-        f"Expected exit 0 (real review validated), got {result.returncode}. "
+    # Without jsonschema, schema_conformance is always advisory (exit 2 even for
+    # a fully valid doc - see Test 8), so the expected exit code depends on
+    # whether jsonschema is available, not on the block-selection fix itself.
+    expected_exit = 0 if JSONSCHEMA_AVAILABLE else 2
+    assert result.returncode == expected_exit, (
+        f"Expected exit {expected_exit}, got {result.returncode}. "
         f"stdout: {result.stdout} stderr: {result.stderr}"
     )
-    assert "All checks passed" in result.stdout, f"Expected success. Got: {result.stdout}"
+    # The real signal that the decoy block was skipped: the real finding's
+    # citation resolved, proving the second block (not {"example": true}) was parsed.
+    assert "Citation coverage: 1/1" in result.stdout and "Citation resolution: 1/1" in result.stdout, (
+        f"Expected the real review's citation to resolve. Got: {result.stdout}"
+    )
     print("✓ Test 15 passed: decoy JSON block before the real review is skipped")
 
 
