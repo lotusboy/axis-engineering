@@ -5,7 +5,8 @@
 
 set -e
 
-REPO_URL="https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering"
+# Overridable for testing against a local checkout instead of the published branch
+REPO_URL="${REPO_URL:-https://raw.githubusercontent.com/lotusboy/axis-engineering/main/.agents/skills/axis-engineering}"
 
 # Detect Claude Code: --claude flag, or the CLAUDECODE env var it actually sets
 # (CLAUDE_CODE_VERSION was never a real Claude Code env var - auto-detect was dead code)
