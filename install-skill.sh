@@ -39,10 +39,14 @@ echo "Downloading assets..."
 curl -fsSL "$REPO_URL/assets/contract-template.md" > "$TARGET_DIR/assets/contract-template.md"
 curl -fsSL "$REPO_URL/assets/review-schema.json" > "$TARGET_DIR/assets/review-schema.json"
 curl -fsSL "$REPO_URL/assets/review-example.json" > "$TARGET_DIR/assets/review-example.json"
+mkdir -p "$TARGET_DIR/assets/fixtures"
+curl -fsSL "$REPO_URL/assets/fixtures/login.ts" > "$TARGET_DIR/assets/fixtures/login.ts"
 
 # Download scripts
 echo "Downloading scripts..."
 curl -fsSL "$REPO_URL/scripts/axis-validate.py" > "$TARGET_DIR/scripts/axis-validate.py"
+curl -fsSL "$REPO_URL/scripts/test_axis_validate.py" > "$TARGET_DIR/scripts/test_axis_validate.py"
+curl -fsSL "$REPO_URL/scripts/requirements.txt" > "$TARGET_DIR/scripts/requirements.txt"
 
 echo ""
 echo "✅ Axis Engineering skill installed to $TARGET_DIR/"

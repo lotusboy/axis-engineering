@@ -64,17 +64,30 @@ def load_review_data(review_path: str) -> Dict[str, Any]:
         sys.exit(1)
     
     content = path.read_text(encoding="utf-8")
-    
-    # If it's a .md file, try to extract JSON from ```json code block
+
+    # If it's a .md file, try to extract JSON from a ```json code block
     if path.suffix.lower() == ".md":
-        # Look for ```json ... ``` block
-        json_match = re.search(r'```json\s*\n(.*?)\n```', content, re.DOTALL)
-        if json_match:
-            content = json_match.group(1)
-        else:
+        # A doc may contain multiple ```json blocks (e.g. a schema example
+        # before the actual review output) - parse each and prefer the one
+        # that looks like a review document over the first block found.
+        matches = list(re.finditer(r'```json\s*\n(.*?)\n```', content, re.DOTALL))
+        if not matches:
             print("ERROR: No JSON code block found in Markdown file", file=sys.stderr)
             sys.exit(1)
-    
+        candidates = []
+        for match in matches:
+            try:
+                candidates.append(json.loads(match.group(1)))
+            except json.JSONDecodeError:
+                continue
+        if not candidates:
+            print("ERROR: No valid JSON found in any ```json code block", file=sys.stderr)
+            sys.exit(1)
+        for candidate in candidates:
+            if isinstance(candidate, dict) and "schema_version" in candidate and "findings" in candidate:
+                return candidate
+        return candidates[-1]
+
     try:
         return json.loads(content)
     except json.JSONDecodeError as e:
@@ -88,7 +101,9 @@ def validate_schema_version(data: Dict[str, Any]) -> Tuple[bool, str, List[Dict]
     if not version:
         return False, "Missing schema_version field", [{"issue": "schema_version is required"}]
     if version not in ("1.0.0", "1.1.0"):
-        return True, f"Schema version mismatch: expected 1.0.0 or 1.1.0, got {version} (advisory)", []
+        return False, f"Unsupported schema_version: expected 1.0.0 or 1.1.0, got {version}", [
+            {"issue": f"schema_version {version} is not supported"}
+        ]
     return True, f"Schema version: {version}", []
 
 
@@ -137,9 +152,9 @@ def check_citation_resolution(findings: List[Dict[str, Any]], repo_path: str) ->
     line_count_cache: Dict[Path, int] = {}
     
     for finding in findings:
-        citations = finding.get("citations", [])
+        citations = finding.get("citations") or []
         finding_id = finding.get("id", "unknown")
-        
+
         for citation in citations:
             total_citations += 1
             file_path = citation.get("file", "")

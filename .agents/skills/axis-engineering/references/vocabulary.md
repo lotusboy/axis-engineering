@@ -40,6 +40,8 @@ Terms that activate specific pattern libraries.
 | **Kent Beck's Four Rules** | Kent Beck | 1. Passes tests. 2. Reveals intention. 3. No duplication. 4. Fewest elements. | Rule-by-rule assessment | code |
 | **Hexagonal Architecture** | Alistair Cockburn | Ports and adapters. Depend inward only. | Port/adapter mapping, dependency direction check | architecture |
 | **12-Factor App** | Heroku | Config in env, stateless processes, logs as streams. | Factor-by-factor compliance check | ops |
+| **Cognitive Load Theory** | John Sweller | Minimize working-memory burden. Chunk information, reduce extraneous complexity, prefer recognition over recall. | Named cognitive-load violation + location + simplification proposed | code, architecture |
+| **Google SRE** | Google SRE (Beyer et al.) | Instrument for SLIs/SLOs and error budgets. Add distributed tracing. Alert on symptoms, not causes. | SLI/SLO definitions cited, error-budget calculation, trace-span review | ops |
 
 ## Axis 4: Adversarial — What to Break
 

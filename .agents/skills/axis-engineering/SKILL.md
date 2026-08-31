@@ -1,11 +1,11 @@
 ---
 name: axis-engineering
-description: AI Operating System with 34 behavior handles for critical thinking, plus four protocols — Prism (modelling raw materials → system shape), Triangle (architecture tradeoffs), Seesaw (3-pole imbalance diagnostic), Two-Pass (review existing artefacts). Use when running any of those protocols, or when performing code review, architecture review, bug investigation, security review, domain modelling, or any task requiring structured reasoning.
+description: AI Operating System with 36 behavior handles for critical thinking, plus four protocols — Prism (modelling raw materials → system shape), Triangle (architecture tradeoffs), Seesaw (3-pole imbalance diagnostic), Two-Pass (review existing artefacts). Use when running any of those protocols, or when performing code review, architecture review, bug investigation, security review, domain modelling, or any task requiring structured reasoning.
 license: CC-BY-4.0
 compatibility: Designed for Claude Code, Cascade/Windsurf, Cursor, and similar agentic tools
 metadata:
   author: Steven Loftus
-  version: "2.0.0"
+  version: "2.1.0"
 tags: [framework, thinking, methodology, prism, triangle, seesaw, two-pass, genba, pre-mortem, stride]
 ---
 
@@ -41,7 +41,7 @@ Before approving, run a Pre-mortem.
 
 *Note: The Pattern-oriented axis is software-specific. SOLID, DDD, Fowler's, STRIDE have no purchase on strategy docs, plans, or people/mentoring artefacts. On non-code work, skip this axis entirely or substitute a domain-appropriate pattern set.*
 
-See `references/vocabulary.md` for the full 34-handle reference.
+See `references/vocabulary.md` for the full 36-handle reference.
 
 ## Recipes (Handle Combinations)
 
@@ -125,7 +125,7 @@ This keeps Axis pure (cognitive framework) while domain skills handle technology
 | File | Purpose |
 |------|---------|
 | `SKILL.md` | Core skill — quick start, recipes, contract (this file) |
-| `references/vocabulary.md` | Full 34-handle reference with Evidence/Domain fields |
+| `references/vocabulary.md` | Full 36-handle reference with Evidence/Domain fields |
 | `references/recipes.md` | Extended recipe catalog |
 | `references/anti-patterns.md` | Detailed anti-patterns and mitigations |
 | `assets/contract-template.md` | Copy-paste contract template |

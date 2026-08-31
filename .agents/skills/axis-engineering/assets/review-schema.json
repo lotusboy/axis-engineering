@@ -8,11 +8,11 @@
   "$defs": {
     "handleEnum": {
       "type": "string",
-      "description": "Axis Engineering behavior handle (34 total)",
+      "description": "Axis Engineering behavior handle (36 total)",
       "enum": [
-        "Genba", "Seven Factors", "Kaizen", "Shoshin", "First Principles", "Wabi-sabi", "Wu Wei",
+        "Genba", "Seven Factors of Awakening", "Kaizen", "Shoshin", "First Principles", "Wabi-sabi", "Wu Wei",
         "MECE", "Pyramid Principle", "BLUF", "Five Whys", "Eisenhower Matrix",
-        "Gang of Four", "Fowler's Catalog", "SOLID", "DDD", "Feathers' Legacy Code", "Kent Beck's Four Rules", "Hexagonal Architecture", "12-Factor App",
+        "Gang of Four", "Fowler's Catalog", "SOLID", "DDD", "Feathers' Legacy Code", "Kent Beck's Four Rules", "Hexagonal Architecture", "12-Factor App", "Cognitive Load Theory", "Google SRE",
         "Red Team", "Pre-mortem", "STRIDE", "Chaos Engineering", "Muda", "Andon", "Devil's Advocate",
         "Cynefin", "Poka-yoke", "Jidoka", "YAGNI", "Occam's Razor", "Theory of Constraints", "Chesterton's Fence"
       ]
