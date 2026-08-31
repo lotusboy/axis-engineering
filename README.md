@@ -942,6 +942,7 @@ The Evidence field is the key addition that prevents cargo-culting. Without it, 
 | File | Purpose |
 |------|---------|
 | `README.md` | This document — the complete Axis Engineering methodology |
+| `examples/README.md` | Domain companion docs — what exists, and the pattern for adding a new domain |
 | `examples/salesforce/salesforce-handles.md` | Salesforce-specific handle applications — what each handle checks and what findings look like on the platform |
 | `triangle-protocol.md` | Triangle Protocol — 3-agent solution space exploration using Iron Triangle constraint pairs |
 | `examples/salesforce/salesforce-triangle.md` | Salesforce-specific Triangle Protocol — output skeleton, contracts, and divergence patterns for the platform |
