@@ -52,8 +52,12 @@ Running them sequentially avoids the agent trying to do both at once.
 ## Output Structure — save the run
 
 **By default, persist the run to the repository being reviewed.** Create
-`axis/runs/<YYYY-MM-DD>-<subject>-two-pass/` and write each phase to its own numbered file as
-you go:
+`axis/runs/<YYYY-MM-DD>-<subject>-two-pass/`. The shape below is a proven **starting** example,
+not a fixed rule — of the four Axis protocols it's the one with enough repeated real runs to
+generalise from, but even it keeps adapting: a review spanning several components typically needs
+one Pass 1 / Pass 2 pair *per component* (`pass1-<component>.md`, `pass2-<component>.md`) rather
+than one pair total, and a longer engagement may add its own later-numbered files on top (a
+calibration pass, a verification log) once this base shape is in place.
 
 | File | What it is |
 |---|---|
@@ -66,6 +70,13 @@ you go:
 | `06-synthesis.md` | Merged, deduplicated, severity-ordered findings |
 
 Write the prompts *before* the agents run; keep the outputs unedited, exactly as they came back.
+Adapt file names and counts to the run — the invariant that matters is stated below, not this
+exact table.
+
+**The same folder convention applies to Prism and Triangle runs**, with the same default-on,
+tell-the-user, easy-opt-out discipline — see `prism-protocol.md` and `triangle-protocol.md`.
+Neither has a file shape proven stable enough to template the way the table above does; name
+their outputs however fits (one per lens, one per agent, or a single consolidated file).
 
 **Why it is worth the files.** A reader — including you in six months — can judge each finding
 against the exact instructions that produced it. Without the prompts, a finding is an assertion;

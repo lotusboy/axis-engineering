@@ -29,7 +29,7 @@ Before approving, run a Pre-mortem.
 
 **For non-routine work, pick a protocol first:** Triangle (architecture tradeoffs) · Prism (modelling from raw materials) · Two-Pass (review existing artefacts) · Single-pass with handles (routine). Seesaw is a cross-cutting diagnostic that fires inside any of them. See [README.md](https://github.com/lotusboy/axis-engineering/blob/main/README.md) "Protocol selector" or `references/recipes.md` for full mechanics.
 
-**Two-Pass runs save their working by default** to `axis/runs/<YYYY-MM-DD>-<subject>-two-pass/` in the repository under review — contract, prompts, raw outputs, synthesis — so findings can be judged against the prompts that produced them. Tell the user the folder was created; skip it if they decline. See `references/recipes.md`.
+**All three multi-agent protocols save their working by default** to `axis/runs/<YYYY-MM-DD>-<subject>-<protocol>/` in the repository under review — prompts, raw outputs, synthesis — so findings can be judged against the prompts that produced them. Two-Pass has a proven file shape (see `two-pass-strategy.md`); Prism and Triangle don't, so name their output files however fits the run. Tell the user the folder was created; skip it if they decline. See `references/recipes.md`.
 
 ## The Five Axes
 

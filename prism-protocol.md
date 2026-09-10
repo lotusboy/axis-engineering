@@ -439,6 +439,25 @@ Open N separate chat sessions. Paste identical prompts into each (protocol doc +
 
 N parallel `messages.create` calls with the same system prompt. Concatenate responses into a synthesis call. Suitable for automation.
 
+## Save the Run
+
+**By default, persist the run to the repository under review.** Create
+`axis/runs/<YYYY-MM-DD>-<subject>-prism/` and commit the run's materials pointers, prompts, and
+outputs there. Prism hasn't converged on one file layout the way Two-Pass has — real runs have
+used a shared-context file plus one output per lens-set, one file per lettered agent, or other
+shapes entirely. Don't force a fixed template; name the outputs however fits this run.
+
+What doesn't change regardless of file count:
+
+- State the materials, substrate/industry config, and blindness rule up front (what each agent must NOT see — critically, this project's own existing model, if one exists, so anchoring doesn't defeat the convergence test)
+- Commit prompts before the agents run
+- Each lens-set/agent's output is its own file or section, unedited
+- Exactly one synthesis, written last, after every lens has returned
+
+Tell the user the folder was created and how to opt out; skip it for a quick ad hoc question or
+when the target isn't a repository you can write to. See `two-pass-strategy.md`'s "Output
+Structure" section for the fuller rationale behind persisting runs at all.
+
 ## Related Work
 
 The Prism Protocol's lens-set design draws from:

@@ -235,14 +235,27 @@ After the human decides, record:
 
 This feedback loop is what turns the protocol from a one-off exercise into a calibrated tool. Without it, teams cannot judge when to use the protocol vs single-pass generation.
 
-## Output Structure
+## Output Structure — save the run
+
+**By default, persist the run to the repository under review**, not to a throwaway or gitignored
+path. Create `axis/runs/<YYYY-MM-DD>-<subject>-triangle/` and commit the run's inputs and outputs
+there. One workable shape, illustrative rather than mandatory:
 
 ```
-testing/triangle-[project]-agent-tq.md     ← Time + Quality design (sacrifice Cost)
-testing/triangle-[project]-agent-tc.md     ← Time + Cost design (sacrifice Quality)
-testing/triangle-[project]-agent-cq.md     ← Cost + Quality design (sacrifice Time)
-testing/triangle-[project]-synthesis.md    ← Comparison, hybrids, and blind spots
+axis/runs/2026-09-10-rating-service-triangle/
+  agent-tq.md      ← Time + Quality design (sacrifice Cost)
+  agent-tc.md      ← Time + Cost design (sacrifice Quality)
+  agent-cq.md      ← Cost + Quality design (sacrifice Time)
+  synthesis.md     ← Comparison, hybrids, and blind spots
 ```
+
+Triangle hasn't converged on one file layout across real runs the way Two-Pass has — for a
+lighter-weight architecture decision, a single file with each design as its own section, followed
+by the synthesis, works just as well and is common in practice. What doesn't change regardless of
+file count: state the task and constraint pairs up front, write each agent's design before
+synthesis runs, keep synthesis in its own section or file written last. Tell the user the folder
+was created and how to opt out; skip it for a quick ad hoc question. See `two-pass-strategy.md`'s
+"Output Structure" section for the fuller rationale, which applies here too.
 
 ## Why Three Agents, Not Three Prompts
 

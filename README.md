@@ -85,6 +85,8 @@ Customer materials → [Prism] → Agreed model → [Triangle] → Architecture 
                                                                 Seesaw fires inside any of these ─┘
 ```
 
+**All three default to saving their run.** Create `axis/runs/<YYYY-MM-DD>-<subject>-<protocol>/` in the repository under review and commit the run's prompts, raw outputs, and synthesis there, alongside whatever the run produced. Only Two-Pass has a file shape proven across enough real runs to give as a template (see its section below) — Prism and Triangle haven't converged on one, so name their output files however fits the run (one per lens, one per agent, or a single consolidated file) rather than forcing a fixed layout. State the run's scope, materials, and blindness rule up front regardless of protocol; tell the user the folder was created and how to opt out.
+
 #### Prism Protocol — multi-lens refraction (start here for new projects)
 
 **Use this when:**
