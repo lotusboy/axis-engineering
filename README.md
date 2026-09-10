@@ -598,6 +598,7 @@ Terms that help the agent calibrate its response to the problem's complexity.
 | **YAGNI** | Kent Beck / XP | You Aren't Gonna Need It. Don't build for hypothetical future requirements. |
 | **Occam's Razor** | William of Ockham | The simplest explanation (or solution) is usually correct. Don't over-engineer. |
 | **Theory of Constraints** | Eliyahu Goldratt | Find the bottleneck. Optimising anything other than the constraint is waste. |
+| **Chesterton's Fence** | G.K. Chesterton | Do not remove or change a rule, process, or boundary until you understand the purpose it serves. Discover why the fence was built before deciding to demolish it. |
 
 ## The Axis Contract
 
