@@ -42,8 +42,10 @@ Include the **Scoring Rubric** at the bottom of your submission to ensure standa
 ### 3. Submit a Pull Request
 
 Add your writeup to `experiment-results.md` (incrementing the Application number)
-and place your raw, redacted AI outputs in the `testing/` directory if you wish
-to share them.
+and, if you wish to share them, commit your raw, redacted AI outputs under
+`axis/runs/<YYYY-MM-DD>-<subject>-<protocol>/` (see `two-pass-strategy.md`'s "Output
+Structure" section) rather than `testing/` — that directory is gitignored (local-only
+example outputs) and anything placed there won't reach your PR.
 
 Submit your PR against the `main` branch.
 
