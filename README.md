@@ -230,6 +230,12 @@ STOP: Andon on P0
 SYNTHESIS (combine Pass 1 + Pass 2): deduplicate by (artefact, symptom, root-cause-class).
 ```
 
+**Save the run.** By default the contract, both prompts, both raw outputs, and the synthesis are
+written to `axis/runs/<YYYY-MM-DD>-<subject>-two-pass/` in the repository under review, and
+committed with the fixes they produced. That way a finding can be judged against the exact prompt
+that produced it, and every review a project has had stays visible in its own history. Skip it if
+you'd rather not keep the files — the methodology doesn't depend on it.
+
 See `two-pass-strategy.md` for full mechanics.
 
 ### Genba Baseline: Standard Artifacts

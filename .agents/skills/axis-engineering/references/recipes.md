@@ -34,6 +34,12 @@ EVIDENCE: Failure scenarios with triggering conditions
 STOP: Andon — halt if data-loss or security vulnerability found
 ```
 
+By default, save the run to `axis/runs/<YYYY-MM-DD>-<subject>-two-pass/` as you go —
+`00-contract.md`, `01-pass1-prompt.md`, `02-pass2-prompt.md`, `03-synthesis-prompt.md`,
+`04-pass1-output.md`, `05-pass2-output.md`, `06-synthesis.md` — then tell the user the folder
+exists and how to opt out. Skip it for quick ad hoc reviews or if the user declines. Full
+rationale in `two-pass-strategy.md`.
+
 ## Architecture Review
 
 **Standard architecture review:**
