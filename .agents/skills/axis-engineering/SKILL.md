@@ -5,7 +5,7 @@ license: CC-BY-4.0
 compatibility: Designed for Claude Code, Cascade/Windsurf, Cursor, and similar agentic tools
 metadata:
   author: Steven Loftus
-  version: "2.1.0"
+  version: "2.2.0"
 tags: [framework, thinking, methodology, prism, triangle, seesaw, two-pass, genba, pre-mortem, stride]
 ---
 
@@ -28,6 +28,8 @@ Before approving, run a Pre-mortem.
 **Rule of thumb:** Pick 2–3 handles across different axes.
 
 **For non-routine work, pick a protocol first:** Triangle (architecture tradeoffs) · Prism (modelling from raw materials) · Two-Pass (review existing artefacts) · Single-pass with handles (routine). Seesaw is a cross-cutting diagnostic that fires inside any of them. See [README.md](https://github.com/lotusboy/axis-engineering/blob/main/README.md) "Protocol selector" or `references/recipes.md` for full mechanics.
+
+**All three multi-agent protocols save their working by default** to `axis/runs/<YYYY-MM-DD>-<subject>-<protocol>/` in the repository under review — prompts, raw outputs, synthesis — so findings can be judged against the prompts that produced them. Two-Pass has a proven file shape (see `two-pass-strategy.md`); Prism and Triangle don't, so name their output files however fits the run. Tell the user the folder was created; skip it if they decline. See `references/recipes.md`.
 
 ## The Five Axes
 

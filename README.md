@@ -85,6 +85,8 @@ Customer materials → [Prism] → Agreed model → [Triangle] → Architecture 
                                                                 Seesaw fires inside any of these ─┘
 ```
 
+**All three default to saving their run.** Create `axis/runs/<YYYY-MM-DD>-<subject>-<protocol>/` in the repository under review and commit the run's prompts, raw outputs, and synthesis there, alongside whatever the run produced. Only Two-Pass has a file shape proven across enough real runs to give as a template (see its section below) — Prism and Triangle haven't converged on one, so name their output files however fits the run (one per lens, one per agent, or a single consolidated file) rather than forcing a fixed layout. State the run's scope, materials, and blindness rule up front regardless of protocol; tell the user the folder was created and how to opt out.
+
 #### Prism Protocol — multi-lens refraction (start here for new projects)
 
 **Use this when:**
@@ -229,6 +231,12 @@ STOP: Andon on P0
 
 SYNTHESIS (combine Pass 1 + Pass 2): deduplicate by (artefact, symptom, root-cause-class).
 ```
+
+**Save the run.** By default the contract, both prompts, both raw outputs, and the synthesis are
+written to `axis/runs/<YYYY-MM-DD>-<subject>-two-pass/` in the repository under review, and
+committed with the fixes they produced. That way a finding can be judged against the exact prompt
+that produced it, and every review a project has had stays visible in its own history. Skip it if
+you'd rather not keep the files — the methodology doesn't depend on it.
 
 See `two-pass-strategy.md` for full mechanics.
 
@@ -592,6 +600,7 @@ Terms that help the agent calibrate its response to the problem's complexity.
 | **YAGNI** | Kent Beck / XP | You Aren't Gonna Need It. Don't build for hypothetical future requirements. |
 | **Occam's Razor** | William of Ockham | The simplest explanation (or solution) is usually correct. Don't over-engineer. |
 | **Theory of Constraints** | Eliyahu Goldratt | Find the bottleneck. Optimising anything other than the constraint is waste. |
+| **Chesterton's Fence** | G.K. Chesterton | Do not remove or change a rule, process, or boundary until you understand the purpose it serves. Discover why the fence was built before deciding to demolish it. |
 
 ## The Axis Contract
 

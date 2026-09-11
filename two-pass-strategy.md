@@ -49,15 +49,52 @@ The passes are also cognitively different:
 
 Running them sequentially avoids the agent trying to do both at once.
 
-## Output Structure
+## Output Structure — save the run
 
-Each pass writes to its own file. A third comparison step synthesises:
+**By default, persist the run to the repository being reviewed.** Create
+`axis/runs/<YYYY-MM-DD>-<subject>-two-pass/`. The shape below is a proven **starting** example,
+not a fixed rule — of the four Axis protocols it's the one with enough repeated real runs to
+generalise from, but even it keeps adapting: a review spanning several components typically needs
+one Pass 1 / Pass 2 pair *per component* (`pass1-<component>.md`, `pass2-<component>.md`) rather
+than one pair total, and a longer engagement may add its own later-numbered files on top (a
+calibration pass, a verification log) once this base shape is in place.
 
-```
-temp-data/review-pass1-structured.md    ← Pass 1 output
-temp-data/review-pass2-verification.md  ← Pass 2 output
-temp-data/review-combined.md            ← Synthesised findings, deduplicated
-```
+| File | What it is |
+|---|---|
+| `00-contract.md` | The Axis Contract for the run — axes, target, structure, evidence rule, stop condition |
+| `01-pass1-prompt.md` | Pass 1 (analytical) instructions |
+| `02-pass2-prompt.md` | Pass 2 (adversarial) instructions |
+| `03-synthesis-prompt.md` | Merge instructions |
+| `04-pass1-output.md` | Pass 1 result, verbatim |
+| `05-pass2-output.md` | Pass 2 result, verbatim |
+| `06-synthesis.md` | Merged, deduplicated, severity-ordered findings |
+
+Write the prompts *before* the agents run; keep the outputs unedited, exactly as they came back.
+Adapt file names and counts to the run — the invariant that matters is stated below, not this
+exact table.
+
+**The same folder convention applies to Prism and Triangle runs**, with the same default-on,
+tell-the-user, easy-opt-out discipline — see `prism-protocol.md` and `triangle-protocol.md`.
+Neither has a file shape proven stable enough to template the way the table above does; name
+their outputs however fits (one per lens, one per agent, or a single consolidated file).
+
+**Why it is worth the files.** A reader — including you in six months — can judge each finding
+against the exact instructions that produced it. Without the prompts, a finding is an assertion;
+with them, it is reproducible. The isolation is also only verifiable on paper: when both passes
+independently reach the same finding and you can see that Pass 2's prompt never mentioned Pass 1,
+the convergence is genuine agreement rather than an echo. Committing the folder makes every
+review run on a project transparent and reviewable alongside the code it changed.
+
+**Tell the user you did it.** When the run finishes, say plainly what was created and how to
+opt out — for example: *"Saved this run under `axis/runs/2026-09-10-billing-api-two-pass/` —
+contract, both prompts, both raw outputs, synthesis. Delete the folder or tell me to skip this
+next time if you'd rather not keep it."* Do not save silently.
+
+**When to skip.** Don't create the folder if the user asks you not to, if the review is a quick
+ad hoc question rather than a real protocol run, or if the target isn't a repository you can
+write to. This is a strong default, not a rule — the convention is one that works well in
+practice, but the methodology does not depend on it and users should bend it to fit their own
+project.
 
 ## Merge Contract
 
