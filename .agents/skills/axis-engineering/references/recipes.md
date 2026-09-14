@@ -39,9 +39,12 @@ By default, save the run to `axis/runs/<YYYY-MM-DD>-<subject>-two-pass/` as you 
 `04-pass1-output.md`, `05-pass2-output.md`, `06-synthesis.md` as a starting shape, adapted to fit
 (e.g. one pass1/pass2 pair per component under review) — then tell the user the folder exists and
 how to opt out. Skip it for quick ad hoc reviews or if the user declines. Full rationale in
-`two-pass-strategy.md`. The same folder convention and default-on discipline apply to Prism and
-Triangle runs — see `prism-protocol.md` and `triangle-protocol.md` for each, since neither has a
-file shape proven stable enough to give as a template.
+[two-pass-strategy.md](https://github.com/lotusboy/axis-engineering/blob/main/two-pass-strategy.md)
+(not bundled in the installed skill — fetch it if you need the full text). The same folder
+convention and default-on discipline apply to Prism and Triangle runs — see
+[prism-protocol.md](https://github.com/lotusboy/axis-engineering/blob/main/prism-protocol.md) and
+[triangle-protocol.md](https://github.com/lotusboy/axis-engineering/blob/main/triangle-protocol.md)
+for each, since neither has a file shape proven stable enough to give as a template.
 
 ## Architecture Review
 
