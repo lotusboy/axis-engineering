@@ -97,7 +97,7 @@ STOP:         Andon — halt and surface if a requirement is genuinely contradic
 
 ### Phase 1b: Multi-agent refraction (for high-stakes requirements)
 
-For requirements where the model shape will persist for years, run the refraction in parallel under context isolation. N=2 is the recommended minimum (cost-effective; ~70% convergence rate observed empirically). N=3 increases coverage of edge cases but at proportional cost.
+For requirements where the model shape will persist for years, run the refraction in parallel under context isolation. N=2 is the recommended minimum (cost-effective; broad convergence rate ~62–65% under v1.0 dual reporting — earlier v0.2 runs measured ~70% by a different method; see the tuning diagnostic below). N=3 increases coverage of edge cases but at proportional cost.
 
 Each agent receives:
 - The Prism Protocol description (this document)
@@ -163,7 +163,7 @@ Empirical anchors so far: intake-vendor ~21kB substrate → ~22 citations per ag
 - **Strict rate** = `convergence / (convergence + divergence + unique-catches-total)`. This is the v0.2 measurement, retained for backwards compatibility.
 - **Broad rate** = `convergence / (convergence + divergence)` — where "divergence" includes both explicit and hidden-divergence subtypes. Broad measures *agreement that survives commitment to shape*, excluding complementary-coverage uniques (which are real signal but not model disagreement).
 
-**Empirical band (v1.0):** the **broad rate** lands in a **62-65% band** across multi-agent runs spanning two industries, four substrate compositions, and Phase 1, Phase 4, and mermaid-augmented variants. The strict rate is materials-richness-dependent and ranges more widely (40-71%); read the strict rate as a tuning diagnostic for materials richness rather than a model-shape convergence measure.
+**Empirical band (v1.0):** the **broad rate** lands in a **62-65% band** across multi-agent runs spanning two industries, four substrate compositions, and Phase 1, Phase 4, and mermaid-augmented variants. The strict rate is materials-richness-dependent and ranges more widely (40-71%); read the strict rate as a tuning diagnostic for materials richness rather than a model-shape convergence measure. **Both rates are sensitive to how findings are counted:** in one field run the broad rate moved from 71% to 78% just by merging three small forks into their neighbours. Read the band as rough, not as a pass mark.
 
 Practical corollaries (apply to broad rate):
 

@@ -230,7 +230,7 @@ STOP: Flag any case where two agents interpret the same requirement
       differently (requirements-level ambiguity, must be resolved).
 ```
 
-**Empirical baseline:** N=2 blind runs on insurance.mga regulatory integration produced ~70% finding convergence with 3 architectural divergences and 4 unique edge-case catches per agent. If your synthesis reports >90% convergence, the requirement was overdetermined — default to single-agent next time.
+**Empirical baseline:** under v1.0 dual reporting the broad convergence rate lands around 62–65% (see `prism-protocol.md` tuning diagnostic); the first N=2 blind runs on insurance.mga regulatory integration measured ~70% under the earlier v0.2 method, with 3 architectural divergences and 4 unique edge-case catches per agent. The rate is sensitive to how findings are counted, so read it as a rough band. If your synthesis reports >90% convergence, the requirement was overdetermined — default to single-agent next time.
 
 ## Seesaw Triggers (cross-cutting)
 
