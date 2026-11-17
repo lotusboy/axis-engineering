@@ -63,7 +63,7 @@ Use this for any non-trivial task:
 AXES:         [2-3 named handles from recipes above]
 TARGET:       [specific artifacts — files, endpoints, docs]
 STRUCTURE:    [output format — Pyramid, MECE, BLUF]
-EVIDENCE:     [every finding must cite file:line]
+EVIDENCE:     [every finding must cite file:line; reproduce it where it can be run, else label it INFERENCE]
 ASSUMPTIONS:  [maintain a Verified/Unknown ledger]
 STOP:         [Andon — halt on data-loss or security vuln]
 ```

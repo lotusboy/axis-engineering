@@ -445,7 +445,7 @@ Solution design generation:      Cynefin + First Principles + MECE + Pre-mortem
 AXES:         [2-3 named handles from recipes above]
 TARGET:       [specific artifacts — files, endpoints, docs]
 STRUCTURE:    [output format — Pyramid, MECE, BLUF]
-EVIDENCE:     [every finding must cite file:line; critical findings include verbatim snippet]
+EVIDENCE:     [every finding must cite file:line; reproduce it where it can be run, else label it INFERENCE; critical findings include verbatim snippet]
 ASSUMPTIONS:  [maintain a Verified/Unknown ledger of all assumptions made]
 STOP:         [Andon — halt and flag on data-loss or security vulnerability]
 ```

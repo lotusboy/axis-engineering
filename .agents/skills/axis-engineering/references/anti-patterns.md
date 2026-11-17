@@ -74,6 +74,8 @@ The agent name-drops the handle without demonstrating application. No artifact r
 
 **Mitigation:** Require an **assumption ledger** — "List each assumption you made and how you verified it (or mark as Unknown)."
 
+**Mitigation — reproduce or label:** a cited `file:line` shows *where*, not that the claim about it is true. Where a claim can be run (a command, a test, a scratch reproduction), require the run. A finding that was not reproduced is labelled **INFERENCE** (reasoned, not run) and ranked below **FACT** findings (shown by a command, or by a cited line that states the claim directly). Field data: in one review, source-only findings needed 3 of 5 checked claims corrected; once reviewers had to verify by running something, 0 of 17 checks were refuted. Where nothing can be run (a design document, a reasoning-only Prism), the labels still apply: a finding is FACT only when a cited line states it directly; anything reasoned is INFERENCE.
+
 ## Persona Drift
 
 ```
