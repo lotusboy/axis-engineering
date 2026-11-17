@@ -39,6 +39,12 @@ Each missed things the others caught.
 
 **Key instruction:** "Do NOT read the Pass 1 review. Approach the code fresh. Focus on what could go wrong at runtime that a document review would miss."
 
+**Variant for refactors and guard changes — mutation probes.** When the change claims to preserve behaviour or to guard something, Pass 2 can break the code on purpose instead of reading it again: apply each mutation to a scratch copy (remove a guard, flip a condition, revert the fix), run the tests, restore. Each mutation that no test catches is a finding, unless the reviewer argues it cannot change behaviour. In field reviews, "8 of 13 mutations survive" and "11 of 18 site reversions survive the tests" were the findings that a second reading would not have produced.
+
+### What to tell the reviewers
+
+It depends on the job. A **discovery** review (what is wrong with this design?) keeps reviewers blind to the author's suspected issues, so they find their own. A **verification** review (does this change do what it claims?) names the claim under review and hands over the author's suspects, and the reviewer adds its own before reading closely. Withholding suspects from a verification review wastes the reviewer's budget re-finding what the author already knew.
+
 ## Why Two Passes Instead of One Bigger Cocktail
 
 Over-stacking handles (7+) causes the agent to name-drop all of them superficially. Two focused passes with 3-4 handles each produces deeper analysis than one pass with 8 handles.
@@ -169,6 +175,7 @@ Applied to the ExampleVision integration. Requirements were extracted from 5 int
 - **Follow-up reviews** (a fix after a Two-Pass, or a fix to that fix):
   - A **single pass** is enough only when it **cites the parent Two-Pass** (its run folder) and the follow-up adds **no new reasoning** — same root cause, same area, carrying out what the parent already reviewed. In field use this cost about a third of a Two-Pass.
   - **No cited parent, a new root cause, or a change to the design → Two-Pass.**
+  - **Re-run each finding's own reproduction (and any surviving mutation) against the fix.** Green tests and gates are not proof the finding is closed. In field runs a fix "moved the blind spot instead of closing it", and in another "every gate passes" while the original reviewer's mutation still passed. A review's own suggested fix was wrong once too; replaying the reproduction caught it.
   - **The loop stops** when a single pass finds nothing at P1 or above.
   - A third fix for the same root cause is a Seesaw signal, not another review round — see `seesaw-principle.md` "When to Trigger It".
   - Every review records which depth it used and why, so a step down can be checked later.
