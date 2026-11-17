@@ -106,6 +106,14 @@ The synthesis step needs deterministic rules to avoid drift:
 - **Unique findings:** Anything found by only one pass is included as-is with source attribution.
 - **Verification:** The synthesis may read the reviewed source. Independence comes from the two passes being blind to each other, not from blinding the synthesis. It spot-checks every factual claim it builds on; anything it did not check is labelled a lead (INFERENCE), not a fact. When its check refutes a claim a pass actually executed, it suspects its own check first (re-run it, widen it) before overruling the pass.
 
+## Repeated Rounds
+
+Two-Pass is often re-run after the author fixes the findings. What to expect depends on whether the scope stayed the same.
+
+- **Same artefact, revised between rounds: expect convergence.** In one field series, a design document reviewed three times as it was revised went 20 → 14 → 7 merged findings (P0: 8 → 5 → 0), and the verdict reached build-ready. The protocol ran out of real things to find; it did not manufacture noise to fill a target count.
+- **If findings do not fall between rounds of the same artefact,** check that the fixes address the pattern behind the findings, not each instance one by one. Fixing instances leaves the pattern free to produce new ones.
+- **A growing system reviewed at each milestone: do not expect convergence.** In another field series, milestone reviews of a system under active construction went ~74 → 44 → 79 → ~188 raw findings, because each round reviewed a larger system (the last ~32,000 lines). A rise there is not evidence that fixes made things worse. Compare rounds only over the same scope.
+
 ## Failure Modes
 
 ### Pass 2 anchoring on Pass 1
