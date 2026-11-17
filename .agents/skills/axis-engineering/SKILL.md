@@ -121,6 +121,7 @@ This keeps Axis pure (cognitive framework) while domain skills handle technology
 2. **Context window decay:** Handle effects weaken over long conversations. Re-anchor periodically.
 3. **Automated contract validation available:** Use `scripts/axis-validate.py` to check conformance. See Automated Contract Validation below.
 4. **English-centric:** Handle effectiveness depends on English training data density.
+5. **Context-independence is not model- or input-independence:** Parallel passes and lenses are blind to each other, but they share the underlying model and read the same inputs. A shared assumption survives any number of reviewers: in one field run, a design's assumption about how source documents were structured passed every review and was broken only by opening the real files; in another, two different vendors' models were both misled by the same input pack. Only contact with the real artefact breaks a shared assumption — budget at least one Genba pass against the real inputs per design cycle.
 
 ## Files in This Skill
 
