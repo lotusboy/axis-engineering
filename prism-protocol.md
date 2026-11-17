@@ -282,6 +282,10 @@ When drafting the requirement statement to pass to agents, customer-terms purity
 
 If a dimension is load-bearing, name it in the requirement statement even at the cost of customer-terms purity. Customer-terms framing belongs in stakeholder-facing artefacts; agent-facing framing should declare every dimension.
 
+### Anchor the run on named hard cases
+
+When the requirement already has real cases the current approach handles badly, name **3–5 of them** in the shared materials, and require every lens to state how its proposed shape handles **each** case. Convergence then becomes checkable case by case rather than overall. In one field run, a brief named four real hard cases from the source documents; the synthesis could report that all three lenses rated a flat representation structurally adequate for two cases (one fully, one as a partial pass) and failing for the other two, and the shape that resolved all four was built and shipped. Use real cases from the materials, not invented ones — an invented hard case tests the lens against the author's imagination, not the data.
+
 ## Why Lens-Sets, Not Triangle Pairs
 
 Triangle uses constraint pairings (TQ/TC/CQ — pick two, sacrifice one) because architecture decisions involve genuine tradeoffs the team must accept. The pairing forces three independent designs by activating different handle clusters in the model.

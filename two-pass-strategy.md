@@ -79,6 +79,8 @@ calibration pass, a verification log) once this base shape is in place.
 
 Write the prompts *before* the agents run; keep the outputs unedited, exactly as they came back.
 
+**When the target is split across reviewers** (one pair per component, or several batches), list every file in the target and assign each to a reviewer **before launch**, then state the coverage (lines assigned of lines in scope). And require every reviewer to say what it did **not** check, and why — silence about coverage reads as "all clear". In one field run, the first split left about 3,050 lines assigned to no one, and a large package was excluded because its name suggested a narrower job; "the five worst findings all sit in code that batch 1 never looked at". The final run reported 31,803 of 31,803 lines covered.
+
 **If the agents cannot write files** (read-only subagents), the orchestrating session writes each agent's output to its file verbatim **as soon as it returns** — not later from memory. In one field batch, nine reviews were backfilled afterwards as condensed records, and the full reports were lost.
 
 **Before committing a run folder to a public repository,** scan it for private names (customers, people, private files or repos) and machine paths, or keep the run in a private location instead. Prompts routinely quote the materials they were given. Field runs did both: some replaced machine paths before commit; others were kept out of the public repo because their prompts named private design files.
