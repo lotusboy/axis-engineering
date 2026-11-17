@@ -10,7 +10,7 @@ No single axis cocktail catches everything. Our A/B/C experiment showed:
 
 Each missed things the others caught.
 
-## The Solution: Two Sequential Passes
+## The Solution: Two Separate Passes
 
 ### Pass 1: Wide Net (Axis Engineering Cocktail)
 
@@ -55,7 +55,7 @@ The passes are also cognitively different:
 - Pass 1 is **analytical** (compare docs to code, categorise findings)
 - Pass 2 is **adversarial** (break things, find edge cases, verify guards)
 
-Running them sequentially avoids the agent trying to do both at once.
+Running them as separate passes avoids the agent trying to do both at once. "Separate" means isolated contexts, not a fixed order: Pass 2 never sees Pass 1, so the two can — and in field use usually do — run in parallel, with the synthesis after both return.
 
 ## Output Structure — save the run
 
@@ -78,6 +78,10 @@ calibration pass, a verification log) once this base shape is in place.
 | `06-synthesis.md` | Merged, deduplicated, severity-ordered findings |
 
 Write the prompts *before* the agents run; keep the outputs unedited, exactly as they came back.
+
+**If the agents cannot write files** (read-only subagents), the orchestrating session writes each agent's output to its file verbatim **as soon as it returns** — not later from memory. In one field batch, nine reviews were backfilled afterwards as condensed records, and the full reports were lost.
+
+**Before committing a run folder to a public repository,** scan it for private names (customers, people, private files or repos) and machine paths, or keep the run in a private location instead. Prompts routinely quote the materials they were given. Field runs did both: some replaced machine paths before commit; others were kept out of the public repo because their prompts named private design files.
 Adapt file names and counts to the run — the invariant that matters is stated below, not this
 exact table.
 
@@ -130,6 +134,10 @@ Two-Pass is often re-run after the author fixes the findings. What to expect dep
 The "Do NOT read Pass 1" instruction is enforced by **agent isolation** in subagent architectures (each pass runs in a separate context). In a single-session workflow where a human runs both prompts sequentially, the model *will* have Pass 1 in context and may anchor on it despite the instruction.
 
 **Mitigation:** For single-session use, run Pass 2 in a new conversation or a separate agent. If that's impractical, instruct Pass 2 to "actively contradict at least 2 Pass 1 findings" — this forces genuine re-examination rather than passive agreement.
+
+### Author as synthesiser
+
+The synthesis is often written by the orchestrating session, which may also be the author of what is under review. The risk is rationalising: the author's own choices get the benefit of the doubt. A fresh-context synthesis is the default when the author wrote the artefact under review. Author-written synthesis is acceptable when it is **stated in the synthesis**, and it must still meet the Merge Contract's Verification rule — every fact it builds on spot-checked against the source.
 
 ### Merge step confabulation
 
