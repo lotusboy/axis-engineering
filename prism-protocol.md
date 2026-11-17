@@ -263,6 +263,8 @@ The combined evidence — gap-pattern *reproduction* across two requirements (In
 
 **Sanitisation test:** does the file declare what the platform CAN do, or what THIS implementation does WITH the platform? Only the former is substrate.
 
+**When the task models real data** (documents, spreadsheets, feeds, a live system), the customer materials must include **facts measured from that data** — a Genba pass's findings, real counts, real samples — not only documents that describe it. Lens claims are checkable only when ground truth is in the materials. Field evidence: a change-ripple Prism given the real changeset counts (1 modified / 7 added / 1,510 unchanged) found its main catch in them — most of a real update was invisible to the ripple; a review batch that could not open the real documents could not verify any claim about them. **Read each input; do not judge it by its name** — file, package, tab or column label. In one field run, workbook tabs classified by name produced two wrong claims (a "40 missing facts" count became 12 once the tabs were read).
+
 **For empty-by-design layers** (e.g. `salesforce + (no MGA frame)`): the protocol still requires the operator to declare them empty. The empty-lens cost is itself a value driver; the protocol must know which layer is empty by design vs missing-by-omission.
 
 ### Requirement-statement framing — name load-bearing dimensions explicitly
