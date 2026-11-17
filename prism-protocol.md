@@ -131,6 +131,10 @@ STRUCTURE:    Convergence → Divergence → Unique catches → Mermaid comparis
               → Meta-findings
 EVIDENCE:     Cite each agent's output for every comparison point.
               Read all agent outputs in full before writing comparison.
+              You may read the materials. Spot-check every fact you build
+              on against them; label anything unchecked a lead (INFERENCE).
+              Hold back any finding that traces to no agent. If your check
+              refutes a claim an agent ran, suspect your check first.
 STOP:         Flag any case where two agents interpret the same requirement
               differently — that's requirements-level ambiguity, must be
               resolved before modelling continues.
