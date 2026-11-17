@@ -104,6 +104,7 @@ The synthesis step needs deterministic rules to avoid drift:
 - **Severity:** start at `max(pass1_severity, pass2_severity)`, so nothing is lowered silently. The synthesis may then move a finding's severity **down or up**, but only after checking the evidence itself, and it states the reason in one line (e.g. "lowered P0 → P1: affects scale, not correctness"). Field runs used this authority in both directions: one milestone review lowered an adversarial-pass P0 that was about scale rather than correctness; another synthesis verified 22 findings itself and raised 3 of them. A pass's severity is an input to the synthesis, not a verdict binding on it.
 - **Conflicts:** If Pass 2 contradicts Pass 1, prefer Pass 2 if it has stronger evidence (more file:line citations, verbatim snippets). Pass 2 reads code fresh without anchoring on Pass 1.
 - **Unique findings:** Anything found by only one pass is included as-is with source attribution.
+- **Patterns:** After merging, the synthesis names **at most 3 systemic patterns** — a cause that shows up as several findings in different places — and lists the findings each one explains. In one field run, five separate gate findings shared one cause (each gate counted objects instead of measuring content); the synthesis named it "one bug with five faces" and warned that fixing the instances alone "guarantees a sixth face". In a **later round**, the synthesis reports each previously named pattern as *closed*, *still open*, or *new instance found*.
 - **Verification:** The synthesis may read the reviewed source. Independence comes from the two passes being blind to each other, not from blinding the synthesis. It spot-checks every factual claim it builds on; anything it did not check is labelled a lead (INFERENCE), not a fact. When its check refutes a claim a pass actually executed, it suspects its own check first (re-run it, widen it) before overruling the pass.
 
 ## Repeated Rounds
@@ -111,7 +112,7 @@ The synthesis step needs deterministic rules to avoid drift:
 Two-Pass is often re-run after the author fixes the findings. What to expect depends on whether the scope stayed the same.
 
 - **Same artefact, revised between rounds: expect convergence.** In one field series, a design document reviewed three times as it was revised went 20 → 14 → 7 merged findings (P0: 8 → 5 → 0), and the verdict reached build-ready. The protocol ran out of real things to find; it did not manufacture noise to fill a target count.
-- **If findings do not fall between rounds of the same artefact,** check that the fixes address the pattern behind the findings, not each instance one by one. Fixing instances leaves the pattern free to produce new ones.
+- **If findings do not fall between rounds of the same artefact,** check that the fixes address the pattern behind the findings (see **Patterns** in the Merge Contract), not each instance one by one. Fixing instances leaves the pattern free to produce new ones.
 - **A growing system reviewed at each milestone: do not expect convergence.** In another field series, milestone reviews of a system under active construction went ~74 → 44 → 79 → ~188 raw findings, because each round reviewed a larger system (the last ~32,000 lines). A rise there is not evidence that fixes made things worse. Compare rounds only over the same scope.
 
 ## Failure Modes
