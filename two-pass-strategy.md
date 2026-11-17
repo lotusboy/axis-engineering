@@ -101,7 +101,7 @@ project.
 The synthesis step needs deterministic rules to avoid drift:
 
 - **Dedupe key:** `(artifact, symptom, root-cause-class)`. Two findings about the same artifact with the same root cause merge into one.
-- **Severity:** `max(pass1_severity, pass2_severity)`. If Pass 2 escalates a Pass 1 finding, use the higher severity.
+- **Severity:** start at `max(pass1_severity, pass2_severity)`, so nothing is lowered silently. The synthesis may then move a finding's severity **down or up**, but only after checking the evidence itself, and it states the reason in one line (e.g. "lowered P0 → P1: affects scale, not correctness"). Field runs used this authority in both directions: one milestone review lowered an adversarial-pass P0 that was about scale rather than correctness; another synthesis verified 22 findings itself and raised 3 of them. A pass's severity is an input to the synthesis, not a verdict binding on it.
 - **Conflicts:** If Pass 2 contradicts Pass 1, prefer Pass 2 if it has stronger evidence (more file:line citations, verbatim snippets). Pass 2 reads code fresh without anchoring on Pass 1.
 - **Unique findings:** Anything found by only one pass is included as-is with source attribution.
 
