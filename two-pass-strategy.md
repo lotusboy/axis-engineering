@@ -45,6 +45,8 @@ Each missed things the others caught.
 
 It depends on the job. A **discovery** review (what is wrong with this design?) keeps reviewers blind to the author's suspected issues, so they find their own. A **verification** review (does this change do what it claims?) names the claim under review and hands over the author's suspects, and the reviewer adds its own before reading closely. Withholding suspects from a verification review wastes the reviewer's budget re-finding what the author already knew.
 
+Even a blind review may be given **checked facts about how the system runs** — its entry points, what is run by hand, what is staged and deliberately not yet wired — in a section labelled *"factual context, not a hint at findings"*. Never suspects, priors or another pass's output. In field runs, blind reviewers without this context raised false "dead code" P0s on paths that were run by hand on purpose; once contracts carried the section, the false flags stopped and real unwired code was still found. Include only facts you have checked: supplied context is a claim too, and a context pack that was itself wrong once misled two different models.
+
 ## Why Two Passes Instead of One Bigger Cocktail
 
 Over-stacking handles (7+) causes the agent to name-drop all of them superficially. Two focused passes with 3-4 handles each produces deeper analysis than one pass with 8 handles.
