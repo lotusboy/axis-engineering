@@ -71,6 +71,9 @@ You're on the seesaw when:
 - You're copy-pasting workarounds across multiple tests → **code bug, not test problem**
 - A simple interaction (tap a button, read a label) requires unusual effort → **design/implementation gap**
 - You've rewritten the same test three times with different approaches → **stop, look at the code**
+- The same root cause needs a third fix → **stop, look at what the failing layer was given** (its input, not its logic). Two fixes that did not hold are evidence the cause sits a level up
+- A design names a test for an invariant, but the test was never built → **it reads as coverage while enforcing nothing**. In one field run a designed invariant with a named-but-unbuilt test was violated silently until a sizing question exposed 66 MB of bloat. Track named test hooks as debt until they exist
+- Code is fully built and unit-tested but nothing calls it → **it reads as "done + tested" when it is "correct + unreachable"**. Wire it or delete it. Seen twice in field reviews of one growing system: a whole orchestration package with zero callers, and a tested extraction function never invoked
 - A UI component is hard to unit test → **component is doing too much**
 - Users ask "where is X?" when X is visible → **design/copy problem**
 - A stakeholder's needs from a requirement don't fit any model slot you've drawn → **model gap or out-of-scope ask** (Prism context)
