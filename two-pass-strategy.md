@@ -166,3 +166,9 @@ Applied to the ExampleVision integration. Requirements were extracted from 5 int
 
 - **Single pass (axis cocktail only):** Routine code reviews, PR reviews, small features, doc chain reviews, retrospectives, solution design generation
 - **Two passes:** Architecture reviews, integration designs, pre-production audits, design document reviews, anything touching shared infrastructure or external APIs
+- **Follow-up reviews** (a fix after a Two-Pass, or a fix to that fix):
+  - A **single pass** is enough only when it **cites the parent Two-Pass** (its run folder) and the follow-up adds **no new reasoning** — same root cause, same area, carrying out what the parent already reviewed. In field use this cost about a third of a Two-Pass.
+  - **No cited parent, a new root cause, or a change to the design → Two-Pass.**
+  - **The loop stops** when a single pass finds nothing at P1 or above.
+  - A third fix for the same root cause is a Seesaw signal, not another review round — see `seesaw-principle.md` "When to Trigger It".
+  - Every review records which depth it used and why, so a step down can be checked later.
