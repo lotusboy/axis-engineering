@@ -97,7 +97,7 @@ STOP:         Andon — halt and surface if a requirement is genuinely contradic
 
 ### Phase 1b: Multi-agent refraction (for high-stakes requirements)
 
-For requirements where the model shape will persist for years, run the refraction in parallel under context isolation. N=2 is the recommended minimum (cost-effective; ~70% convergence rate observed empirically). N=3 increases coverage of edge cases but at proportional cost.
+For requirements where the model shape will persist for years, run the refraction in parallel under context isolation. N=2 is the recommended minimum (cost-effective; broad convergence rate ~62–65% under v1.0 dual reporting — earlier v0.2 runs measured ~70% by a different method; see the tuning diagnostic below). N=3 increases coverage of edge cases but at proportional cost.
 
 Each agent receives:
 - The Prism Protocol description (this document)
@@ -131,6 +131,10 @@ STRUCTURE:    Convergence → Divergence → Unique catches → Mermaid comparis
               → Meta-findings
 EVIDENCE:     Cite each agent's output for every comparison point.
               Read all agent outputs in full before writing comparison.
+              You may read the materials. Spot-check every fact you build
+              on against them; label anything unchecked a lead (INFERENCE).
+              Hold back any finding that traces to no agent. If your check
+              refutes a claim an agent ran, suspect your check first.
 STOP:         Flag any case where two agents interpret the same requirement
               differently — that's requirements-level ambiguity, must be
               resolved before modelling continues.
@@ -159,7 +163,7 @@ Empirical anchors so far: intake-vendor ~21kB substrate → ~22 citations per ag
 - **Strict rate** = `convergence / (convergence + divergence + unique-catches-total)`. This is the v0.2 measurement, retained for backwards compatibility.
 - **Broad rate** = `convergence / (convergence + divergence)` — where "divergence" includes both explicit and hidden-divergence subtypes. Broad measures *agreement that survives commitment to shape*, excluding complementary-coverage uniques (which are real signal but not model disagreement).
 
-**Empirical band (v1.0):** the **broad rate** lands in a **62-65% band** across multi-agent runs spanning two industries, four substrate compositions, and Phase 1, Phase 4, and mermaid-augmented variants. The strict rate is materials-richness-dependent and ranges more widely (40-71%); read the strict rate as a tuning diagnostic for materials richness rather than a model-shape convergence measure.
+**Empirical band (v1.0):** the **broad rate** lands in a **62-65% band** across multi-agent runs spanning two industries, four substrate compositions, and Phase 1, Phase 4, and mermaid-augmented variants. The strict rate is materials-richness-dependent and ranges more widely (40-71%); read the strict rate as a tuning diagnostic for materials richness rather than a model-shape convergence measure. **Both rates are sensitive to how findings are counted:** in one field run the broad rate moved from 71% to 78% just by merging three small forks into their neighbours. Read the band as rough, not as a pass mark.
 
 Practical corollaries (apply to broad rate):
 
@@ -259,6 +263,8 @@ The combined evidence — gap-pattern *reproduction* across two requirements (In
 
 **Sanitisation test:** does the file declare what the platform CAN do, or what THIS implementation does WITH the platform? Only the former is substrate.
 
+**When the task models real data** (documents, spreadsheets, feeds, a live system), the customer materials must include **facts measured from that data** — a Genba pass's findings, real counts, real samples — not only documents that describe it. Lens claims are checkable only when ground truth is in the materials. Field evidence: a change-ripple Prism given the real changeset counts (1 modified / 7 added / 1,510 unchanged) found its main catch in them — most of a real update was invisible to the ripple; a review batch that could not open the real documents could not verify any claim about them. **Read each input; do not judge it by its name** — file, package, tab or column label. In one field run, workbook tabs classified by name produced two wrong claims (a "40 missing facts" count became 12 once the tabs were read).
+
 **For empty-by-design layers** (e.g. `salesforce + (no MGA frame)`): the protocol still requires the operator to declare them empty. The empty-lens cost is itself a value driver; the protocol must know which layer is empty by design vs missing-by-omission.
 
 ### Requirement-statement framing — name load-bearing dimensions explicitly
@@ -275,6 +281,10 @@ When drafting the requirement statement to pass to agents, customer-terms purity
 - **Multi-vendor** — when one vendor exists, ask if there might be a second class of vendor in scope (e.g. wildfire as a second rater alongside AOP — the multi-rater modelling question that emerged as a unique-catch in the rater run).
 
 If a dimension is load-bearing, name it in the requirement statement even at the cost of customer-terms purity. Customer-terms framing belongs in stakeholder-facing artefacts; agent-facing framing should declare every dimension.
+
+### Anchor the run on named hard cases
+
+When the requirement already has real cases the current approach handles badly, name **3–5 of them** in the shared materials, and require every lens to state how its proposed shape handles **each** case. Convergence then becomes checkable case by case rather than overall. In one field run, a brief named four real hard cases from the source documents; the synthesis could report that all three lenses rated a flat representation structurally adequate for two cases (one fully, one as a partial pass) and failing for the other two, and the shape that resolved all four was built and shipped. Use real cases from the materials, not invented ones — an invented hard case tests the lens against the author's imagination, not the data.
 
 ## Why Lens-Sets, Not Triangle Pairs
 

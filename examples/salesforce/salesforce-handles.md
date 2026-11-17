@@ -486,7 +486,8 @@ ASSUMPTIONS:  Independent ledger. Do NOT reference Pass 1.
 STOP:         Andon on data loss or security vulnerability.
 
 === MERGE ===
-Deduplicate by (file, symptom, root cause). Severity = max(pass severities).
+Deduplicate by (file, symptom, root cause). Severity starts at max(pass severities);
+the synthesis may lower or raise it only after verifying the evidence, stating the reason in one line.
 Findings discovered by both passes independently marked [Confirmed].
 ```
 
