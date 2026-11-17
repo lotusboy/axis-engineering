@@ -143,7 +143,7 @@ The synthesis is often written by the orchestrating session, which may also be t
 
 ### Merge step confabulation
 
-The third agent synthesising two reviews may fabricate connections between findings that don't actually relate, or invent severity escalations not supported by either pass.
+The third agent synthesising two reviews may fabricate connections between findings that don't actually relate, or make severity changes it has not verified.
 
 **Mitigation:** The merge contract's dedupe key `(artifact, symptom, root-cause-class)` constrains the synthesis. Additionally, require the merge output to cite which pass originated each finding — any finding not traceable to Pass 1 or Pass 2 is held back from the findings table and listed separately for the human. Blinding the synthesis to the source does not prevent confabulation: in one field run, a synthesis told not to read the reviewed repository still added a finding traceable to neither pass, and miscounted its own convergence. It only removed the check that would have caught both.
 
