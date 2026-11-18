@@ -91,7 +91,7 @@ When you detect you're on the seesaw, apply this discipline:
 6. **Re-balance** — re-run the test / re-test with a user / re-refract the requirement. Did it get easier?
 
 > Never add weight to the test (or workaround) to compensate for a broken implementation. That just hides the imbalance.
-
+>
 > Never fix without a ticket. A fix without a ticket is invisible — no one knows why it changed, what it cost, or whether it might regress.
 
 ## Relationship to Other Strategies
@@ -102,7 +102,7 @@ The Seesaw Principle is **cross-cutting** — it fires *inside* the other axis-e
 Axis Engineering
 ├── Prism Protocol         (modelling — multi-lens refraction; start of new projects)
 ├── Triangle Protocol      (decisions — multi-agent + synthesis; architecture choices)
-├── Two-Pass Strategy      (review — sequential constructive then adversarial)
+├── Two-Pass Strategy      (review — separate constructive and adversarial passes)
 └── Seesaw Principle       (cross-cutting diagnostic — fires inside any of the above)
     ├── Test↔Design↔UI         (E2E / Maestro)
     ├── Test↔Design↔Component  (Jest / unit)
