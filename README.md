@@ -1036,3 +1036,15 @@ Create a small automated suite (`tests/axis-regression/`) for the top P0/P1s acr
 This framework is an original synthesis by Steven Loftus, based on publicly available engineering, systems thinking, and organisational design frameworks. It does not contain proprietary code, data, or confidential material from any employer or client.
 
 Except where otherwise noted, this original synthesis and the specific Axis Engineering methodology is licensed under CC BY 4.0. Referenced third-party frameworks, models, and terminology (e.g., Toyota Production System, McKinsey, Gang of Four) remain the property of their respective originators and are used here under fair use for educational and structural purposes.
+
+### How to attribute Axis
+
+If you copy or adapt any of the methodology, CC BY 4.0 asks for a short notice. Paste these lines into your README or a `NOTICE` file and fill in the last part of line 2:
+
+```text
+Adapted from Axis Engineering by Steven Loftus — https://github.com/lotusboy/axis-engineering
+© 2026 Steven Loftus. Licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Changes: <what you changed, or "none">.
+Provided as is, without warranties of any kind.
+```
+
+Put the notice where your users will read it, such as the README, not only inside the adapted files. The code files are licensed separately under GPL v3.0 (see [LICENSE-CODE](LICENSE-CODE)).
