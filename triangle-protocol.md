@@ -289,8 +289,8 @@ The Triangle Protocol is one of three multi-agent extensions in the Axis Enginee
 │  Triangle Protocol — decision phase         │  ← Multi-agent constraint
 │  (3 agents + synthesis)                     │     exploration; architecture choices
 ├─────────────────────────────────────────────┤
-│  Two-Pass Strategy — review phase           │  ← Sequential constructive
-│  (Pass 1 + Pass 2 in fresh contexts)        │     then adversarial
+│  Two-Pass Strategy — review phase           │  ← Separate constructive
+│  (Pass 1 + Pass 2 in fresh contexts)        │     and adversarial passes
 ├─────────────────────────────────────────────┤
 │           Axis Contracts + Handles          │  ← Each agent uses these internally
 ├─────────────────────────────────────────────┤
